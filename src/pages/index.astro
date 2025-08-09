@@ -1,330 +1,45 @@
 ---
 import { getCollection } from 'astro:content'
-import Layout from '../layouts/Layout.astro'
-import Card from '../components/Card.astro'
+import BaseLayout from '../layouts/BaseLayout.astro'
 import BlogCard from '../components/BlogCard.astro'
 
-// Get recent posts for homepage - mix of tech and life posts
+// Get recent posts
 const allPosts = await getCollection('blog')
 const recentPosts = allPosts
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 4)
-
-// Get one featured life post
-const lifePost = allPosts.find(post => post.data.category === 'life' && !post.data.draft)
+  .slice(0, 5)
 ---
 
-<Layout title="Khoi Van - Android Developer & Coffee Enthusiast">
-  <main>
-    <!-- Hero Section with Personality -->
-    <section class="hero">
-      <h1>Xin chào! I'm <span class="gradient-text">Khoi</span> 👋</h1>
-      <p class="tagline">
-        Building Android apps by day, hunting bánh mì by night<br />
-        <span class="sub-tagline">Currently: Crafting banking apps for 5M+ Vietnamese users at VietinBank</span>
+<BaseLayout title="Khoi Van - Android Developer" description="Personal blog about Android development, software engineering, and life in Saigon">
+  <div class="mx-auto max-w-3xl px-4 py-12">
+    <!-- Simple intro -->
+    <section class="mb-12">
+      <h1 class="mb-4 text-3xl font-serif font-semibold text-gray-900 dark:text-gray-100">
+        Khoi Van
+      </h1>
+      <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+        Android Developer based in Saigon. Currently building banking apps for millions of users at VietinBank. 
+        Writing about software engineering, mobile development, and occasional life stories.
       </p>
+    </section>
+
+    <!-- Recent posts -->
+    <section>
+      <h2 class="mb-8 text-2xl font-serif font-semibold text-gray-900 dark:text-gray-100">
+        Recent Posts
+      </h2>
+      <div class="space-y-0">
+        {recentPosts.map((post) => (
+          <BlogCard post={post} />
+        ))}
+      </div>
       
-      <div class="currently-section">
-        <p class="currently-item">📍 Saigon, Vietnam</p>
-        <p class="currently-item">☕ Fueled by cà phê sữa đá</p>
-        <p class="currently-item">🚀 8 years in Android trenches</p>
-      </div>
-
-      <div class="cta-buttons">
-        <a href="/blog" class="btn btn-primary">Read my thoughts</a>
-        <a href="/about" class="btn btn-secondary">More about me</a>
+      <div class="mt-12 text-center">
+        <a href="/blog" class="text-blue-600 hover:underline dark:text-blue-400">
+          View all posts →
+        </a>
       </div>
     </section>
-
-    <!-- What I Do Section -->
-    <section class="what-i-do">
-      <h2>What I'm about</h2>
-      <div class="about-grid">
-        <div class="about-card">
-          <span class="emoji">🏗️</span>
-          <h3>Engineering</h3>
-          <p>Clean Architecture advocate. Turning spaghetti code into organized modules since 2016.</p>
-        </div>
-        <div class="about-card">
-          <span class="emoji">🎨</span>
-          <h3>UI/UX</h3>
-          <p>Jetpack Compose enthusiast. Making banking apps that don't feel like banking apps.</p>
-        </div>
-        <div class="about-card">
-          <span class="emoji">🔒</span>
-          <h3>Security</h3>
-          <p>Because when you handle people's money, "it works on my machine" isn't good enough.</p>
-        </div>
-        <div class="about-card">
-          <span class="emoji">📝</span>
-          <h3>Writing</h3>
-          <p>Sharing war stories from production, lessons from failures, and occasional rants about iOS.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Recent Posts with Mix -->
-    <section class="recent-posts">
-      <h2>Recent thoughts & adventures</h2>
-      <p class="section-subtitle">Technical deep-dives, 2am debugging stories, and everything in between</p>
-      
-      {
-        recentPosts.length > 0 ? (
-          <div class="blog-grid">
-            {recentPosts.map((post) => (
-              <BlogCard post={post} />
-            ))}
-          </div>
-        ) : (
-          <p class="no-posts">Loading stories...</p>
-        )
-      }
-      <p class="view-all"><a href="/blog">Explore all posts →</a></p>
-    </section>
-
-    <!-- Currently Learning -->
-    <section class="currently-learning">
-      <h2>Currently exploring</h2>
-      <div class="learning-grid">
-        <div class="learning-item">
-          <span class="tech-emoji">🦀</span>
-          <span>Rust for Android NDK</span>
-        </div>
-        <div class="learning-item">
-          <span class="tech-emoji">🎯</span>
-          <span>Kotlin Multiplatform</span>
-        </div>
-        <div class="learning-item">
-          <span class="tech-emoji">🤖</span>
-          <span>ML Kit integration</span>
-        </div>
-        <div class="learning-item">
-          <span class="tech-emoji">⚡</span>
-          <span>Performance optimization</span>
-        </div>
-      </div>
-    </section>
-  </main>
-</Layout>
-
-<style>
-  main {
-    margin: auto;
-    padding: 1rem;
-    width: 900px;
-    max-width: calc(100% - 2rem);
-  }
-
-  .hero {
-    text-align: center;
-    padding: 4rem 0;
-  }
-
-  h1 {
-    font-size: 3.5rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 1em;
-  }
-
-  .gradient-text {
-    background-image: linear-gradient(45deg, #4f39fa, #da62c4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .tagline {
-    font-size: 1.35rem;
-    color: #333;
-    margin-bottom: 0.5rem;
-    line-height: 1.6;
-  }
-
-  .sub-tagline {
-    font-size: 1.1rem;
-    color: #666;
-    display: block;
-    margin-top: 0.5rem;
-  }
-
-  .currently-section {
-    display: flex;
-    gap: 2rem;
-    justify-content: center;
-    margin: 2rem 0;
-    flex-wrap: wrap;
-  }
-
-  .currently-item {
-    font-size: 0.95rem;
-    color: #555;
-    margin: 0;
-  }
-
-  .cta-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin-top: 2rem;
-  }
-
-  .btn {
-    padding: 0.75rem 2rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-  }
-
-  .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-  }
-
-  .btn-primary {
-    background: linear-gradient(45deg, #4f39fa, #da62c4);
-    color: white;
-  }
-
-  .btn-secondary {
-    border: 2px solid #4f39fa;
-    color: #4f39fa;
-  }
-
-  .btn-secondary:hover {
-    background: #4f39fa;
-    color: white;
-  }
-
-  /* What I Do Section */
-  .what-i-do {
-    padding: 3rem 0;
-  }
-
-  .about-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
-  }
-
-  .about-card {
-    text-align: center;
-  }
-
-  .about-card .emoji {
-    font-size: 2.5rem;
-    display: block;
-    margin-bottom: 1rem;
-  }
-
-  .about-card h3 {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-    color: #333;
-  }
-
-  .about-card p {
-    font-size: 0.95rem;
-    color: #666;
-    line-height: 1.5;
-  }
-
-  /* Recent Posts */
-  .recent-posts {
-    padding: 3rem 0;
-  }
-
-  .section-subtitle {
-    text-align: center;
-    color: #666;
-    margin-top: -0.5rem;
-    margin-bottom: 2rem;
-  }
-
-  h2 {
-    font-size: 2.2rem;
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-
-  .blog-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin: 2rem 0;
-  }
-
-  .no-posts {
-    text-align: center;
-    color: #666;
-    padding: 2rem;
-  }
-
-  .view-all {
-    text-align: center;
-    margin-top: 2rem;
-  }
-
-  .view-all a {
-    color: #4f39fa;
-    font-weight: 600;
-    text-decoration: none;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-  }
-
-  .view-all a:hover {
-    text-decoration: underline;
-  }
-
-  /* Currently Learning */
-  .currently-learning {
-    padding: 3rem 0;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    border-radius: 20px;
-    margin: 2rem 0;
-  }
-
-  .learning-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
-  }
-
-  .learning-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: white;
-    padding: 1rem 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  }
-
-  .tech-emoji {
-    font-size: 1.5rem;
-  }
-
-  @media (max-width: 768px) {
-    h1 {
-      font-size: 2.5rem;
-    }
-    
-    .tagline {
-      font-size: 1.1rem;
-    }
-    
-    .currently-section {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    
-    .about-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>
+  </div>
+</BaseLayout>

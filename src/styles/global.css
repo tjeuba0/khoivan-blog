@@ -1,84 +1,84 @@
 @import 'tailwindcss';
 
-/* Dark mode configuration */
+/* Minimalist color palette inspired by mckerlie.com */
 @layer base {
   :root {
-    --color-bg: 255 255 255;
-    --color-text: 31 41 55;
-    --color-border: 229 231 235;
-    --color-accent: 124 58 237;
-    --color-accent-secondary: 236 72 153;
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    --color-black: 0 0 0;
+    --color-gray-900: 17 17 17;
+    --color-gray-700: 51 51 51;
+    --color-gray-500: 102 102 102;
+    --color-gray-300: 153 153 153;
+    --color-gray-100: 245 245 245;
+    --color-white: 255 255 255;
+    --color-link: 0 102 204; /* Simple blue for links */
   }
 
   .dark {
-    --color-bg: 17 24 39;
-    --color-text: 243 244 246;
-    --color-border: 55 65 81;
-    --color-accent: 167 139 250;
-    --color-accent-secondary: 244 114 182;
+    --color-black: 255 255 255;
+    --color-gray-900: 238 238 238;
+    --color-gray-700: 204 204 204;
+    --color-gray-500: 153 153 153;
+    --color-gray-300: 102 102 102;
+    --color-gray-100: 26 26 26;
+    --color-white: 0 0 0;
+    --color-link: 70 146 221;
   }
 
   html {
     @apply scroll-smooth;
     font-size: 16px;
-    line-height: 1.6;
+    line-height: 1.8;
   }
 
   body {
-    background-color: rgb(var(--color-bg));
-    color: rgb(var(--color-text));
-    @apply transition-colors duration-200;
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    background-color: rgb(var(--color-white));
+    color: rgb(var(--color-gray-900));
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Typography improvements */
+  /* Typography - Simple and clean */
   h1, h2, h3, h4, h5, h6 {
-    font-weight: 700;
-    line-height: 1.2;
-    margin-top: 1.5em;
-    margin-bottom: 0.5em;
-    letter-spacing: -0.02em;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-top: 2em;
+    margin-bottom: 0.8em;
+    color: rgb(var(--color-black));
   }
 
-  h1 { font-size: 2.5rem; }
-  h2 { font-size: 2rem; }
-  h3 { font-size: 1.75rem; }
-  h4 { font-size: 1.5rem; }
-  h5 { font-size: 1.25rem; }
-  h6 { font-size: 1.125rem; }
+  h1 { font-size: 2.2rem; }
+  h2 { font-size: 1.8rem; }
+  h3 { font-size: 1.5rem; }
+  h4 { font-size: 1.3rem; }
+  h5 { font-size: 1.1rem; }
+  h6 { font-size: 1rem; }
 
   p {
-    margin-top: 1em;
-    margin-bottom: 1em;
-    line-height: 1.7;
+    margin-top: 1.2em;
+    margin-bottom: 1.2em;
+    line-height: 1.8;
   }
 
   code, pre {
-    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
-    font-size: 0.875em;
-    font-weight: 400;
-    font-feature-settings: 'liga' 1, 'calt' 1;
+    font-family: Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    font-size: 0.85em;
   }
 
-  /* Inline code styling */
+  /* Inline code - minimal styling */
   code:not(pre code) {
-    @apply px-1.5 py-0.5 rounded-md;
-    background-color: rgba(var(--color-accent), 0.1);
-    color: rgb(var(--color-accent));
-    border: 1px solid rgba(var(--color-accent), 0.2);
+    padding: 0.2em 0.4em;
+    background-color: rgb(var(--color-gray-100));
+    border-radius: 3px;
     font-size: 0.9em;
   }
 
-  /* Better link styling */
+  /* Links - simple underline */
   a {
-    @apply transition-all duration-200;
+    color: rgb(var(--color-link));
+    text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 2px;
   }
@@ -89,235 +89,119 @@
 
   /* Selection color */
   ::selection {
-    background-color: rgba(var(--color-accent), 0.2);
-    color: rgb(var(--color-text));
+    background-color: rgb(var(--color-gray-300));
+    color: rgb(var(--color-white));
   }
 }
 
-/* Prose/Article styling */
+/* Prose/Article styling - Minimalist */
 @layer components {
   .prose-content {
-    @apply mx-auto max-w-3xl;
+    @apply mx-auto;
+    max-width: 650px;
   }
 
   .prose-content h1,
   .prose-content h2,
   .prose-content h3,
   .prose-content h4 {
-    @apply scroll-mt-24 font-bold;
-    position: relative;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    color: rgb(var(--color-black));
   }
 
   .prose-content h1 {
-    @apply mb-8 mt-0 text-4xl leading-tight tracking-tight;
+    @apply mb-6 mt-0 text-3xl;
   }
 
   .prose-content h2 {
-    @apply mb-4 mt-12 text-3xl;
+    @apply mb-4 mt-12 text-2xl;
   }
 
   .prose-content h3 {
-    @apply mb-4 mt-8 text-2xl;
+    @apply mb-3 mt-8 text-xl;
   }
 
   .prose-content h4 {
-    @apply mb-3 mt-6 text-xl;
+    @apply mb-2 mt-6 text-lg;
   }
 
   .prose-content p {
-    @apply mb-6 leading-relaxed;
+    @apply mb-6;
+    line-height: 1.8;
   }
 
   .prose-content ul,
   .prose-content ol {
-    @apply mb-6 ml-6 space-y-2;
+    @apply mb-6 ml-6;
   }
 
   .prose-content li {
-    @apply leading-relaxed;
+    @apply mb-2;
+    line-height: 1.8;
   }
 
   .prose-content blockquote {
-    @apply my-8 border-l-4 border-violet-500 bg-gray-50 p-6 italic;
-    @apply dark:bg-gray-800;
-  }
-
-  .prose-content blockquote p {
-    @apply mb-0;
+    @apply my-6 border-l-2 border-gray-300 pl-6 italic;
+    color: rgb(var(--color-gray-700));
   }
 
   .prose-content pre {
-    @apply my-8 overflow-x-auto rounded-lg bg-gray-900 p-6 shadow-xl;
-    @apply dark:bg-gray-950;
+    @apply my-6 overflow-x-auto rounded border p-4;
+    background-color: #f6f8fa;
+    border-color: #e1e4e8;
   }
 
   .prose-content pre code {
-    @apply text-sm leading-relaxed text-gray-300;
+    @apply text-sm;
     background: transparent !important;
-    border: none !important;
     padding: 0 !important;
+    font-family: Menlo, Monaco, Consolas, monospace;
   }
 
   .prose-content img {
-    @apply my-8 rounded-lg shadow-lg;
+    @apply my-6;
   }
 
   .prose-content table {
-    @apply my-8 w-full overflow-hidden rounded-lg shadow-md;
+    @apply my-6 w-full;
+    border-collapse: collapse;
   }
 
   .prose-content th {
-    @apply bg-gray-100 px-4 py-2 text-left font-semibold;
-    @apply dark:bg-gray-800;
+    @apply border-b-2 px-4 py-2 text-left;
+    border-color: rgb(var(--color-gray-300));
   }
 
   .prose-content td {
-    @apply border-t border-gray-200 px-4 py-2;
-    @apply dark:border-gray-700;
+    @apply border-b px-4 py-2;
+    border-color: rgb(var(--color-gray-100));
   }
 
   .prose-content hr {
-    @apply my-12 border-gray-200;
-    @apply dark:border-gray-700;
-  }
-
-  /* Code block enhancements */
-  .prose-content pre[data-lang]::before {
-    content: attr(data-lang);
-    @apply absolute right-2 top-2 rounded bg-gray-800 px-2 py-1 text-xs text-gray-400;
-  }
-
-  /* Link hover effect */
-  .prose-content a {
-    @apply text-violet-600 underline decoration-violet-400/30 underline-offset-2 transition-all;
-    @apply hover:decoration-violet-600 dark:text-violet-400 dark:decoration-violet-600/30;
-  }
-
-  .prose-content a:hover {
-    @apply decoration-2;
+    @apply my-8 border-t;
+    border-color: rgb(var(--color-gray-100));
   }
 }
 
-/* Dark mode utilities */
+/* Dark mode support - minimal */
 @layer utilities {
-  .dark .dark\:prose-invert {
-    --tw-prose-body: #d1d5db;
-    --tw-prose-headings: #f3f4f6;
-    --tw-prose-lead: #d1d5db;
-    --tw-prose-links: #a78bfa;
-    --tw-prose-bold: #f3f4f6;
-    --tw-prose-counters: #9ca3af;
-    --tw-prose-bullets: #6b7280;
-    --tw-prose-hr: #374151;
-    --tw-prose-quotes: #e5e7eb;
-    --tw-prose-quote-borders: #374151;
-    --tw-prose-captions: #9ca3af;
-    --tw-prose-code: #f3f4f6;
-    --tw-prose-pre-code: #e5e7eb;
-    --tw-prose-pre-bg: #1f2937;
-    --tw-prose-th-borders: #374151;
-    --tw-prose-td-borders: #374151;
+  .dark .prose-content pre {
+    background-color: #1a1a1a;
+    border-color: #333;
   }
 
-  .dark .dark\:bg-gray-900 {
-    background-color: rgb(17 24 39);
+  .dark .prose-content pre code {
+    color: #e6e6e6;
   }
 
-  .dark .dark\:bg-gray-800 {
-    background-color: rgb(31 41 55);
-  }
-
-  .dark .dark\:bg-gray-700 {
-    background-color: rgb(55 65 81);
-  }
-
-  .dark .dark\:text-gray-100 {
-    color: rgb(243 244 246);
-  }
-
-  .dark .dark\:text-gray-200 {
-    color: rgb(229 231 235);
-  }
-
-  .dark .dark\:text-gray-300 {
-    color: rgb(209 213 219);
-  }
-
-  .dark .dark\:text-gray-400 {
-    color: rgb(156 163 175);
-  }
-
-  .dark .dark\:border-gray-700 {
-    border-color: rgb(55 65 81);
-  }
-
-  .dark .dark\:border-gray-600 {
-    border-color: rgb(75 85 99);
-  }
-
-  .dark .dark\:hover\:bg-gray-700:hover {
-    background-color: rgb(55 65 81);
-  }
-
-  .dark .dark\:hover\:text-violet-400:hover {
-    color: rgb(167 139 250);
-  }
-
-  /* Smooth transitions for dark mode */
-  * {
-    @apply transition-colors duration-200;
-  }
-
-  /* Custom scrollbar styling */
-  ::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: rgb(var(--color-bg));
-    border-radius: 6px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: rgba(var(--color-accent), 0.3);
-    border-radius: 6px;
-    border: 2px solid rgb(var(--color-bg));
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(var(--color-accent), 0.5);
-  }
-
-  /* Focus styles */
+  /* Focus styles - minimal */
   *:focus {
     outline: none;
   }
 
   *:focus-visible {
-    outline: 2px solid rgba(var(--color-accent), 0.5);
+    outline: 2px solid rgb(var(--color-link));
     outline-offset: 2px;
-    border-radius: 4px;
-  }
-
-  /* Loading skeleton animation */
-  @keyframes shimmer {
-    0% {
-      background-position: -200% 0;
-    }
-    100% {
-      background-position: 200% 0;
-    }
-  }
-
-  .skeleton {
-    background: linear-gradient(
-      90deg,
-      rgba(var(--color-border), 0.3) 25%,
-      rgba(var(--color-border), 0.5) 50%,
-      rgba(var(--color-border), 0.3) 75%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
   }
 }
