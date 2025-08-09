@@ -1,0 +1,135 @@
+---
+title: 'Fix Memory Leaks in Android: Context và Lifecycle'
+description: 'Cách detect và fix memory leaks phổ biến trong Android apps'
+pubDate: 2025-01-09
+author: 'Khoi Van'
+category: 'engineering'
+tags: ['android', 'performance', 'debugging']
+mood: 'technical'
+---
+
+import Callout from '../../components/mdx/Callout.astro'
+import Comparison from '../../components/mdx/Comparison.astro'
+import CodeDemo from '../../components/mdx/CodeDemo.astro'
+
+Memory leaks là một trong những bugs khó chịu nhất trong Android. App chạy ngon lành 5 phút đầu, sau đó lag và crash với `OutOfMemoryError`.
+
+<Callout type="warning" title="Common Memory Leak">
+90% memory leaks trong Android đến từ việc giữ reference đến Context sai cách.
+</Callout>
+
+## The Problem
+
+<Comparison before="Leaking Code" after="Fixed Code">
+  <div slot="before">
+```kotlin
+class DataManager {
+    companion object {
+        // ❌ Static reference to Context
+        private var context: Context? = null
+        
+        fun init(ctx: Context) {
+            context = ctx
+        }
+    }
+}
+```
+  </div>
+  <div slot="after">
+```kotlin
+class DataManager {
+    companion object {
+        // ✅ Use Application Context
+        private var context: Context? = null
+        
+        fun init(ctx: Context) {
+            context = ctx.applicationContext
+        }
+    }
+}
+```
+  </div>
+</Comparison>
+
+## Detection với LeakCanary
+
+<CodeDemo title="Setup LeakCanary">
+```kotlin
+// build.gradle.kts
+dependencies {
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
+}
+
+// Automatic - no code needed!
+// LeakCanary will notify you when leaks happen
+```
+</CodeDemo>
+
+## Common Patterns to Avoid
+
+### 1. Anonymous Inner Classes
+
+<Comparison>
+  <div slot="before">
+```kotlin
+class MyActivity : Activity() {
+    override fun onCreate(...) {
+        // ❌ Anonymous class holds Activity ref
+        Handler().postDelayed({
+            doSomething()
+        }, 10000)
+    }
+}
+```
+  </div>
+  <div slot="after">
+```kotlin
+class MyActivity : Activity() {
+    private val handler = Handler(Looper.getMainLooper())
+    
+    override fun onCreate(...) {
+        // ✅ Use lifecycle-aware components
+        lifecycleScope.launch {
+            delay(10000)
+            doSomething()
+        }
+    }
+}
+```
+  </div>
+</Comparison>
+
+### 2. Singleton Pattern
+
+<CodeDemo title="Safe Singleton">
+```kotlin
+// Safe singleton with WeakReference
+object NetworkManager {
+    private var callbackRef: WeakReference<Callback>? = null
+    
+    fun registerCallback(callback: Callback) {
+        callbackRef = WeakReference(callback)
+    }
+    
+    fun notifyCallback() {
+        callbackRef?.get()?.onUpdate()
+    }
+}
+```
+</CodeDemo>
+
+<Callout type="success">
+**Pro tip**: Sử dụng `lifecycleScope` và `viewModelScope` thay vì manual threading. Chúng tự động cancel khi component destroyed.
+</Callout>
+
+## Quick Checklist
+
+- [ ] Replace Activity Context với Application Context khi possible
+- [ ] Cancel all coroutines trong `onDestroy()`
+- [ ] Unregister all listeners và callbacks
+- [ ] Avoid static Views hoặc Activities
+- [ ] Use WeakReference cho callbacks
+
+<Callout type="info">
+**Tools**: LeakCanary cho detection, Android Studio Profiler cho analysis, và MAT (Memory Analyzer Tool) cho deep dive.
+</Callout>

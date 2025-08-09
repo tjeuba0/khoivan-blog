@@ -11,13 +11,9 @@ const posts = allPosts
 ---
 
 <BaseLayout title="Khoi Van" description="Personal blog about Android development, software engineering, and life in Saigon">
-  <div class="mx-auto max-w-3xl px-4 py-12">
-    <!-- Page title -->
-    <h1 class="mb-2 text-3xl font-bold">Posts</h1>
-    <p class="mb-12 text-gray-600 italic">All the articles I've posted.</p>
-
-    <!-- Posts list -->
-    <div>
+  <div class="mx-auto max-w-2xl px-4 py-16">
+    <!-- Clean, simple posts list -->
+    <div class="space-y-6">
       {posts.map((post) => (
         <BlogCard post={post} />
       ))}
