@@ -50,15 +50,6 @@ const {
       tags={tags}
     />
 
-    <!-- Preconnect to external domains -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap"
-      rel="stylesheet"
-    />
 
     <!-- View Transitions -->
     <ClientRouter />
@@ -68,56 +59,18 @@ const {
   </head>
   <body class="bg-white text-gray-900 antialiased dark:bg-gray-900 dark:text-gray-100">
     <!-- Header -->
-    <header
-      transition:persist
-      class="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-md dark:border-gray-700 dark:bg-gray-900/80"
-    >
-      <nav class="container mx-auto px-4 py-4">
+    <header class="border-b border-gray-200 dark:border-gray-700">
+      <nav class="mx-auto max-w-4xl px-4 py-6">
         <div class="flex items-center justify-between">
-          <a href="/" class="flex items-center gap-2 text-xl font-bold">
-            <span
-              class="bg-gradient-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent"
-            >
-              Khoi Van
-            </span>
+          <a href="/" class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            Khoi Van
           </a>
 
-          <div class="flex items-center gap-6">
-            <a
-              href="/blog"
-              class="transition-colors hover:text-violet-600 dark:hover:text-violet-400">Blog</a
-            >
-            <a
-              href="/about"
-              class="transition-colors hover:text-violet-600 dark:hover:text-violet-400">About</a
-            >
-            <a
-              href="/portfolio"
-              class="transition-colors hover:text-violet-600 dark:hover:text-violet-400"
-              >Portfolio</a
-            >
-            <a
-              href="/search"
-              class="transition-colors hover:text-violet-600 dark:hover:text-violet-400">Search</a
-            >
-            <a
-              href="/rss.xml"
-              class="transition-colors hover:text-violet-600 dark:hover:text-violet-400"
-              aria-label="RSS Feed"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path d="M5 3a1 1 0 000 2c5.523 0 10 4.477 10 10a1 1 0 102 0C17 8.373 11.627 3 5 3z"
-                ></path>
-                <path
-                  d="M4 9a1 1 0 011-1 7 7 0 017 7 1 1 0 11-2 0 5 5 0 00-5-5 1 1 0 01-1-1zM3 15a2 2 0 114 0 2 2 0 01-4 0z"
-                ></path>
-              </svg>
-            </a>
+          <div class="flex items-center gap-6 text-sm">
+            <a href="/blog" class="hover:text-blue-600 dark:hover:text-blue-400">Blog</a>
+            <a href="/about" class="hover:text-blue-600 dark:hover:text-blue-400">About</a>
+            <a href="/portfolio" class="hover:text-blue-600 dark:hover:text-blue-400">Portfolio</a>
+            <a href="/search" class="hover:text-blue-600 dark:hover:text-blue-400">Search</a>
             <ThemeToggle />
           </div>
         </div>
@@ -234,14 +187,3 @@ const {
     </footer>
   </body>
 </html>
-
-<style>
-  html {
-    font-family: 'Inter', system-ui, sans-serif;
-  }
-
-  code,
-  pre {
-    font-family: 'JetBrains Mono', monospace;
-  }
-</style>

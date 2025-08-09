@@ -41,69 +41,25 @@ const relatedPosts = allPosts
     tags: post.data.tags,
   }}
 >
-  <article class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+  <article class="mx-auto max-w-3xl px-4 py-12">
     <!-- Article Header -->
-    <header class="mb-12 text-center">
-      <div class="mb-6 flex flex-wrap items-center justify-center gap-3 text-sm">
-        <span class="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-violet-500 to-purple-600 px-4 py-1.5 font-medium text-white shadow-sm">
-          {post.data.category === 'engineering' && '🏗️'}
-          {post.data.category === 'life' && '☕'}
-          {post.data.category === 'notes' && '📝'}
-          {post.data.category === 'projects' && '🚀'}
-          {post.data.category}
-        </span>
-        <span class="text-gray-400 dark:text-gray-500">•</span>
-        <time datetime={post.data.pubDate.toISOString()} class="text-gray-600 dark:text-gray-400">
-          {formattedDate}
-        </time>
-        <span class="text-gray-400 dark:text-gray-500">•</span>
-        <span class="inline-flex items-center gap-1 text-gray-600 dark:text-gray-400">
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-          {post.data.readingTime}
-        </span>
-      </div>
-
-      <h1 class="mb-6 text-4xl font-bold leading-tight tracking-tight text-gray-900 sm:text-5xl lg:text-6xl dark:text-gray-100">
-        <span class="bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-          {post.data.title}
-        </span>
+    <header class="mb-8">
+      <time datetime={post.data.pubDate.toISOString()} class="text-sm text-gray-500">
+        {formattedDate}
+      </time>
+      
+      <h1 class="mt-2 mb-4 text-3xl font-serif font-semibold text-gray-900 dark:text-gray-100">
+        {post.data.title}
       </h1>
 
-      <p class="mx-auto max-w-2xl text-xl leading-relaxed text-gray-600 dark:text-gray-300">
+      <p class="text-lg text-gray-700 dark:text-gray-300">
         {post.data.description}
       </p>
-
-      <div class="mt-8 flex items-center justify-center">
-        <div class="flex items-center rounded-full bg-gray-100 px-4 py-2 dark:bg-gray-800">
-          <div class="flex-shrink-0">
-            <div class="h-10 w-10 rounded-full bg-gradient-to-r from-violet-500 to-pink-500 shadow-md"></div>
-          </div>
-          <div class="ml-3 text-left">
-            <p class="font-semibold text-gray-900 dark:text-gray-100">
-              {post.data.author}
-            </p>
-            <p class="text-sm text-gray-600 dark:text-gray-400">Android Developer • Coffee Enthusiast</p>
-          </div>
-        </div>
+      
+      <div class="mt-6 text-sm text-gray-500">
+        By {post.data.author}
       </div>
     </header>
-
-    <!-- Tags -->
-    <div class="mb-10 flex flex-wrap items-center justify-center gap-2 border-b border-gray-200 pb-10 dark:border-gray-700">
-      <span class="mr-2 text-sm font-medium text-gray-500 dark:text-gray-400">Tags:</span>
-      {
-        post.data.tags.map((tag) => (
-          <a
-            href={`/blog/tag/${tag}/`}
-            class="group inline-flex items-center rounded-full border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-gray-700 transition-all hover:-translate-y-0.5 hover:border-violet-400 hover:bg-violet-50 hover:text-violet-700 hover:shadow-md dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-violet-500 dark:hover:bg-violet-900/20 dark:hover:text-violet-400"
-          >
-            <span class="mr-1 opacity-60">#</span>{tag}
-          </a>
-        ))
-      }
-    </div>
 
     <!-- Article Content -->
     <div class="prose-content">
