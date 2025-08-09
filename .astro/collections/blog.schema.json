@@ -57,12 +57,12 @@
         "category": {
           "type": "string",
           "enum": [
-            "tutorial",
-            "article",
-            "opinion",
-            "case-study"
+            "engineering",
+            "life",
+            "notes",
+            "projects"
           ],
-          "default": "article"
+          "default": "notes"
         },
         "tags": {
           "type": "array",
@@ -70,6 +70,15 @@
             "type": "string"
           },
           "default": []
+        },
+        "mood": {
+          "type": "string",
+          "enum": [
+            "technical",
+            "personal",
+            "reflective",
+            "humorous"
+          ]
         },
         "series": {
           "type": "string"
