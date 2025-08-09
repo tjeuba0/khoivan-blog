@@ -43,21 +43,20 @@ const relatedPosts = allPosts
 >
   <article class="mx-auto max-w-3xl px-4 py-12">
     <!-- Article Header -->
-    <header class="mb-8">
-      <time datetime={post.data.pubDate.toISOString()} class="text-sm text-gray-500">
-        {formattedDate}
-      </time>
-      
-      <h1 class="mt-2 mb-4 text-3xl font-serif font-semibold text-gray-900 dark:text-gray-100">
+    <header class="mb-12">
+      <h1 class="mb-4 text-4xl font-bold">
         {post.data.title}
       </h1>
-
-      <p class="text-lg text-gray-700 dark:text-gray-300">
-        {post.data.description}
-      </p>
       
-      <div class="mt-6 text-sm text-gray-500">
-        By {post.data.author}
+      <div class="flex items-center gap-2 text-sm text-gray-600">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <time datetime={post.data.pubDate.toISOString()}>
+          {formattedDate}
+        </time>
+        <span>·</span>
+        <span>{post.data.author}</span>
       </div>
     </header>
 
