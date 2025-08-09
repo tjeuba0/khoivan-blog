@@ -10,9 +10,6 @@ import pagefind from 'astro-pagefind'
 // https://astro.build/config
 export default defineConfig({
   site: 'https://khoivan.dev',
-  build: {
-    format: 'file',
-  },
   vite: {
     plugins: [tailwindcss()],
   },
