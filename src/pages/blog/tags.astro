@@ -14,60 +14,31 @@ allPosts
     })
   })
 
-// Sort tags alphabetically
-const sortedTags = Array.from(tagCounts.entries()).sort((a, b) => a[0].localeCompare(b[0]))
-
-// Group tags by first letter
-const groupedTags = new Map()
-sortedTags.forEach(([tag, count]) => {
-  const firstLetter = tag[0].toUpperCase()
-  if (!groupedTags.has(firstLetter)) {
-    groupedTags.set(firstLetter, [])
-  }
-  groupedTags.get(firstLetter).push([tag, count])
+// Sort tags by count (descending), then alphabetically
+const sortedTags = Array.from(tagCounts.entries()).sort((a, b) => {
+  if (b[1] !== a[1]) return b[1] - a[1] // Sort by count descending
+  return a[0].localeCompare(b[0]) // Then alphabetically
 })
 ---
 
-<BaseLayout title="All Tags" description="Tất cả tags trong blog">
-  <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-    <!-- Page Header -->
-    <div class="mb-12">
-      <div class="flex items-center gap-2 text-sm text-gray-500">
-        <a href="/" class="hover:text-blue-600">Trang chủ</a>
-        <span>/</span>
-        <a href="/blog" class="hover:text-blue-600">Blog</a>
-        <span>/</span>
-        <span>Tags</span>
-      </div>
+<BaseLayout title="All Tags" description="All tags used in posts">
+  <div class="mx-auto max-w-3xl px-4 py-12">
+    <!-- Simple header like mckerlie -->
+    <p class="mb-8 text-gray-700">All the tags used in posts.</p>
 
-      <h1 class="mt-4 text-4xl font-bold tracking-tight text-gray-900">Tất cả Tags</h1>
-      <p class="mt-2 text-gray-600">
-        {tagCounts.size} tags với tổng cộng {allPosts.filter((p) => !p.data.draft).length} bài viết
-      </p>
-    </div>
-
-    <!-- Tags grouped by letter -->
-    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    <!-- Tags inline list - matching mckerlie.com format -->
+    <div class="space-y-2 text-base">
       {
-        Array.from(groupedTags.entries()).map(([letter, tags]) => (
-          <div>
-            <h2 class="mb-4 text-2xl font-bold text-gray-900">{letter}</h2>
-            <ul class="space-y-2">
-              {tags.map(([tag, count]) => (
-                <li>
-                  <a
-                    href={`/blog/tag/${tag}/`}
-                    class="group flex items-center justify-between rounded-lg px-3 py-2 transition-colors hover:bg-blue-50"
-                  >
-                    <span class="text-gray-700 group-hover:text-blue-600">#{tag}</span>
-                    <span class="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-600 group-hover:bg-blue-100 group-hover:text-blue-700">
-                      {count}
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+        sortedTags.map(([tag, count], index) => (
+          <>
+            <a
+              href={`/blog/tag/${tag}/`}
+              class="inline-block mr-4 mb-3 text-[#0969da] no-underline hover:underline hover:decoration-dashed hover:underline-offset-4"
+            >
+              {tag} ({count})
+            </a>
+            {index < sortedTags.length - 1 && <span class="text-gray-400 mr-4">  </span>}
+          </>
         ))
       }
     </div>

@@ -82,19 +82,19 @@ const {
   </head>
   <body class="antialiased transition-colors duration-300" style="background-color: rgb(var(--color-white)); color: rgb(var(--color-gray-900));">
     <!-- Header -->
-    <header class="py-8">
+    <header class="py-6 md:py-8">
       <nav class="mx-auto max-w-3xl px-4">
         <div class="flex items-center justify-between">
-          <a href="/" class="text-2xl font-bold" style="color: rgb(var(--color-black));">
+          <a href="/" class="text-xl md:text-2xl font-bold" style="color: rgb(var(--color-black));">
             Khoi Van
           </a>
 
-          <div class="flex items-center gap-6">
+          <div class="flex items-center gap-3 md:gap-6 text-sm md:text-base">
             <a href="/" class="hover:underline">Posts</a>
             <a href="/blog/tags" class="hover:underline">Tags</a>
-            <a href="/about" class="hover:underline">Resume</a>
+            <a href="/about" class="hover:underline hidden sm:inline">Resume</a>
             <a href="/search" class="hover:underline">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </a>

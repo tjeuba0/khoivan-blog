@@ -26,8 +26,14 @@
 
   html {
     @apply scroll-smooth;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 1.75;
+  }
+  
+  @media (min-width: 768px) {
+    html {
+      font-size: 18px;
+    }
   }
 
   body {
@@ -49,12 +55,21 @@
     color: rgb(var(--color-black));
   }
 
-  h1 { font-size: 2.5rem; }
-  h2 { font-size: 2rem; }
-  h3 { font-size: 1.75rem; }
-  h4 { font-size: 1.5rem; }
-  h5 { font-size: 1.25rem; }
-  h6 { font-size: 1.125rem; }
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.5rem; }
+  h4 { font-size: 1.25rem; }
+  h5 { font-size: 1.125rem; }
+  h6 { font-size: 1rem; }
+  
+  @media (min-width: 768px) {
+    h1 { font-size: 2.5rem; }
+    h2 { font-size: 2rem; }
+    h3 { font-size: 1.75rem; }
+    h4 { font-size: 1.5rem; }
+    h5 { font-size: 1.25rem; }
+    h6 { font-size: 1.125rem; }
+  }
 
   p {
     margin-top: 1.5rem;
@@ -159,26 +174,26 @@
     background: transparent !important;
     padding: 0 !important;
     font-family: 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
-    font-size: 0.95rem !important;
-    line-height: 1.8 !important;
+    font-size: 0.875rem !important;
+    line-height: 1.7 !important;
   }
 
   /* Shiki code block container */
   .astro-code {
     @apply my-8 overflow-x-auto;
     background-color: #0d1117 !important;
-    padding: 2rem !important;
+    padding: 1.75rem !important;
     border-radius: 0.75rem !important;
     border: 1px solid #30363d !important;
-    font-size: 0.95rem !important;
+    font-size: 0.875rem !important;
   }
 
   .astro-code code {
     background: transparent !important;
     padding: 0 !important;
     font-family: 'JetBrains Mono', Menlo, Monaco, Consolas, monospace !important;
-    font-size: 0.95rem !important;
-    line-height: 1.8 !important;
+    font-size: 0.875rem !important;
+    line-height: 1.7 !important;
   }
 
   .prose-content img {
