@@ -144,10 +144,12 @@
     color: rgb(var(--color-gray-700));
   }
 
+  /* Code blocks - Shiki handles the syntax highlighting */
   .prose-content pre {
-    @apply my-6 overflow-x-auto rounded border p-4;
-    background-color: #f6f8fa;
-    border-color: #e1e4e8;
+    @apply my-8 overflow-x-auto rounded-lg;
+    background-color: #0d1117 !important; /* GitHub dark theme background */
+    padding: 1.5rem !important;
+    border: 1px solid #30363d;
   }
 
   .prose-content pre code {
@@ -155,6 +157,23 @@
     background: transparent !important;
     padding: 0 !important;
     font-family: 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
+    line-height: 1.7;
+  }
+
+  /* Shiki code block container */
+  .astro-code {
+    @apply my-8 overflow-x-auto rounded-lg;
+    background-color: #0d1117 !important;
+    padding: 1.5rem !important;
+    border: 1px solid #30363d !important;
+  }
+
+  .astro-code code {
+    @apply text-sm;
+    background: transparent !important;
+    padding: 0 !important;
+    font-family: 'JetBrains Mono', Menlo, Monaco, Consolas, monospace !important;
+    line-height: 1.7 !important;
   }
 
   .prose-content img {
@@ -184,15 +203,6 @@
 
 /* Dark mode support - minimal */
 @layer utilities {
-  .dark .prose-content pre {
-    background-color: #1a1a1a;
-    border-color: #333;
-  }
-
-  .dark .prose-content pre code {
-    color: #e6e6e6;
-  }
-
   /* Focus styles - minimal */
   *:focus {
     outline: none;

@@ -50,6 +50,25 @@ const {
       tags={tags}
     />
 
+    <!-- Dark mode script - must run before page renders to prevent flash -->
+    <script is:inline>
+      (() => {
+        const getTheme = () => {
+          if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+            return localStorage.getItem('theme')
+          }
+          if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark'
+          }
+          return 'light'
+        }
+        const theme = getTheme()
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark')
+        }
+      })()
+    </script>
+
     <!-- Google Fonts: Space Grotesk & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
