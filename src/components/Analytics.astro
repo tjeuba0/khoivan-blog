@@ -1,0 +1,59 @@
+---
+// Plausible Analytics component
+// Privacy-friendly, lightweight analytics
+
+const domain = import.meta.env.PUBLIC_SITE_DOMAIN || 'khoivan.dev'
+const plausibleScript =
+  import.meta.env.PUBLIC_PLAUSIBLE_SCRIPT || 'https://plausible.io/js/script.js'
+---
+
+<!-- Plausible Analytics -->
+<script defer data-domain={domain} src={plausibleScript} is:inline></script>
+
+<!-- Custom events for tracking (optional) -->
+<script is:inline>
+  // Track 404 pages
+  if (window.location.pathname === '/404') {
+    window.plausible =
+      window.plausible ||
+      function () {
+        ;(window.plausible.q = window.plausible.q || []).push(arguments)
+      }
+    window.plausible('404', { props: { path: document.referrer } })
+  }
+
+  // Track external link clicks
+  document.addEventListener('DOMContentLoaded', () => {
+    const externalLinks = document.querySelectorAll('a[href^="http"]:not([href*="khoivan.dev"])')
+
+    externalLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        if (window.plausible) {
+          window.plausible('Outbound Link', {
+            props: {
+              url: link.href,
+            },
+          })
+        }
+      })
+    })
+
+    // Track search queries
+    const searchInput = document.querySelector('#search input')
+    if (searchInput) {
+      let searchTimeout
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout)
+        searchTimeout = setTimeout(() => {
+          if (e.target.value.length > 2 && window.plausible) {
+            window.plausible('Search', {
+              props: {
+                query: e.target.value,
+              },
+            })
+          }
+        }, 1000)
+      })
+    }
+  })
+</script>

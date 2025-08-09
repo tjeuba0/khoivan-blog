@@ -1,0 +1,97 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../../../layouts/BaseLayout.astro'
+import BlogCard from '../../../../components/BlogCard.astro'
+import Pagination from '../../../../components/Pagination.astro'
+
+export async function getStaticPaths({ paginate }) {
+  const allPosts = await getCollection('blog')
+
+  // Get all unique categories
+  const uniqueCategories = [
+    ...new Set(allPosts.filter((post) => !post.data.draft).map((post) => post.data.category)),
+  ]
+
+  // For each category, create paginated pages
+  return uniqueCategories.flatMap((category) => {
+    const filteredPosts = allPosts
+      .filter((post) => !post.data.draft && post.data.category === category)
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+
+    return paginate(filteredPosts, {
+      params: { category },
+      pageSize: 6,
+    })
+  })
+}
+
+const { page } = Astro.props
+const { category } = Astro.params
+
+// Category display names
+const categoryNames = {
+  tutorial: 'Tutorials',
+  article: 'Articles',
+  opinion: 'Opinions',
+  'case-study': 'Case Studies',
+}
+
+const displayName = categoryNames[category] || category
+
+const pageTitle =
+  page.currentPage === 1
+    ? `Category: ${displayName}`
+    : `Category: ${displayName} - Trang ${page.currentPage}`
+---
+
+<BaseLayout title={pageTitle} description={`Bài viết trong danh mục ${displayName}`}>
+  <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <!-- Page Header -->
+    <div class="mb-12">
+      <div class="flex items-center gap-2 text-sm text-gray-500">
+        <a href="/" class="hover:text-blue-600">Trang chủ</a>
+        <span>/</span>
+        <a href="/blog" class="hover:text-blue-600">Blog</a>
+        <span>/</span>
+        <span>Category</span>
+      </div>
+
+      <h1 class="mt-4 text-4xl font-bold tracking-tight text-gray-900">
+        Category: <span class="text-blue-600">{displayName}</span>
+      </h1>
+      <p class="mt-2 text-gray-600">
+        {page.total} bài viết trong danh mục này
+      </p>
+    </div>
+
+    <!-- Blog Posts -->
+    {
+      page.data.length > 0 ? (
+        <>
+          <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {page.data.map((post) => (
+              <BlogCard post={post} />
+            ))}
+          </div>
+
+          {page.lastPage > 1 && (
+            <div class="mt-12">
+              <Pagination page={page} />
+            </div>
+          )}
+        </>
+      ) : (
+        <div class="rounded-lg bg-gray-50 p-8 text-center">
+          <p class="text-gray-600">Không có bài viết nào trong danh mục này.</p>
+        </div>
+      )
+    }
+
+    <!-- Back to all posts -->
+    <div class="mt-12 text-center">
+      <a href="/blog" class="inline-flex items-center text-blue-600 hover:text-blue-500">
+        ← Quay lại tất cả bài viết
+      </a>
+    </div>
+  </div>
+</BaseLayout>

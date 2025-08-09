@@ -1,0 +1,84 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../../../layouts/BaseLayout.astro'
+import BlogCard from '../../../../components/BlogCard.astro'
+import Pagination from '../../../../components/Pagination.astro'
+
+export async function getStaticPaths({ paginate }) {
+  const allPosts = await getCollection('blog')
+
+  // Get all unique tags
+  const uniqueTags = [
+    ...new Set(allPosts.filter((post) => !post.data.draft).flatMap((post) => post.data.tags)),
+  ]
+
+  // For each tag, create paginated pages
+  return uniqueTags.flatMap((tag) => {
+    const filteredPosts = allPosts
+      .filter((post) => !post.data.draft && post.data.tags.includes(tag))
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+
+    return paginate(filteredPosts, {
+      params: { tag },
+      pageSize: 6,
+    })
+  })
+}
+
+const { page } = Astro.props
+const { tag } = Astro.params
+
+const pageTitle = page.currentPage === 1 ? `Tag: ${tag}` : `Tag: ${tag} - Trang ${page.currentPage}`
+---
+
+<BaseLayout title={pageTitle} description={`Bài viết với tag ${tag}`}>
+  <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <!-- Page Header -->
+    <div class="mb-12">
+      <div class="flex items-center gap-2 text-sm text-gray-500">
+        <a href="/" class="hover:text-blue-600">Trang chủ</a>
+        <span>/</span>
+        <a href="/blog" class="hover:text-blue-600">Blog</a>
+        <span>/</span>
+        <span>Tag</span>
+      </div>
+
+      <h1 class="mt-4 text-4xl font-bold tracking-tight text-gray-900">
+        Tag: <span class="text-blue-600">#{tag}</span>
+      </h1>
+      <p class="mt-2 text-gray-600">
+        {page.total} bài viết với tag này
+      </p>
+    </div>
+
+    <!-- Blog Posts -->
+    {
+      page.data.length > 0 ? (
+        <>
+          <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {page.data.map((post) => (
+              <BlogCard post={post} />
+            ))}
+          </div>
+
+          {page.lastPage > 1 && (
+            <div class="mt-12">
+              <Pagination page={page} />
+            </div>
+          )}
+        </>
+      ) : (
+        <div class="rounded-lg bg-gray-50 p-8 text-center">
+          <p class="text-gray-600">Không có bài viết nào với tag này.</p>
+        </div>
+      )
+    }
+
+    <!-- Back to all posts -->
+    <div class="mt-12 text-center">
+      <a href="/blog" class="inline-flex items-center text-blue-600 hover:text-blue-500">
+        ← Quay lại tất cả bài viết
+      </a>
+    </div>
+  </div>
+</BaseLayout>

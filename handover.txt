@@ -1,0 +1,394 @@
+📚 TÀI LIỆU BÀN GIAO PROJECT KHOIVAN.DEV
+Version: 1.0
+Date: August 2025
+Author: Khoi Van
+Status: Production Ready ✅
+
+📋 EXECUTIVE SUMMARY
+Project Overview
+
+Domain: https://khoivan.dev
+Type: Personal Blog / Portfolio
+Stack: Astro + GitHub Actions + VPS
+Status: Fully operational với CI/CD automation
+
+Quick Stats
+Infrastructure: ✅ Complete (100%)
+CI/CD Pipeline: ✅ Automated
+Security: ✅ Hardened
+Content: ⚠️ Basic (cần thêm content)
+Monitoring: ⚠️ Basic (có thể enhance)
+🏗️ INFRASTRUCTURE
+1. VPS Details
+Provider: Linode
+Plan: Nanode 1GB ($5/month)
+OS: Ubuntu 22.04 LTS
+Location: Singapore (ap-south)
+IP: 172.104.173.100
+Hostname: localhost
+2. Domain & DNS
+Domain: khoivan.dev
+Registrar: [Your registrar]
+DNS: Pointing to 172.104.173.100
+SSL: Let's Encrypt (auto-renew enabled)
+3. Server Configuration
+Web Server: Nginx 1.24.0
+SSH Port: 2222 (custom)
+Firewall: UFW enabled
+Swap: 1GB configured
+Auto-updates: Enabled via unattended-upgrades
+Fail2ban: Active for SSH protection
+🔐 ACCESS MANAGEMENT
+SSH Access
+# Connect to VPS
+ssh -p 2222 khoivan@172.104.173.100
+
+# User permissions
+User: khoivan
+Privileges: sudo
+Auth: SSH key only (password disabled)
+Required SSH Keys
+Location: ~/.ssh/
+Key files:
+  - id_ed25519 (private key - KEEP SECURE)
+  - id_ed25519.pub (public key)
+Purpose: VPS access + GitHub Actions deployment
+
+GitHub Repository
+URL: https://github.com/[USERNAME]/khoivan-blog
+Branch: main
+Access: SSH key authentication configured
+
+💻 DEVELOPMENT WORKFLOW
+Local Development Setup
+
+# 1. Clone repository
+git clone git@github.com:[USERNAME]/khoivan-blog.git
+cd khoivan-blog
+
+# 2. Install dependencies
+npm install
+
+# 3. Run development server
+npm run dev
+# Access: http://localhost:4321
+
+# 4. Build for production
+npm run build
+
+Project Structure
+khoivan-blog/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml        # CI/CD configuration
+├── src/
+│   ├── components/           # Reusable components
+│   ├── content/
+│   │   └── blog/            # Blog posts (Markdown)
+│   ├── layouts/             # Page layouts
+│   └── pages/               # Routes
+├── public/                  # Static assets
+├── astro.config.mjs         # Astro configuration
+└── package.json             # Dependencies
+
+Content Management
+# Create new blog post
+nano src/content/blog/new-post.md
+
+# Blog post template
+---
+title: 'Post Title'
+description: 'Description'
+pubDate: 'Jan 15 2024'
+heroImage: '/blog-placeholder.jpg'
+---
+
+Content in Markdown...
+
+🚀 DEPLOYMENT PROCESS
+Automatic Deployment (CI/CD)
+# Any push to main branch triggers deployment
+git add .
+git commit -m "Update content"
+git push origin main
+
+# GitHub Actions automatically:
+# 1. Builds the site
+# 2. Deploys to VPS
+# 3. Updates live site (~2-3 minutes)
+
+Manual Deployment (if needed)
+# Build locally
+npm run build
+
+# Deploy manually via rsync
+rsync -avz -e "ssh -p 2222" \
+  ./dist/ \
+  khoivan@172.104.173.100:/var/www/khoivan.dev/
+
+  
+GitHub Actions Configuration
+Location: .github/workflows/deploy.yml
+Secrets configured:
+  - SSH_KEY: VPS SSH private key
+  - HOST: 172.104.173.100
+  - USERNAME: khoivan
+  
+
+🛡️ SECURITY CONFIGURATIONS
+Current Security Measures
+✅ SSH:
+  - Custom port (2222)
+  - Key-only authentication
+  - Root login disabled
+  
+✅ Firewall (UFW):
+  - Port 22: Closed
+  - Port 2222: SSH
+  - Port 80: HTTP (redirects to HTTPS)
+  - Port 443: HTTPS
+  
+✅ Fail2ban:
+  - SSH protection enabled
+  - Auto-ban after 3 failed attempts
+  
+✅ SSL/TLS:
+  - Let's Encrypt certificate
+  - Auto-renewal configured
+  - TLS 1.2/1.3 only
+  
+✅ Updates:
+  - Unattended-upgrades enabled
+  - Security patches auto-installed
+
+Security Commands
+# Check Fail2ban status
+sudo fail2ban-client status sshd
+
+# Check SSL certificate
+sudo certbot certificates
+
+# View firewall rules
+sudo ufw status verbose
+
+# Check system updates
+sudo apt update && sudo apt list --upgradable
+
+🔧 MAINTENANCE PROCEDURES
+Regular Tasks (Weekly)
+# 1. Check disk usage
+df -h
+
+# 2. Check memory usage
+free -h
+
+# 3. Review logs
+sudo tail -n 100 /var/log/nginx/error.log
+sudo journalctl -u ssh -n 50
+
+# 4. Update system packages
+sudo apt update && sudo apt upgrade
+
+SSL Certificate Renewal
+# Test renewal (dry run)
+sudo certbot renew --dry-run
+
+# Force renewal if needed
+sudo certbot renew --force-renewal
+
+# Auto-renewal is configured via cron
+sudo crontab -l | grep certbot
+
+Backup Procedures
+# Create backup script
+#!/bin/bash
+DATE=$(date +%Y%m%d)
+BACKUP_DIR="/home/khoivan/backups"
+
+# Backup website
+tar -czf $BACKUP_DIR/web_$DATE.tar.gz /var/www/khoivan.dev
+
+# Backup nginx config
+tar -czf $BACKUP_DIR/nginx_$DATE.tar.gz /etc/nginx
+
+# Keep only last 7 days
+find $BACKUP_DIR -name "*.tar.gz" -mtime +7 -delete
+
+🐛 TROUBLESHOOTING
+Common Issues & Solutions
+1. Website không accessible
+# Check nginx status
+sudo systemctl status nginx
+
+# Restart nginx
+sudo systemctl restart nginx
+
+# Check nginx config
+sudo nginx -t
+
+# View error logs
+sudo tail -f /var/log/nginx/error.log
+
+2. Deploy failed
+# Check GitHub Actions log
+# Go to repo → Actions → Click failed workflow
+
+# Common fixes:
+# - Check SSH key in GitHub Secrets
+# - Verify server disk space: df -h
+# - Check folder permissions:
+sudo chown -R khoivan:khoivan /var/www/khoivan.dev
+
+3. SSH connection refused
+# From another terminal or recovery console:
+# Check SSH service
+sudo systemctl status ssh
+
+# Restart SSH
+sudo systemctl restart ssh
+
+# Check port 2222 is open
+sudo netstat -tlnp | grep 2222
+
+4. High server load
+# Check processes
+htop  # or top
+
+# Check disk I/O
+iotop
+
+# Check network connections
+sudo netstat -tulpn
+
+# Restart services if needed
+sudo systemctl restart nginx
+
+📊 MONITORING
+Current Monitoring
+Manual checks: Required
+Automated monitoring: Not configured
+Recommended: Setup UptimeRobot or similar
+
+Setup Monitoring (Recommended)
+# Option 1: UptimeRobot (Free)
+# 1. Register at https://uptimerobot.com
+# 2. Add monitor for https://khoivan.dev
+# 3. Configure email alerts
+
+# Option 2: Self-hosted (Netdata)
+# Already considered in planning
+
+📈 PERFORMANCE OPTIMIZATION
+Current Optimizations
+yaml✅ Nginx:
+  - Gzip compression enabled
+  - Static assets cached (1 year)
+  - HTML cached (1 hour)
+  
+✅ Astro:
+  - Static site generation
+  - Optimized build output
+  - Minimal JavaScript
+Future Optimizations
+yamlConsider:
+  - Cloudflare CDN
+  - Image optimization (WebP)
+  - Redis cache
+  - HTTP/3 support
+
+🎯 FUTURE ENHANCEMENTS
+Priority 1 (Recommended)
+
+ Add Cloudflare CDN (free, improves performance)
+ Setup automated backups to cloud storage
+ Implement proper monitoring (UptimeRobot/Netdata)
+ Add Google Analytics or Plausible
+
+Priority 2 (Nice to have)
+
+ Implement CMS (Decap/Tina)
+ Add comment system (Giscus)
+ Setup email notifications for blog
+ Implement search functionality
+
+Priority 3 (Future)
+
+ Multi-language support
+ Newsletter integration
+ A/B testing setup
+ Advanced analytics
+
+
+📞 SUPPORT & RESOURCES
+Documentation
+
+Astro: https://docs.astro.build
+Nginx: https://nginx.org/en/docs/
+Ubuntu: https://ubuntu.com/server/docs
+Linode: https://www.linode.com/docs/
+
+Commands Cheatsheet
+bash# Service management
+sudo systemctl [start|stop|restart|status] nginx
+sudo systemctl [start|stop|restart|status] ssh
+
+# Logs
+sudo journalctl -f                    # All system logs
+sudo tail -f /var/log/nginx/access.log # Nginx access
+sudo tail -f /var/log/auth.log        # Auth attempts
+
+# Disk & Memory
+df -h                                  # Disk usage
+free -h                                # Memory usage
+du -sh /var/www/*                      # Folder sizes
+
+# Network
+sudo netstat -tulpn                   # Open ports
+sudo ufw status                        # Firewall status
+
+⚠️ IMPORTANT NOTES
+DO NOT
+yaml❌ Never:
+  - Share SSH private keys
+  - Disable firewall
+  - Change SSH port without updating GitHub Actions
+  - Delete /swapfile (needed for 1GB RAM)
+  - Modify nginx config without backup
+ALWAYS
+yaml✅ Always:
+  - Test locally before pushing
+  - Keep backups before major changes
+  - Monitor disk space (df -h)
+  - Check GitHub Actions after push
+  - Document any infrastructure changes
+
+🔄 HANDOVER CHECKLIST
+For receiving team member:
+
+ Receive SSH private key securely
+ Test SSH access: ssh -p 2222 khoivan@172.104.173.100
+ Clone GitHub repository
+ Test local development: npm run dev
+ Make small change and test deployment
+ Review all security settings
+ Check all services are running
+ Verify backup procedures
+ Update documentation with your info
+
+Access needed:
+
+ SSH key for VPS
+ GitHub repository access
+ Domain registrar access (for DNS)
+ Linode account (for VPS management)
+
+
+📝 CHANGE LOG
+yaml2024-08-09:
+  - Initial setup completed
+  - CI/CD pipeline configured
+  - Security hardening applied
+  - Basic content added
+  - Documentation created
+
+

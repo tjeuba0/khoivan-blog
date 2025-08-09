@@ -1,0 +1,211 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+
+const projects = [
+  {
+    title: 'VietinBank iPay',
+    role: 'Lead Android Developer',
+    description:
+      'Mobile banking app serving millions of users with features including money transfer, bill payment, QR payment, and investment services.',
+    tech: [
+      'Kotlin',
+      'Jetpack Compose',
+      'Clean Architecture',
+      'Biometric Auth',
+      'End-to-end Encryption',
+    ],
+    impact: '5M+ users, 4.7★ on Play Store',
+    featured: true,
+  },
+  {
+    title: 'E-Commerce Platform',
+    role: 'Android Developer',
+    description:
+      'Built a complete e-commerce solution with real-time inventory, payment gateway integration, and AR product preview.',
+    tech: ['Kotlin', 'MVVM', 'ARCore', 'Stripe API', 'Firebase'],
+    impact: '100K+ downloads, 20% conversion rate increase',
+    featured: true,
+  },
+  {
+    title: 'Healthcare Tracking App',
+    role: 'Mobile Developer',
+    description:
+      'Health monitoring app with wearable device integration, medication reminders, and telemedicine features.',
+    tech: ['Kotlin', 'Health Connect API', 'WebRTC', 'Room', 'WorkManager'],
+    impact: 'Used by 50+ clinics',
+    featured: false,
+  },
+  {
+    title: 'Food Delivery App',
+    role: 'Freelance Developer',
+    description:
+      'Real-time food delivery app with live tracking, multi-restaurant ordering, and driver management.',
+    tech: ['Kotlin', 'Google Maps', 'Socket.io', 'Retrofit', 'Dagger'],
+    impact: '10K+ daily orders',
+    featured: false,
+  },
+  {
+    title: 'Social Media Analytics',
+    role: 'Android Developer',
+    description:
+      'Analytics dashboard app for social media managers with real-time metrics and reporting.',
+    tech: ['Kotlin', 'Charts Library', 'REST APIs', 'Coroutines', 'DataStore'],
+    impact: 'Used by 500+ businesses',
+    featured: false,
+  },
+  {
+    title: 'Fitness Tracking App',
+    role: 'Mobile Developer',
+    description:
+      'Comprehensive fitness app with workout plans, nutrition tracking, and progress monitoring.',
+    tech: ['Kotlin', 'CameraX', 'ML Kit', 'Room', 'Compose'],
+    impact: '50K+ active users',
+    featured: false,
+  },
+]
+
+const openSource = [
+  {
+    name: 'Android Clean Architecture Template',
+    description:
+      'A template project demonstrating Clean Architecture with Kotlin, Compose, and Hilt.',
+    stars: '500+',
+    link: 'https://github.com/yourrepo',
+  },
+  {
+    name: 'Compose UI Components',
+    description: 'Collection of reusable Jetpack Compose UI components for Android apps.',
+    stars: '200+',
+    link: 'https://github.com/yourrepo',
+  },
+  {
+    name: 'Kotlin Extensions Library',
+    description: 'Useful Kotlin extension functions for Android development.',
+    stars: '150+',
+    link: 'https://github.com/yourrepo',
+  },
+]
+---
+
+<BaseLayout title="Portfolio - Khoi Van" description="Các dự án và sản phẩm tôi đã phát triển">
+  <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="text-center">
+      <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Portfolio</h1>
+      <p class="mt-4 text-lg text-gray-600">
+        Một số dự án tiêu biểu tôi đã tham gia phát triển trong 8 năm qua
+      </p>
+    </div>
+
+    <!-- Featured Projects -->
+    <section class="mt-16">
+      <h2 class="mb-8 text-2xl font-bold text-gray-900">Featured Projects</h2>
+      <div class="grid gap-8 md:grid-cols-2">
+        {
+          projects
+            .filter((p) => p.featured)
+            .map((project) => (
+              <div class="overflow-hidden rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 p-6 shadow-lg">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xl font-bold text-gray-900">{project.title}</h3>
+                  <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
+                    Featured
+                  </span>
+                </div>
+                <p class="mt-1 text-sm text-gray-600">{project.role}</p>
+                <p class="mt-4 text-gray-700">{project.description}</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  {project.tech.map((tech) => (
+                    <span class="rounded-full bg-white px-3 py-1 text-xs text-gray-700">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+                <p class="mt-4 text-sm font-semibold text-blue-600">{project.impact}</p>
+              </div>
+            ))
+        }
+      </div>
+    </section>
+
+    <!-- Other Projects -->
+    <section class="mt-16">
+      <h2 class="mb-8 text-2xl font-bold text-gray-900">Other Projects</h2>
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {
+          projects
+            .filter((p) => !p.featured)
+            .map((project) => (
+              <div class="rounded-lg border border-gray-200 bg-white p-6 hover:shadow-lg">
+                <h3 class="text-lg font-bold text-gray-900">{project.title}</h3>
+                <p class="text-sm text-gray-600">{project.role}</p>
+                <p class="mt-3 text-sm text-gray-700">{project.description}</p>
+                <div class="mt-3 flex flex-wrap gap-1">
+                  {project.tech.slice(0, 3).map((tech) => (
+                    <span class="rounded bg-gray-100 px-2 py-1 text-xs text-gray-600">{tech}</span>
+                  ))}
+                  {project.tech.length > 3 && (
+                    <span class="rounded bg-gray-100 px-2 py-1 text-xs text-gray-600">
+                      +{project.tech.length - 3}
+                    </span>
+                  )}
+                </div>
+                <p class="mt-3 text-xs font-semibold text-blue-600">{project.impact}</p>
+              </div>
+            ))
+        }
+      </div>
+    </section>
+
+    <!-- Open Source -->
+    <section class="mt-16">
+      <h2 class="mb-8 text-2xl font-bold text-gray-900">Open Source Contributions</h2>
+      <div class="grid gap-6 md:grid-cols-3">
+        {
+          openSource.map((repo) => (
+            <a
+              href={repo.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group block rounded-lg border border-gray-200 bg-white p-6 hover:border-blue-500 hover:shadow-lg"
+            >
+              <div class="flex items-center justify-between">
+                <h3 class="font-semibold text-gray-900 group-hover:text-blue-600">{repo.name}</h3>
+                <span class="flex items-center text-sm text-gray-500">
+                  <svg class="mr-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  {repo.stars}
+                </span>
+              </div>
+              <p class="mt-2 text-sm text-gray-600">{repo.description}</p>
+              <span class="mt-3 inline-flex items-center text-sm font-medium text-blue-600 group-hover:text-blue-500">
+                View on GitHub
+                <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="mt-16 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 p-8 text-center">
+      <h2 class="text-2xl font-bold text-white">Interested in working together?</h2>
+      <p class="mt-2 text-blue-100">Tôi luôn sẵn sàng cho các dự án thú vị và thử thách mới</p>
+      <a
+        href="/contact"
+        class="mt-6 inline-block rounded-md bg-white px-6 py-3 font-semibold text-blue-600 hover:bg-blue-50"
+      >
+        Liên hệ với tôi
+      </a>
+    </section>
+  </div>
+</BaseLayout>

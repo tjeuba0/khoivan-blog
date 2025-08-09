@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Search from 'astro-pagefind/components/Search'
+---
+
+<BaseLayout title="Search | Khoi Van Blog" description="Search through all blog posts and content">
+  <main class="mx-auto max-w-4xl px-6 py-12">
+    <div class="mb-12 text-center">
+      <h1 class="mb-4 text-4xl font-bold">Search</h1>
+      <p class="text-gray-600">Find what you're looking for</p>
+    </div>
+
+    <div class="min-h-[400px]">
+      <Search
+        id="search"
+        className="pagefind-ui"
+        uiOptions={{
+          showImages: false,
+          showSubResults: true,
+          excerptLength: 150,
+        }}
+      />
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  :global(.pagefind-ui) {
+    --pagefind-ui-primary: #7c3aed;
+    --pagefind-ui-text: #1f2937;
+    --pagefind-ui-background: #ffffff;
+    --pagefind-ui-border: #e5e7eb;
+    --pagefind-ui-tag: #f3f4f6;
+    --pagefind-ui-border-radius: 0.5rem;
+    --pagefind-ui-font: inherit;
+  }
+
+  :global(.pagefind-ui__search-input) {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    border-color: #d1d5db;
+  }
+
+  :global(.pagefind-ui__result) {
+    border-color: #e5e7eb;
+  }
+
+  :global(.pagefind-ui__result-title) {
+    color: #7c3aed;
+  }
+
+  :global(.pagefind-ui__result-title:hover) {
+    color: #6d28d9;
+  }
+
+  :global(.pagefind-ui__result-excerpt) {
+    color: #6b7280;
+  }
+
+  :global(.pagefind-ui__result-link) {
+    text-decoration: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(.pagefind-ui) {
+      --pagefind-ui-primary: #a78bfa;
+      --pagefind-ui-text: #e5e7eb;
+      --pagefind-ui-background: #111827;
+      --pagefind-ui-border: #374151;
+      --pagefind-ui-tag: #1f2937;
+    }
+  }
+</style>
