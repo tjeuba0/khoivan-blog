@@ -1,0 +1,922 @@
+---
+title: "From XML Hell to Jetpack Compose: Migrating 100,000 Lines of UI Code"
+description: "The real story of migrating VietinBank's Android app to Jetpack Compose - the wins, the failures, and that one time we broke production"
+pubDate: 2025-01-08
+author: "Khoi Van"
+category: "engineering"
+tags: ["android", "jetpack-compose", "migration", "ui"]
+mood: "reflective"
+---
+
+I still have nightmares about `activity_transaction_detail.xml`. 1,847 lines of nested LinearLayouts, RelativeLayouts, and ConstraintLayouts. Seven levels of ViewGroups deep. A ScrollView containing a RecyclerView (yes, that's as bad as it sounds). And my personal favorite: a comment from 2018 that just said "// TODO: Refactor this mess - Hung".
+
+It was March 2023 when our tech lead dropped the bomb: "We're migrating to Jetpack Compose." I looked at our codebase - 100,000+ lines of XML layouts accumulated over five years, custom views that nobody understood anymore, and a design system held together by copy-paste and prayer. 
+
+"How long do you think it'll take?" he asked.
+
+"Six months," I said confidently.
+
+It took fourteen.
+
+## The Monster We Were Dealing With
+
+Let me paint you a picture of our XML situation. Here's a real excerpt from our transaction detail screen:
+
+```xml
+<!-- activity_transaction_detail.xml - Line 234 to 298 (yes, out of 1,847) -->
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        
+        <LinearLayout
+            android:id="@+id/amount_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentStart="true">
+            
+            <TextView
+                android:id="@+id/currency_symbol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="₫"
+                android:textSize="24sp"
+                android:textColor="@color/primary_text"
+                android:layout_marginEnd="4dp" />
+            
+            <TextView
+                android:id="@+id/amount_major"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="32sp"
+                android:textColor="@color/primary_text"
+                android:textStyle="bold" />
+            
+            <TextView
+                android:id="@+id/amount_decimal_separator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="."
+                android:textSize="24sp"
+                android:textColor="@color/secondary_text" />
+            
+            <TextView
+                android:id="@+id/amount_minor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="@color/secondary_text" />
+        </LinearLayout>
+        
+        <ImageView
+            android:id="@+id/transaction_status_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_pending"
+            android:visibility="gone" />
+    </RelativeLayout>
+    
+    <!-- 1,783 more lines of this... -->
+</LinearLayout>
+```
+
+And the corresponding Activity code to populate it:
+
+```kotlin
+// TransactionDetailActivity.kt
+class TransactionDetailActivity : BaseActivity() {
+    
+    private lateinit var currencySymbol: TextView
+    private lateinit var amountMajor: TextView
+    private lateinit var amountDecimalSeparator: TextView
+    private lateinit var amountMinor: TextView
+    private lateinit var statusIcon: ImageView
+    // ... 47 more view references
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_transaction_detail)
+        
+        initViews()
+        setupListeners()
+        loadTransaction()
+    }
+    
+    private fun initViews() {
+        currencySymbol = findViewById(R.id.currency_symbol)
+        amountMajor = findViewById(R.id.amount_major)
+        amountDecimalSeparator = findViewById(R.id.amount_decimal_separator)
+        amountMinor = findViewById(R.id.amount_minor)
+        statusIcon = findViewById(R.id.transaction_status_icon)
+        // ... 47 more findViewById calls
+    }
+    
+    private fun displayAmount(amount: Long) {
+        val formatted = NumberFormat.getInstance(Locale("vi", "VN")).format(amount)
+        val parts = formatted.split(".")
+        
+        if (parts.size > 1) {
+            amountMajor.text = parts[0]
+            amountDecimalSeparator.visibility = View.VISIBLE
+            amountMinor.text = parts[1]
+            amountMinor.visibility = View.VISIBLE
+        } else {
+            amountMajor.text = formatted
+            amountDecimalSeparator.visibility = View.GONE
+            amountMinor.visibility = View.GONE
+        }
+        
+        // Update status icon based on amount
+        when {
+            amount > 50000000 -> {
+                statusIcon.setImageResource(R.drawable.ic_high_value)
+                statusIcon.visibility = View.VISIBLE
+            }
+            amount < 0 -> {
+                statusIcon.setImageResource(R.drawable.ic_refund)
+                statusIcon.visibility = View.VISIBLE
+            }
+            else -> {
+                statusIcon.visibility = View.GONE
+            }
+        }
+    }
+}
+```
+
+Looking at this code now, I understand why Hung never refactored it. Where would you even start?
+
+## The First Attempt: Big Bang Migration
+
+My initial plan was ambitious and, in hindsight, incredibly naive. I created a new branch called `feature/compose-migration` and decided to rewrite the entire UI layer from scratch.
+
+Day 1 was glorious. I rewrote our login screen in Compose:
+
+```kotlin
+@Composable
+fun LoginScreen(
+    onLoginClick: (String, String) -> Unit,
+    onForgotPasswordClick: () -> Unit
+) {
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(R.drawable.logo),
+            contentDescription = "VietinBank Logo",
+            modifier = Modifier.size(120.dp)
+        )
+        
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        OutlinedTextField(
+            value = username,
+            onValueChange = { username = it },
+            label = { Text("Tên đăng nhập") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Mật khẩu") },
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier.fillMaxWidth()
+        )
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        Button(
+            onClick = { onLoginClick(username, password) },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Đăng nhập")
+        }
+        
+        TextButton(onClick = onForgotPasswordClick) {
+            Text("Quên mật khẩu?")
+        }
+    }
+}
+```
+
+20 lines of Compose replaced 156 lines of XML and 89 lines of Kotlin. I was feeling like a superhero.
+
+By day 5, reality hit. Our custom OTP input view - a critical component used in 12 different screens - was 2,000 lines of custom view code with intricate animations, accessibility features, and edge cases handled over years of production use.
+
+I tried to recreate it in Compose:
+
+```kotlin
+@Composable
+fun OtpInput(
+    length: Int = 6,
+    onOtpComplete: (String) -> Unit
+) {
+    var otpValues by remember { mutableStateOf(List(length) { "" }) }
+    val focusRequesters = remember { List(length) { FocusRequester() } }
+    
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        otpValues.forEachIndexed { index, value ->
+            OutlinedTextField(
+                value = value,
+                onValueChange = { newValue ->
+                    if (newValue.length <= 1 && newValue.all { it.isDigit() }) {
+                        val newOtpValues = otpValues.toMutableList()
+                        newOtpValues[index] = newValue
+                        otpValues = newOtpValues
+                        
+                        // Move to next field
+                        if (newValue.isNotEmpty() && index < length - 1) {
+                            focusRequesters[index + 1].requestFocus()
+                        }
+                        
+                        // Check if complete
+                        if (newOtpValues.all { it.isNotEmpty() }) {
+                            onOtpComplete(newOtpValues.joinToString(""))
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .focusRequester(focusRequesters[index]),
+                textStyle = TextStyle(
+                    fontSize = 24.sp,
+                    textAlign = TextAlign.Center
+                ),
+                singleLine = true
+            )
+        }
+    }
+    
+    // Auto-focus first field
+    LaunchedEffect(Unit) {
+        focusRequesters[0].requestFocus()
+    }
+}
+```
+
+It looked similar, but the behavior was all wrong. Paste support was broken. Backspace didn't move to the previous field. The animation when typing was janky. Accessibility was non-existent.
+
+After two weeks, I had migrated exactly 3 screens out of 127. At this rate, we'd be done in 2027.
+
+## The Pivot: Incremental Migration
+
+I deleted my branch (RIP two weeks of work) and started over with a different approach. Instead of rewriting everything, we'd migrate incrementally, screen by screen, keeping both XML and Compose running side by side.
+
+The first step was setting up interoperability:
+
+```kotlin
+// ComposeView in XML layout
+<androidx.compose.ui.platform.ComposeView
+    android:id="@+id/compose_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+
+// In Activity/Fragment
+composeView.setContent {
+    VietinBankTheme {
+        // Compose content here
+        TransactionCard(transaction = currentTransaction)
+    }
+}
+```
+
+This let us migrate component by component. We started with leaf components - things with no dependencies:
+
+```kotlin
+// Before: Custom XML view for transaction status badge
+<com.vietinbank.ui.views.TransactionStatusBadge
+    android:id="@+id/status_badge"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:status="@{transaction.status}" />
+
+// After: Compose component
+@Composable
+fun TransactionStatusBadge(status: TransactionStatus) {
+    val (text, backgroundColor, textColor) = when (status) {
+        TransactionStatus.SUCCESS -> Triple("Thành công", Color.Green, Color.White)
+        TransactionStatus.PENDING -> Triple("Đang xử lý", Color.Yellow, Color.Black)
+        TransactionStatus.FAILED -> Triple("Thất bại", Color.Red, Color.White)
+    }
+    
+    Surface(
+        color = backgroundColor,
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Text(
+            text = text,
+            color = textColor,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+```
+
+## The Design System Disaster
+
+Three months in, we hit our first major crisis. Our designers had been maintaining a design system in Figma, but our implementation was... creative. The same button could look different on different screens because developers copied and modified styles instead of using them.
+
+I found 47 different shades of our "primary" blue color:
+
+```xml
+<!-- From various colors.xml files across the app -->
+<color name="primary_blue">#0B74B8</color>
+<color name="main_blue">#0B73B7</color>
+<color name="button_blue">#0C74B8</color>
+<color name="primary">#0B74B9</color>
+<color name="blue_primary">#0A74B8</color>
+<!-- ... 42 more variations -->
+```
+
+In Compose, we decided to fix this once and for all:
+
+```kotlin
+// ui/theme/Color.kt
+object VietinBankColors {
+    val Primary = Color(0xFF0B74B8)  // The ONE true primary
+    val PrimaryVariant = Color(0xFF085A91)
+    val Secondary = Color(0xFFF39200)
+    val Background = Color(0xFFF5F5F5)
+    val Surface = Color(0xFFFFFFFF)
+    val Error = Color(0xFFD32F2F)
+    val OnPrimary = Color(0xFFFFFFFF)
+    val OnSecondary = Color(0xFF000000)
+    val OnBackground = Color(0xFF212121)
+    val OnSurface = Color(0xFF212121)
+    val OnError = Color(0xFFFFFFFF)
+}
+
+// ui/theme/Theme.kt
+@Composable
+fun VietinBankTheme(
+    darkTheme: Boolean = isSystemInDarkModeEnabled(),
+    content: @Composable () -> Unit
+) {
+    val colors = if (darkTheme) {
+        darkColorScheme(
+            primary = VietinBankColors.Primary,
+            // ... dark theme colors
+        )
+    } else {
+        lightColorScheme(
+            primary = VietinBankColors.Primary,
+            // ... light theme colors
+        )
+    }
+    
+    MaterialTheme(
+        colorScheme = colors,
+        typography = VietinBankTypography,
+        content = content
+    )
+}
+```
+
+The design team was thrilled. The other developers... less so. I had to update 237 XML files to use the new canonical colors. It took a week, and I'm pretty sure some developers still haven't forgiven me.
+
+## The Performance Surprise
+
+Six months in, we had migrated about 40% of our screens. Then our QA team dropped a bomb: "The new Compose screens feel slower than the old ones."
+
+I was shocked. Compose was supposed to be faster! I spent three days profiling and found the culprit - excessive recomposition:
+
+```kotlin
+// The problematic code
+@Composable
+fun TransactionList(transactions: List<Transaction>) {
+    LazyColumn {
+        items(transactions) { transaction ->
+            // This caused every item to recompose when any transaction changed!
+            TransactionRow(
+                transaction = transaction,
+                onClick = { 
+                    // Inline lambda = new instance every recomposition
+                    navigateToDetail(transaction.id) 
+                }
+            )
+        }
+    }
+}
+```
+
+The fix was simple but not obvious:
+
+```kotlin
+@Composable
+fun TransactionList(
+    transactions: List<Transaction>,
+    onTransactionClick: (String) -> Unit  // Stable parameter
+) {
+    LazyColumn {
+        items(
+            items = transactions,
+            key = { it.id }  // Stable keys for smart recomposition
+        ) { transaction ->
+            TransactionRow(
+                transaction = transaction,
+                onClick = { onTransactionClick(transaction.id) }
+            )
+        }
+    }
+}
+
+// Make data classes stable
+@Immutable
+data class Transaction(
+    val id: String,
+    val amount: Long,
+    val description: String,
+    val timestamp: Instant,
+    val status: TransactionStatus
+)
+```
+
+After optimization, the Compose screens were actually 30% faster than XML. The lesson? Compose is fast, but you have to understand how it works.
+
+## The Day We Broke Production
+
+It was a Thursday (it's always a Thursday). We had just migrated the transfer screen to Compose and pushed it to production with our usual staged rollout - 1% of users first.
+
+Within an hour, our error tracking exploded:
+
+```
+Fatal Exception: java.lang.IllegalStateException: 
+ViewTreeLifecycleOwner not found from androidx.compose.ui.platform.ComposeView
+```
+
+2,000 crashes in 30 minutes. We rolled back immediately.
+
+The issue? Our money transfer flow was weird. It started in `TransferActivity`, opened `RecipientSelectionActivity` for result, then came back to complete the transfer. But we were initializing Compose UI in `onActivityResult`:
+
+```kotlin
+// The broken code
+override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    
+    if (requestCode == SELECT_RECIPIENT && resultCode == RESULT_OK) {
+        val recipient = data?.getParcelableExtra<Recipient>("recipient")
+        
+        // This was the problem - ComposeView wasn't ready yet
+        binding.composeView.setContent {
+            TransferConfirmation(
+                recipient = recipient,
+                amount = pendingAmount
+            )
+        }
+    }
+}
+```
+
+The fix was embarrassing:
+
+```kotlin
+override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    
+    if (requestCode == SELECT_RECIPIENT && resultCode == RESULT_OK) {
+        val recipient = data?.getParcelableExtra<Recipient>("recipient")
+        
+        // Wait for the view to be ready
+        binding.composeView.post {
+            binding.composeView.setContent {
+                TransferConfirmation(
+                    recipient = recipient,
+                    amount = pendingAmount
+                )
+            }
+        }
+    }
+}
+```
+
+One `post { }` call. That's all it took. But it cost us a sleepless night and a very uncomfortable meeting with the product team.
+
+## The Custom View Challenge
+
+Remember that OTP input component I struggled with? We eventually got it working, but it took a completely different approach:
+
+```kotlin
+@Composable
+fun OtpInput(
+    length: Int = 6,
+    onOtpComplete: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var otpText by remember { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    
+    // Hidden TextField that actually handles input
+    Box(modifier = modifier) {
+        BasicTextField(
+            value = otpText,
+            onValueChange = { value ->
+                if (value.length <= length && value.all { it.isDigit() }) {
+                    otpText = value
+                    if (value.length == length) {
+                        onOtpComplete(value)
+                        keyboardController?.hide()
+                    }
+                }
+            },
+            modifier = Modifier
+                .focusRequester(focusRequester)
+                .alpha(0f), // Invisible but functional
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number
+            )
+        )
+        
+        // Visual representation
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.clickable { 
+                focusRequester.requestFocus()
+                keyboardController?.show()
+            }
+        ) {
+            repeat(length) { index ->
+                val char = otpText.getOrNull(index)
+                OtpDigitBox(
+                    digit = char?.toString() ?: "",
+                    isFocused = otpText.length == index
+                )
+            }
+        }
+    }
+    
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+}
+
+@Composable
+fun OtpDigitBox(
+    digit: String,
+    isFocused: Boolean
+) {
+    val animatedBorderColor by animateColorAsState(
+        targetValue = if (isFocused) MaterialTheme.colorScheme.primary 
+                      else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+        animationSpec = tween(200)
+    )
+    
+    Box(
+        modifier = Modifier
+            .size(48.dp)
+            .border(
+                width = 2.dp,
+                color = animatedBorderColor,
+                shape = RoundedCornerShape(8.dp)
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = digit,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
+        )
+        
+        // Cursor animation
+        if (isFocused && digit.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .size(2.dp, 24.dp)
+                    .background(MaterialTheme.colorScheme.primary)
+                    .blinkingCursor()
+            )
+        }
+    }
+}
+
+fun Modifier.blinkingCursor(): Modifier = composed {
+    val infiniteTransition = rememberInfiniteTransition()
+    val alpha by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = 1000
+                0.0f at 500
+            },
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+    this.alpha(alpha)
+}
+```
+
+The trick was using an invisible `BasicTextField` for input handling while creating a custom visual representation. It took three iterations to get right, but the final version was actually better than our original XML custom view.
+
+## The State Management Revelation
+
+About eight months in, we realized we had a bigger problem than just UI migration. Our state management was a mess. Each Activity had its own way of handling data:
+
+```kotlin
+// Some used LiveData
+class TransactionViewModel : ViewModel() {
+    private val _transactions = MutableLiveData<List<Transaction>>()
+    val transactions: LiveData<List<Transaction>> = _transactions
+}
+
+// Some used RxJava
+class AccountViewModel : ViewModel() {
+    val accounts: Observable<List<Account>> = accountRepository
+        .getAccounts()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+}
+
+// Some used callbacks
+class ProfileActivity : BaseActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        profileRepository.getProfile(object : Callback<Profile> {
+            override fun onSuccess(profile: Profile) {
+                updateUI(profile)
+            }
+            override fun onError(error: Throwable) {
+                showError(error)
+            }
+        })
+    }
+}
+```
+
+With Compose, we standardized on StateFlow and a unidirectional data flow:
+
+```kotlin
+// Standard ViewModel pattern
+class TransactionViewModel(
+    private val repository: TransactionRepository
+) : ViewModel() {
+    
+    private val _uiState = MutableStateFlow(TransactionUiState())
+    val uiState: StateFlow<TransactionUiState> = _uiState.asStateFlow()
+    
+    fun loadTransactions() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            
+            repository.getTransactions()
+                .flowOn(Dispatchers.IO)
+                .catch { error ->
+                    _uiState.update { 
+                        it.copy(
+                            isLoading = false,
+                            error = error.message
+                        )
+                    }
+                }
+                .collect { transactions ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            transactions = transactions,
+                            error = null
+                        )
+                    }
+                }
+        }
+    }
+}
+
+// In Compose
+@Composable
+fun TransactionScreen(
+    viewModel: TransactionViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    
+    when {
+        uiState.isLoading -> LoadingScreen()
+        uiState.error != null -> ErrorScreen(uiState.error)
+        else -> TransactionList(uiState.transactions)
+    }
+}
+```
+
+This consistency made the codebase so much easier to understand. New developers could jump between features without learning a new pattern each time.
+
+## The Unexpected Benefits
+
+Ten months in, something interesting happened. Our crash rate dropped by 40%. Not because of Compose directly, but because the migration forced us to:
+
+1. **Fix ancient bugs**: "While we're migrating this screen, let's fix that weird crash from 2019"
+2. **Remove dead code**: We found entire features that were unused but still maintained
+3. **Improve architecture**: The migration was a perfect excuse to implement proper patterns
+4. **Update dependencies**: Some screens were using libraries from 2017
+
+We also discovered Compose made certain features trivial that were nightmares in XML:
+
+```kotlin
+// Dark mode support - literally one line
+val colors = if (isSystemInDarkModeEnabled()) darkColors else lightColors
+
+// Animations that would take 100 lines of XML
+val offset by animateDpAsState(
+    targetValue = if (isExpanded) 0.dp else (-100).dp,
+    animationSpec = spring(stiffness = Spring.StiffnessLow)
+)
+
+// Conditional UI that's actually readable
+if (user.isPremium) {
+    PremiumFeatures()
+} else {
+    StandardFeatures()
+    UpgradePrompt()
+}
+```
+
+## The Final Push
+
+Month 12. We were at 85% migrated. The remaining 15% were the scariest screens - payment flows, KYC verification, and the home dashboard that hadn't been touched since 2018.
+
+The home dashboard was particularly terrifying. It was a `RecyclerView` with 17 different view types, each with its own complex layout:
+
+```kotlin
+// The old ViewHolder nightmare
+override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    return when (viewType) {
+        TYPE_HEADER -> HeaderViewHolder(inflater.inflate(R.layout.item_header, parent, false))
+        TYPE_BALANCE -> BalanceViewHolder(inflater.inflate(R.layout.item_balance, parent, false))
+        TYPE_QUICK_ACTIONS -> QuickActionsViewHolder(inflater.inflate(R.layout.item_quick_actions, parent, false))
+        TYPE_PROMOTION -> PromotionViewHolder(inflater.inflate(R.layout.item_promotion, parent, false))
+        TYPE_TRANSACTION -> TransactionViewHolder(inflater.inflate(R.layout.item_transaction, parent, false))
+        // ... 12 more types
+        else -> throw IllegalArgumentException("Unknown view type: $viewType")
+    }
+}
+```
+
+In Compose, it became beautifully simple:
+
+```kotlin
+@Composable
+fun HomeScreen(
+    sections: List<HomeSection>,
+    onSectionClick: (HomeSection) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(vertical = 16.dp)
+    ) {
+        items(sections) { section ->
+            when (section) {
+                is HomeSection.Header -> HeaderSection(section)
+                is HomeSection.Balance -> BalanceSection(section)
+                is HomeSection.QuickActions -> QuickActionsSection(section)
+                is HomeSection.Promotion -> PromotionSection(section)
+                is HomeSection.Transaction -> TransactionSection(section)
+                // So much cleaner!
+            }
+        }
+    }
+}
+```
+
+## The Launch
+
+February 2024. Fourteen months after starting. We finally removed the last XML layout file. The entire UI was now Compose.
+
+The numbers:
+- **Before**: 127 XML layouts, ~100,000 lines of XML, ~50,000 lines of View code
+- **After**: 0 XML layouts, ~30,000 lines of Compose code
+- **Reduction**: 70% less UI code
+- **Build time**: 35% faster (no more layout inflation!)
+- **APK size**: 2.3MB smaller (removed layout XML resources)
+
+But the real win wasn't the numbers. It was the developer experience. Features that would take a week now took two days. UI bugs became rare. New developers could contribute immediately without learning our weird custom view conventions.
+
+## What I'd Do Differently
+
+Looking back, here's what I wish I knew at the start:
+
+1. **Start with new features**: Instead of migrating existing screens, build new features in Compose first. It's less risky and lets you learn gradually.
+
+2. **Invest in education early**: I learned Compose as I went. Bad idea. Take a week to really understand recomposition, state management, and performance.
+
+3. **Build the design system first**: We did it halfway through and had to refactor everything. Start with a solid foundation.
+
+4. **Don't migrate everything**: Some of our admin screens are still XML. They work fine, nobody cares. Focus on screens that matter.
+
+5. **Automate testing from day one**: Compose has excellent testing support. Use it. We added tests later and found bugs that had been there for months.
+
+## The Surprise Ending
+
+Remember that transaction detail screen with 1,847 lines of XML? Here's the Compose version:
+
+```kotlin
+@Composable
+fun TransactionDetailScreen(
+    transaction: Transaction,
+    onBack: () -> Unit,
+    onShare: () -> Unit
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Chi tiết giao dịch") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Default.ArrowBack, "Back")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onShare) {
+                        Icon(Icons.Default.Share, "Share")
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item { 
+                AmountSection(
+                    amount = transaction.amount,
+                    status = transaction.status
+                )
+            }
+            
+            item { 
+                DetailSection(
+                    title = "Thông tin chuyển khoản",
+                    details = transaction.transferDetails
+                )
+            }
+            
+            item { 
+                DetailSection(
+                    title = "Người nhận",
+                    details = transaction.recipientDetails
+                )
+            }
+            
+            if (transaction.notes.isNotEmpty()) {
+                item {
+                    NotesSection(notes = transaction.notes)
+                }
+            }
+            
+            item {
+                ActionButtons(
+                    transaction = transaction,
+                    onRepeat = { /* Handle repeat */ },
+                    onSave = { /* Handle save */ }
+                )
+            }
+        }
+    }
+}
+```
+
+About 150 lines total including all the sub-components. 92% less code. And Hung finally got his refactor - just six years late.
+
+## Final Thoughts
+
+Was it worth it? Absolutely. But not for the reasons we expected.
+
+Yes, we have less code. Yes, it's faster. Yes, it's easier to maintain. But the real value was the forced modernization. The migration made us fix years of technical debt, establish proper patterns, and actually document our code.
+
+The funniest part? Three months after we finished, Google announced Compose Multiplatform. Our iOS team is now jealously watching us share UI code between Android and desktop apps.
+
+Would I do it again? In a heartbeat. But I'd probably give a more realistic timeline. "Six months" became fourteen, but those fourteen months transformed not just our codebase, but our entire development culture.
+
+And that comment from Hung - "// TODO: Refactor this mess"? I finally deleted it. Then I sent him a message: "Done. Only took six years."
+
+His response? "Great! Now migrate it to Compose Multiplatform 😅"
+
+Some TODOs never die. They just evolve.
+
+---
+
+*If you're considering a Compose migration, feel free to reach out on [Twitter](https://twitter.com/khoivan). I have a 47-slide presentation on "Lessons Learned" that my manager made me create. It's yours if you want it.*
+
+*And yes, we're hiring. Especially if you know Compose Multiplatform. Hung wasn't entirely joking.*

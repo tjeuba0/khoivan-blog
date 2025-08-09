@@ -1,0 +1,465 @@
+---
+title: "That Morning 50,000 Users Couldn't Login: My First Production Crash"
+description: "The story of my first major production incident - how a simple SharedPreferences migration brought down a banking app, and what I learned about debugging under pressure"
+pubDate: 2025-01-07
+author: "Khoi Van"
+category: "life"
+tags: ["debugging", "production", "android", "war-stories"]
+mood: "reflective"
+---
+
+June 15th, 2021, 6:47 AM. I was having phở for breakfast at my favorite spot in District 1 when my phone exploded. Not literally - though that would have been less stressful than what actually happened.
+
+17 Slack notifications. 8 missed calls. 23 WhatsApp messages. All variations of the same theme: "THE APP IS BROKEN. NOBODY CAN LOGIN. FIX IT NOW."
+
+I threw 50,000 VND on the table and ran. Literally ran. Four blocks to the office, laptop bouncing in my backpack, already sweating through my shirt in the Saigon morning humidity. By the time I reached the office, Crashlytics showed 47,000 crashes in the last hour.
+
+This is the story of the worst morning of my career, and paradoxically, the day I became a real engineer.
+
+## The Calm Before the Storm
+
+Let me rewind two days. We had just pushed version 3.7.0 to production. It was a minor release - some UI tweaks, performance improvements, and one seemingly innocent change: migrating from SharedPreferences to DataStore for better async handling.
+
+```kotlin
+// The migration code that seemed so simple
+class PreferencesMigration(private val context: Context) {
+    
+    suspend fun migrate() {
+        val sharedPrefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val dataStore = context.dataStore
+        
+        // Migrate all preferences
+        sharedPrefs.all.forEach { (key, value) ->
+            when (value) {
+                is String -> dataStore.edit { prefs ->
+                    prefs[stringPreferencesKey(key)] = value
+                }
+                is Int -> dataStore.edit { prefs ->
+                    prefs[intPreferencesKey(key)] = value
+                }
+                is Boolean -> dataStore.edit { prefs ->
+                    prefs[booleanPreferencesKey(key)] = value
+                }
+                // ... handle other types
+            }
+        }
+        
+        // Clear old SharedPreferences after successful migration
+        sharedPrefs.edit().clear().apply()
+    }
+}
+```
+
+I had tested it thoroughly. On my device. On the QA team's devices. On the beta program with 500 users. Everything worked perfectly.
+
+What I didn't test was what happens when 50,000 users try to migrate simultaneously at 6:30 AM - peak login time for our banking app.
+
+## The Crime Scene
+
+When I finally got to my desk and opened Crashlytics, the stack trace made no sense:
+
+```
+Fatal Exception: java.lang.IllegalStateException: 
+    SharedPreferences file /data/data/com.vietinbank.app/shared_prefs/user_prefs.xml 
+    already exists but is not readable
+    
+    at android.app.SharedPreferencesImpl.loadFromDisk(SharedPreferencesImpl.java:115)
+    at android.app.SharedPreferencesImpl.<init>(SharedPreferencesImpl.java:73)
+    at android.app.ContextImpl.getSharedPreferences(ContextImpl.java:419)
+    at com.vietinbank.app.data.PreferencesMigration.migrate(PreferencesMigration.kt:8)
+    at com.vietinbank.app.MainActivity.onCreate(MainActivity.kt:47)
+```
+
+"Already exists but is not readable"? How is that possible?
+
+I started digging through the crash reports. They all had something in common - they were from users who had been using the app for over a year. New installations were fine. Recent users were fine. But our loyal, long-term users? Completely locked out.
+
+## The Investigation
+
+First instinct: rollback. But our product manager shut that down immediately. "We can't rollback. The new version fixes a critical security vulnerability. We need to fix forward."
+
+Great. No pressure.
+
+I started by trying to reproduce the issue. I installed the old version, added a bunch of preferences, then updated to the new version. It worked fine. I tried with different amounts of data. Still fine. I was about to scream when our junior developer, Minh, asked a simple question:
+
+"What if the file permissions are wrong?"
+
+File permissions. On Android. Each app has its own sandbox, so permissions shouldn't matter, right? Wrong.
+
+I SSH'd into our test device (yes, we had rooted test devices for exactly this purpose) and checked:
+
+```bash
+vietinbank_test:/ $ su
+vietinbank_test:/ # cd /data/data/com.vietinbank.app/shared_prefs/
+vietinbank_test:/data/data/com.vietinbank.app/shared_prefs # ls -la
+
+-rw-rw---- 1 u0_a142 u0_a142   4096 Jun 15 06:30 user_prefs.xml
+-rw-rw---- 1 u0_a142 u0_a142    512 Jun 15 06:30 user_prefs.xml.bak
+```
+
+Normal. But then I checked a crashed user's device (we had remote debug access for some power users who opted in):
+
+```bash
+-rw------- 1 root root   4096 Jun 15 06:30 user_prefs.xml
+-rw-rw---- 1 u0_a245 u0_a245    512 Jun 15 06:30 user_prefs.xml.bak
+```
+
+The file was owned by root! How the hell did that happen?
+
+## The Eureka Moment
+
+I was staring at the migration code when it hit me. The clear() operation:
+
+```kotlin
+// Clear old SharedPreferences after successful migration
+sharedPrefs.edit().clear().apply()
+```
+
+In certain Android versions (particularly custom ROMs popular in Vietnam like BKAV or Viettel), when you clear SharedPreferences while another process is reading them, the file gets recreated with wrong permissions. It's a race condition that only happens under specific circumstances:
+
+1. User opens app (migration starts)
+2. Our background sync service also starts (reads SharedPreferences)
+3. Migration completes and calls clear()
+4. OS recreates the file but assigns wrong permissions
+5. Next access fails
+
+But why only old users? Because they had accumulated lots of preferences, making the migration take longer, increasing the window for the race condition.
+
+## The Hot Fix
+
+We needed a fix that could be deployed immediately. No time for elegant solutions. I wrote the hackiest code of my career:
+
+```kotlin
+class EmergencyPreferencesFix {
+    
+    fun fixPermissions(context: Context): Boolean {
+        return try {
+            // Try to access preferences normally
+            val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+            prefs.getString("test", null)
+            true
+        } catch (e: Exception) {
+            // If failed, try alternative approach
+            tryAlternativeAccess(context)
+        }
+    }
+    
+    private fun tryAlternativeAccess(context: Context): Boolean {
+        // Nuclear option: delete and recreate
+        val prefsFile = File(context.filesDir.parent, "shared_prefs/user_prefs.xml")
+        val backupFile = File(context.filesDir.parent, "shared_prefs/user_prefs.xml.bak")
+        
+        return try {
+            // Try to read backup
+            if (backupFile.exists() && backupFile.canRead()) {
+                // Parse XML manually (yes, really)
+                val prefs = parsePreferencesXml(backupFile)
+                
+                // Delete corrupted file
+                prefsFile.delete()
+                backupFile.delete()
+                
+                // Recreate with correct permissions
+                val newPrefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                val editor = newPrefs.edit()
+                
+                prefs.forEach { (key, value) ->
+                    when (value) {
+                        is String -> editor.putString(key, value)
+                        is Int -> editor.putInt(key, value)
+                        is Boolean -> editor.putBoolean(key, value)
+                        is Float -> editor.putFloat(key, value)
+                        is Long -> editor.putLong(key, value)
+                    }
+                }
+                
+                editor.apply()
+                true
+            } else {
+                // Last resort: start fresh
+                prefsFile.delete()
+                backupFile.delete()
+                
+                // Create new preferences with default values
+                initializeDefaultPreferences(context)
+                true
+            }
+        } catch (e: Exception) {
+            // If everything fails, at least log it
+            FirebaseCrashlytics.getInstance().recordException(e)
+            false
+        }
+    }
+    
+    private fun parsePreferencesXml(file: File): Map<String, Any> {
+        // I'm not proud of this code
+        val prefs = mutableMapOf<String, Any>()
+        
+        try {
+            val content = file.readText()
+            
+            // Regex parsing XML because XmlPullParser wasn't working
+            // (Yes, I know, please don't judge)
+            val stringPattern = "<string name=\"(.+?)\">(.+?)</string>".toRegex()
+            val intPattern = "<int name=\"(.+?)\" value=\"(.+?)\" />".toRegex()
+            val boolPattern = "<boolean name=\"(.+?)\" value=\"(.+?)\" />".toRegex()
+            
+            stringPattern.findAll(content).forEach {
+                prefs[it.groupValues[1]] = it.groupValues[2]
+            }
+            
+            intPattern.findAll(content).forEach {
+                prefs[it.groupValues[1]] = it.groupValues[2].toInt()
+            }
+            
+            boolPattern.findAll(content).forEach {
+                prefs[it.groupValues[1]] = it.groupValues[2].toBoolean()
+            }
+        } catch (e: Exception) {
+            // Silent fail, we'll use defaults
+        }
+        
+        return prefs
+    }
+}
+```
+
+I'm not proud of this code. Parsing XML with regex? Manually recreating SharedPreferences? It's everything they tell you not to do. But it worked.
+
+## The Deployment Drama
+
+9:30 AM. We had a fix. But how do you deploy to 50,000 angry users who can't even open the app?
+
+Our solution was creative: we deployed a special version (3.7.1) that didn't require login for the first screen. It would:
+1. Show a "Maintenance" message
+2. Run the fix in the background
+3. Auto-restart the app when fixed
+
+But Google Play review takes hours, sometimes days. We couldn't wait.
+
+That's when our Head of Engineering made the call: "Deploy through our CDN."
+
+We had an emergency update mechanism built into the app (for exactly this kind of situation) that could download and apply patches without going through the Play Store. It was meant for critical security fixes, but this qualified.
+
+```kotlin
+class EmergencyPatcher {
+    fun checkAndApplyPatch() {
+        val patchUrl = "https://cdn.vietinbank.com/emergency/patch_3.7.1.jar"
+        
+        // Download patch
+        val patchFile = downloadPatch(patchUrl)
+        
+        // Verify signature (CRITICAL for security)
+        if (!verifySignature(patchFile)) {
+            return
+        }
+        
+        // Load patch using DexClassLoader
+        val dexLoader = DexClassLoader(
+            patchFile.absolutePath,
+            context.cacheDir.absolutePath,
+            null,
+            this.javaClass.classLoader
+        )
+        
+        // Replace broken class with patched version
+        val patchedClass = dexLoader.loadClass("com.vietinbank.app.EmergencyPreferencesFix")
+        val fixMethod = patchedClass.getMethod("fixPermissions", Context::class.java)
+        
+        // Apply fix
+        val result = fixMethod.invoke(patchedClass.newInstance(), context) as Boolean
+        
+        if (result) {
+            // Restart app
+            restartApp()
+        }
+    }
+}
+```
+
+By 10:15 AM, we pushed the patch. Within 30 minutes, crash rates started dropping.
+
+## The Clean-Up
+
+By noon, 90% of affected users were fixed. But we still had 5,000 users whose apps were so broken they couldn't even download the patch. For them, we had to get creative.
+
+We sent SMS messages (we're a bank, we have everyone's phone number) with a link to download a standalone fixer app:
+
+"VietinBank: We detected an issue with your app. Please install this fix: https://fix.vietinbank.com/repair"
+
+The repair app was simple - it just needed permission to access the main app's data directory and fix the permissions. Not elegant, but effective.
+
+## The Post-Mortem
+
+Two days later, when everyone could breathe again, we had the post-mortem. The room was tense. I expected to be fired.
+
+Instead, our CTO said something I'll never forget: "This is the best mistake we've ever made."
+
+He explained: "We learned more about our system in these 6 hours than in the past year. We discovered:
+- Our emergency patch system actually works
+- Our monitoring needs improvement
+- Our rollout process has gaps
+- Our team can handle crisis"
+
+The lessons we implemented:
+
+### 1. Staged Rollouts Are Not Enough
+
+We were doing staged rollouts (1% → 5% → 20% → 100%), but over days. The issue manifested within hours. Now we have "canary periods" - 1% for at least 6 hours during peak usage before proceeding.
+
+### 2. Test on Real User Data
+
+Our QA environment had clean data. Real users had years of accumulated cruft. We now have a "chaos testing" environment with data copied from production (anonymized, of course).
+
+### 3. Race Conditions Are Everywhere
+
+We added extensive synchronization around SharedPreferences operations:
+
+```kotlin
+object PreferenceManager {
+    private val lock = Any()
+    
+    fun getPreferences(context: Context): SharedPreferences {
+        synchronized(lock) {
+            return context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        }
+    }
+    
+    fun migratePreferences(context: Context) {
+        synchronized(lock) {
+            // Migration code here
+        }
+    }
+}
+```
+
+### 4. Always Have a Rollback Plan
+
+"We can't rollback" should never be the answer. We now maintain compatibility layers:
+
+```kotlin
+class PreferencesCompat {
+    fun getValue(key: String): Any? {
+        return try {
+            // Try new DataStore
+            getFromDataStore(key)
+        } catch (e: Exception) {
+            try {
+                // Fallback to SharedPreferences
+                getFromSharedPreferences(key)
+            } catch (e: Exception) {
+                // Return default
+                getDefaultValue(key)
+            }
+        }
+    }
+}
+```
+
+## The Human Cost
+
+What the post-mortem didn't capture was the human side. Our customer support team received over 10,000 calls that morning. One support agent, Linh, told me she had an elderly customer crying on the phone because he thought his money was gone.
+
+That hit hard. For us, it was a technical problem. For users, it was their life savings apparently vanishing.
+
+I personally called 50 affected users to apologize. Most were understanding. One businessman said he missed a critical transfer and lost a deal. We compensated him, but you can't really compensate for lost opportunities.
+
+## The Silver Lining
+
+Three months later, something interesting happened. We had another production issue - a third-party service went down. But this time, we were ready. The emergency response plan kicked in:
+
+1. Alert triggered within 30 seconds
+2. War room assembled in 5 minutes
+3. Root cause identified in 15 minutes
+4. Fix deployed through emergency channel in 45 minutes
+5. Full resolution in under 2 hours
+
+The muscle memory from that horrible morning had turned into institutional knowledge.
+
+## What I Really Learned
+
+Technical lessons aside, that morning taught me some fundamental truths:
+
+**1. Humility**: No matter how much you test, production will surprise you. Stay humble.
+
+**2. Communication**: During the crisis, clear communication saved us. We over-communicated - Slack, email, SMS, even phone calls.
+
+**3. Team**: Minh, the junior who suggested checking permissions, got promoted. Good ideas can come from anywhere.
+
+**4. Users First**: Every technical decision has human consequences. Those 50,000 crashes were 50,000 people unable to access their money.
+
+**5. Post-Mortems Are Not Blame Games**: Our blameless post-mortem culture meant we could be honest about what went wrong.
+
+## The Code That Haunts Me
+
+You know what the real fix was? The one we deployed in version 3.8.0 after proper testing?
+
+```kotlin
+class SafePreferencesMigration {
+    suspend fun migrate(context: Context) {
+        // Don't clear immediately
+        val oldPrefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val newPrefs = context.getSharedPreferences("user_prefs_v2", Context.MODE_PRIVATE)
+        
+        // Migrate to NEW file
+        oldPrefs.all.forEach { (key, value) ->
+            when (value) {
+                is String -> newPrefs.edit().putString(key, value).apply()
+                is Int -> newPrefs.edit().putInt(key, value).apply()
+                is Boolean -> newPrefs.edit().putBoolean(key, value).apply()
+                // ... other types
+            }
+        }
+        
+        // Keep old file around for 30 days as backup
+        // Mark it as migrated
+        oldPrefs.edit().putBoolean("MIGRATED_TO_V2", true).apply()
+    }
+}
+```
+
+That's it. Use a different file name. Don't delete the old one immediately. Such a simple solution that would have prevented everything.
+
+## One Year Later
+
+I still wake up sometimes at 6:47 AM with a spike of anxiety. It's like PTSD for developers. But I'm also grateful for that morning. It transformed me from a developer who wrote code to an engineer who understood systems.
+
+We now have a tradition. Every June 15th at 6:47 AM, the team that was there that morning meets for phở. We call it "Crash Day." We share war stories, laugh about the regex XML parser, and remind ourselves that we survived.
+
+Last Crash Day, Minh (now a senior engineer) raised his beer and said, "To the crashes that make us better engineers."
+
+I'll drink to that.
+
+## Epilogue
+
+That emergency patch system we used? It's now a core feature. We can push critical fixes to users within minutes. It's saved us three times since then.
+
+The regex XML parser? It's still in the codebase. There's a comment above it:
+
+```kotlin
+/**
+ * DO NOT REMOVE THIS CODE
+ * Yes, it's horrible. Yes, it parses XML with regex.
+ * But it saved 50,000 users on June 15, 2021.
+ * Sometimes, bad code that works is better than good code that doesn't.
+ * 
+ * If you must refactor this, please test with:
+ * - Corrupted XML files
+ * - Files with root permissions
+ * - Files with special characters in values
+ * - Files larger than 5MB
+ * - Files that are currently being written to
+ * 
+ * May the force be with you.
+ */
+```
+
+It's a monument to that morning. A reminder that perfect is the enemy of good, especially at 6:47 AM with 50,000 users locked out of their banking app.
+
+Would I do anything differently? Absolutely. Would I trade the experience? Never.
+
+---
+
+*If you're dealing with a production crisis right now, remember: breathe, communicate, and focus on the users. The code can be fixed. The architecture can be improved. But user trust, once lost, is hard to regain.*
+
+*And always, ALWAYS, test your SharedPreferences migrations.*

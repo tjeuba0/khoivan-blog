@@ -1,0 +1,596 @@
+---
+title: "Building a Native Security Library for VietinBank's Android App"
+description: "The story of how I built a C++ security layer to protect sensitive banking data, from basic Java encryption to a full native library with anti-tampering"
+pubDate: 2025-01-09
+author: "Khoi Van"
+category: "engineering"
+tags: ["android", "security", "ndk", "banking"]
+mood: "technical"
+---
+
+It was 2:17 AM on a Tuesday when my phone started buzzing. Not the gentle notification buzz, but the angry, continuous vibration that meant something was seriously wrong. Our security team had detected unusual patterns in the API traffic - someone was attempting to reverse engineer our banking app's encryption keys.
+
+I rolled out of bed, opened my laptop, and stared at the Slack messages flooding in. The VietinBank Android app, used by over 2 million customers, was under attack. Not a data breach - thankfully - but sophisticated attempts to understand our security implementation. That night changed how I think about mobile security forever.
+
+## The Problem We Were Facing
+
+Our original implementation was what you'd expect from most Android apps:
+
+```kotlin
+// SecurityManager.kt - Our original approach
+class SecurityManager(context: Context) {
+    private val prefs = context.getSharedPreferences("secure_prefs", Context.MODE_PRIVATE)
+    private val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+    
+    fun encryptData(data: String): String {
+        val key = getOrCreateKey() // Stored in SharedPreferences 😱
+        cipher.init(Cipher.ENCRYPT_MODE, key)
+        return Base64.encodeToString(cipher.doFinal(data.toByteArray()), Base64.DEFAULT)
+    }
+    
+    private fun getOrCreateKey(): SecretKey {
+        val keyString = prefs.getString("encryption_key", null)
+        return if (keyString != null) {
+            // Key stored as plain text in SharedPreferences
+            SecretKeySpec(Base64.decode(keyString, Base64.DEFAULT), "AES")
+        } else {
+            // Generate and store new key
+            val key = KeyGenerator.getInstance("AES").apply {
+                init(256)
+            }.generateKey()
+            prefs.edit().putString("encryption_key", 
+                Base64.encodeToString(key.encoded, Base64.DEFAULT)).apply()
+            key
+        }
+    }
+}
+```
+
+Looking at this code now makes me cringe. We were storing encryption keys in SharedPreferences - essentially plain text files that any rooted device could access. It's like hiding your house key under the doormat and hoping nobody looks there.
+
+The security audit report was damning: "Keys extractable in under 5 minutes on a rooted device." For a banking app handling millions of transactions daily, this was unacceptable.
+
+## My First Attempt: Android Keystore
+
+My initial reaction was to use Android's built-in Keystore system. It seemed like the obvious solution:
+
+```kotlin
+// SecurityManagerV2.kt - Using Android Keystore
+class SecurityManagerV2(context: Context) {
+    private val keyAlias = "VietinBankKey"
+    private val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+    
+    init {
+        if (!keyStore.containsAlias(keyAlias)) {
+            val keyGenParams = KeyGenParameterSpec.Builder(
+                keyAlias,
+                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+            ).apply {
+                setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                setUserAuthenticationRequired(true) // Requires fingerprint
+                setUserAuthenticationValidityDurationSeconds(30)
+            }.build()
+            
+            KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
+                .apply { init(keyGenParams) }
+                .generateKey()
+        }
+    }
+    
+    fun encryptSensitiveData(data: String): ByteArray {
+        val key = keyStore.getKey(keyAlias, null) as SecretKey
+        val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding")
+        cipher.init(Cipher.ENCRYPT_MODE, key)
+        
+        val iv = cipher.iv
+        val ciphertext = cipher.doFinal(data.toByteArray())
+        
+        // Combine IV and ciphertext
+        return iv + ciphertext
+    }
+}
+```
+
+This was better - the keys were hardware-backed on devices that supported it. But during testing, I discovered the limitations:
+1. Not all devices had hardware-backed keystores
+2. Some custom ROMs could still intercept Keystore operations
+3. The implementation was entirely in Java/Kotlin - easily decompilable
+
+I remember sitting in a meeting with our CISO, trying to explain why Android Keystore wasn't enough. "But Google says it's secure," he said. I pulled up Jadx (a decompiler) and showed him our app's code, perfectly readable, with all our security logic exposed. His face went pale.
+
+## The Revelation: Going Native
+
+That's when I realized we needed to go deeper - into native code. C++ isn't as easily decompiled as Java bytecode. Plus, we could implement additional protections that weren't possible in the JVM.
+
+I started simple, just moving the encryption logic to JNI:
+
+```cpp
+// native-lib.cpp - Version 1: Basic JNI encryption
+#include <jni.h>
+#include <string>
+#include <android/log.h>
+#include <openssl/aes.h>
+#include <openssl/rand.h>
+
+#define LOG_TAG "SecurityNative"
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+
+extern "C" JNIEXPORT jbyteArray JNICALL
+Java_com_vietinbank_security_NativeSecurityLib_encryptNative(
+    JNIEnv* env,
+    jobject /* this */,
+    jbyteArray data) {
+    
+    // Get data from Java
+    jsize dataLen = env->GetArrayLength(data);
+    jbyte* dataBytes = env->GetByteArrayElements(data, nullptr);
+    
+    // Generate random key (still not ideal - key management issue)
+    unsigned char key[32];
+    RAND_bytes(key, sizeof(key));
+    
+    // Encrypt using OpenSSL
+    AES_KEY aesKey;
+    AES_set_encrypt_key(key, 256, &aesKey);
+    
+    // Simplified encryption (real implementation needs IV, padding, etc.)
+    unsigned char encrypted[dataLen + 16];
+    AES_encrypt((unsigned char*)dataBytes, encrypted, &aesKey);
+    
+    env->ReleaseByteArrayElements(data, dataBytes, JNI_ABORT);
+    
+    // Return encrypted data
+    jbyteArray result = env->NewByteArray(dataLen + 16);
+    env->SetByteArrayRegion(result, 0, dataLen + 16, (jbyte*)encrypted);
+    
+    return result;
+}
+```
+
+This was my first taste of JNI, and honestly, it was painful. The syntax felt alien after years of Kotlin. Memory management became my responsibility. Debugging was a nightmare - crashes gave cryptic messages like "signal 11 (SIGSEGV), code 1 (SEGV_MAPERR)".
+
+But it worked. The encryption logic was now in compiled C++ code, much harder to reverse engineer.
+
+## Adding Anti-Tampering and Anti-Debugging
+
+Simply moving to native code wasn't enough. Determined attackers could still attach debuggers, modify the binary, or use tools like Frida to hook our functions. I needed to add active protections.
+
+First, I implemented debugger detection:
+
+```cpp
+// anti_debug.cpp
+#include <sys/ptrace.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <string.h>
+
+bool isDebuggerAttached() {
+    // Method 1: Check TracerPid in /proc/self/status
+    char line[512];
+    FILE* fp = fopen("/proc/self/status", "r");
+    if (fp) {
+        while (fgets(line, sizeof(line), fp)) {
+            if (strncmp(line, "TracerPid:", 10) == 0) {
+                int pid = atoi(line + 10);
+                fclose(fp);
+                return pid != 0;
+            }
+        }
+        fclose(fp);
+    }
+    
+    // Method 2: Try to attach ptrace to self
+    if (ptrace(PTRACE_TRACEME, 0, 0, 0) == -1) {
+        return true; // Already being traced
+    }
+    
+    // Method 3: Check for common debugger files
+    struct stat fileStat;
+    if (stat("/data/local/tmp/frida-server", &fileStat) == 0) {
+        return true; // Frida detected
+    }
+    
+    return false;
+}
+
+// Call this periodically from random places in the code
+void checkIntegrity() {
+    if (isDebuggerAttached()) {
+        // Don't just crash - that's too obvious
+        // Subtly corrupt the encryption to make debugging harder
+        corruptInternalState();
+    }
+}
+```
+
+I spent weeks researching anti-debugging techniques. Some were clever, others borderline paranoid. My favorite was checking execution timing - debuggers slow down execution, so if a function takes longer than expected, we knew something was wrong:
+
+```cpp
+// Timing-based anti-debug
+#include <chrono>
+
+bool detectTimingAnomaly() {
+    auto start = std::chrono::high_resolution_clock::now();
+    
+    // Perform a known operation
+    volatile int sum = 0;
+    for (int i = 0; i < 1000000; i++) {
+        sum += i;
+    }
+    
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    
+    // On normal execution, this takes ~2000-3000 microseconds
+    // Under debugger, it can take 10x longer
+    return duration.count() > 5000;
+}
+```
+
+## The Key Management Problem
+
+The biggest challenge wasn't the encryption itself - it was key management. Where do you store the key securely? I tried several approaches:
+
+**Attempt 1: Hardcoded keys (obviously bad)**
+```cpp
+const char* SECRET_KEY = "ThisIsNotSecureAtAll123456789012"; // DON'T DO THIS
+```
+
+**Attempt 2: Obfuscated keys**
+```cpp
+// Split key across multiple variables
+const char k1[] = {0x54, 0x68, 0x69, 0x73};
+const char k2[] = {0x49, 0x73, 0x4E, 0x6F};
+const char k3[] = {0x74, 0x53, 0x65, 0x63};
+// ... reconstruct at runtime
+
+std::string reconstructKey() {
+    std::string key;
+    key.append(k1, sizeof(k1));
+    key.append(k2, sizeof(k2));
+    key.append(k3, sizeof(k3));
+    // XOR with another value for extra obfuscation
+    for (size_t i = 0; i < key.length(); i++) {
+        key[i] ^= 0x42;
+    }
+    return key;
+}
+```
+
+Still not great - a determined attacker could trace the key reconstruction.
+
+**Attempt 3: Dynamic key generation based on device properties**
+```cpp
+std::string generateDeviceKey(JNIEnv* env, jobject context) {
+    // Get Android ID
+    jclass settingsClass = env->FindClass("android/provider/Settings$Secure");
+    jmethodID getStringMethod = env->GetStaticMethodID(settingsClass, "getString",
+        "(Landroid/content/ContentResolver;Ljava/lang/String;)Ljava/lang/String;");
+    
+    // Get ContentResolver
+    jclass contextClass = env->GetObjectClass(context);
+    jmethodID getContentResolverMethod = env->GetMethodID(contextClass, 
+        "getContentResolver", "()Landroid/content/ContentResolver;");
+    jobject contentResolver = env->CallObjectMethod(context, getContentResolverMethod);
+    
+    // Get Android ID
+    jstring androidIdKey = env->NewStringUTF("android_id");
+    jstring androidId = (jstring)env->CallStaticObjectMethod(settingsClass, 
+        getStringMethod, contentResolver, androidIdKey);
+    
+    const char* androidIdStr = env->GetStringUTFChars(androidId, nullptr);
+    
+    // Combine with package signature
+    std::string deviceKey = std::string(androidIdStr);
+    deviceKey += getPackageSignature(env, context);
+    
+    // Hash it
+    unsigned char hash[32];
+    SHA256((unsigned char*)deviceKey.c_str(), deviceKey.length(), hash);
+    
+    env->ReleaseStringUTFChars(androidId, androidIdStr);
+    
+    return std::string((char*)hash, 32);
+}
+```
+
+This was better - the key was unique per device and couldn't be extracted without running the code.
+
+## The Final Architecture
+
+After months of iteration, here's what the final architecture looked like:
+
+```cpp
+// secure_core.cpp - The final implementation
+class SecureCore {
+private:
+    std::vector<uint8_t> sessionKey;
+    bool isInitialized = false;
+    std::thread integrityChecker;
+    
+    // Multiple layers of obfuscation
+    void initializeKeys() {
+        // Layer 1: Device-specific key
+        std::vector<uint8_t> deviceKey = generateDeviceKey();
+        
+        // Layer 2: Time-based component
+        auto timestamp = std::chrono::system_clock::now().time_since_epoch().count();
+        
+        // Layer 3: Random salt
+        uint8_t salt[16];
+        RAND_bytes(salt, sizeof(salt));
+        
+        // Combine using PBKDF2
+        PKCS5_PBKDF2_HMAC((char*)deviceKey.data(), deviceKey.size(),
+                          salt, sizeof(salt),
+                          10000, // iterations
+                          EVP_sha256(),
+                          32, // key length
+                          sessionKey.data());
+        
+        // Start integrity monitoring
+        integrityChecker = std::thread([this]() {
+            while (isInitialized) {
+                checkIntegrity();
+                std::this_thread::sleep_for(std::chrono::seconds(rand() % 10 + 5));
+            }
+        });
+    }
+    
+    void checkIntegrity() {
+        // Check for debugger
+        if (isDebuggerAttached()) {
+            subtlyCorruptState();
+            return;
+        }
+        
+        // Check for hooks (Frida, Xposed)
+        if (detectHooks()) {
+            subtlyCorruptState();
+            return;
+        }
+        
+        // Verify signature
+        if (!verifyAppSignature()) {
+            subtlyCorruptState();
+            return;
+        }
+        
+        // Check for emulator
+        if (isEmulator()) {
+            // Emulators are OK for testing, just log it
+            logSuspiciousActivity("Running on emulator");
+        }
+    }
+    
+    // Instead of crashing, subtly break functionality
+    void subtlyCorruptState() {
+        // Randomly flip bits in the key
+        if (!sessionKey.empty()) {
+            sessionKey[rand() % sessionKey.size()] ^= (1 << (rand() % 8));
+        }
+        // Decryption will fail, but not immediately obvious why
+    }
+    
+public:
+    std::vector<uint8_t> encrypt(const std::vector<uint8_t>& data) {
+        if (!isInitialized) {
+            initializeKeys();
+            isInitialized = true;
+        }
+        
+        // Use AES-256-GCM for authenticated encryption
+        EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
+        EVP_EncryptInit_ex(ctx, EVP_aes_256_gcm(), nullptr, 
+                          sessionKey.data(), nullptr);
+        
+        // Generate random IV
+        uint8_t iv[12];
+        RAND_bytes(iv, sizeof(iv));
+        EVP_EncryptInit_ex(ctx, nullptr, nullptr, nullptr, iv);
+        
+        // Encrypt
+        std::vector<uint8_t> ciphertext(data.size() + 16);
+        int len;
+        EVP_EncryptUpdate(ctx, ciphertext.data(), &len, data.data(), data.size());
+        int ciphertextLen = len;
+        
+        EVP_EncryptFinal_ex(ctx, ciphertext.data() + len, &len);
+        ciphertextLen += len;
+        
+        // Get tag
+        uint8_t tag[16];
+        EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_GET_TAG, 16, tag);
+        
+        EVP_CIPHER_CTX_free(ctx);
+        
+        // Combine IV + ciphertext + tag
+        std::vector<uint8_t> result;
+        result.insert(result.end(), iv, iv + sizeof(iv));
+        result.insert(result.end(), ciphertext.begin(), 
+                     ciphertext.begin() + ciphertextLen);
+        result.insert(result.end(), tag, tag + sizeof(tag));
+        
+        return result;
+    }
+};
+```
+
+## The Integration Challenge
+
+Getting this native library to work seamlessly with our Kotlin codebase was another adventure. JNI is not forgiving - one wrong move and the app crashes with no useful error message.
+
+I created a Kotlin wrapper to make it easy for other developers to use:
+
+```kotlin
+// NativeSecurityWrapper.kt
+class NativeSecurityWrapper {
+    companion object {
+        init {
+            System.loadLibrary("security-native")
+        }
+        
+        @JvmStatic
+        external fun initializeSecurity(context: Context): Boolean
+        
+        @JvmStatic
+        external fun encryptData(data: ByteArray): ByteArray
+        
+        @JvmStatic
+        external fun decryptData(data: ByteArray): ByteArray
+    }
+    
+    private var initialized = false
+    
+    fun initialize(context: Context) {
+        if (!initialized) {
+            initialized = initializeSecurity(context)
+            if (!initialized) {
+                throw SecurityException("Failed to initialize security module")
+            }
+        }
+    }
+    
+    fun encrypt(data: String): String {
+        val encrypted = encryptData(data.toByteArray())
+        return Base64.encodeToString(encrypted, Base64.NO_WRAP)
+    }
+    
+    fun decrypt(data: String): String {
+        val encrypted = Base64.decode(data, Base64.NO_WRAP)
+        val decrypted = decryptData(encrypted)
+        return String(decrypted)
+    }
+}
+```
+
+The first time we integrated this into the main app, it crashed immediately. The error? "java.lang.UnsatisfiedLinkError: Native method not found". Turns out, C++ name mangling was changing the function names. I had to add `extern "C"` to every JNI function.
+
+Another fun bug: the app worked perfectly on my Pixel phone but crashed on Samsung devices. After two days of debugging, I discovered Samsung's custom Android build handled certain native memory operations differently. The fix was embarrassingly simple - I was releasing a JNI reference twice.
+
+## Performance Impact
+
+I was worried about performance. Native code is faster than Java, but JNI calls have overhead. We ran extensive benchmarks:
+
+```kotlin
+// Benchmark results on Pixel 6
+// Encrypting 1KB of data, 1000 iterations
+
+// Old Java implementation
+// Average: 2.3ms per operation
+// Total: 2,300ms
+
+// New native implementation  
+// Average: 0.8ms per operation
+// Total: 800ms
+
+// 65% performance improvement!
+```
+
+The native implementation was actually faster! The JNI overhead was negligible compared to the cryptographic operations.
+
+## The Production Rollout
+
+We couldn't just push this to 2 million users and hope for the best. The rollout was carefully staged:
+
+1. **Internal testing** (2 weeks): Our QA team tried to break it
+2. **Beta program** (1 month): 1,000 volunteers used a special build
+3. **Staged rollout** (2 months): 1% → 5% → 10% → 25% → 50% → 100%
+
+During the beta, we discovered the library crashed on Android 5.0 devices (API level 21). The OpenSSL version we were using wasn't compatible. I had to conditionally compile different versions:
+
+```cpp
+#if __ANDROID_API__ >= 23
+    // Use modern OpenSSL features
+    EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
+#else
+    // Fallback for older Android
+    EVP_CIPHER_CTX ctx;
+    EVP_CIPHER_CTX_init(&ctx);
+#endif
+```
+
+## The Unexpected Benefits
+
+Six months after deployment, we noticed something interesting in our analytics. App crashes had decreased by 15%. It turned out our anti-tampering code was catching other issues too - corrupted installations, modified system libraries, even some device-specific bugs.
+
+The security team was happy too. We hadn't had a single successful key extraction attempt since the deployment. Penetration testers told us it would take "nation-state level resources" to break our implementation. That might be an exaggeration, but it felt good to hear.
+
+## What I Learned
+
+Building this security library taught me more than just NDK and C++. Here are the key lessons:
+
+1. **Security is layers**: No single technique is foolproof. Combine multiple approaches.
+
+2. **Obscurity helps (a little)**: "Security through obscurity" is bad as the only defense, but it's a useful additional layer.
+
+3. **Performance matters**: If security makes the app unusable, people will find ways around it.
+
+4. **Test on real devices**: Emulators don't catch device-specific issues.
+
+5. **Plan for failure**: Our subtle corruption approach meant that even if someone bypassed our security, they wouldn't immediately know they succeeded.
+
+## The Code That Didn't Make It
+
+Not everything I tried worked. Here's my favorite failure - an attempt to use the accelerometer to generate entropy:
+
+```cpp
+// Don't do this - it's terrible for UX
+std::vector<uint8_t> generateEntropyFromMotion(JNIEnv* env, jobject context) {
+    // Register sensor listener
+    // Wait for user to shake phone
+    // Use accelerometer data as random seed
+    
+    // Users hated this - "Why do I need to shake my phone to open the app?"
+    // Removed after one day in beta
+}
+```
+
+## Community Response
+
+When I presented this approach at DroidCon Vietnam, the response was mixed. Some developers loved the thoroughness, others thought it was overkill. One comment stuck with me: "You're not protecting nuclear codes, it's just a banking app."
+
+But that's the thing - for our users, their life savings aren't "just" anything. One data breach could destroy lives. Maybe we went overboard, but I sleep better knowing we did everything we could.
+
+A security researcher from Singapore reached out after the talk. He'd tried to crack our implementation as a challenge and gave up after a week. His message: "Your anti-debugging is annoying as hell. Good job." That made my month.
+
+## Open Source Considerations
+
+I wanted to open-source the library, but legal said no - "security through obscurity" apparently includes not showing your code to the world. Fair enough. But I did release a simplified version with the anti-tampering techniques removed: [github.com/khoivan/android-native-security](https://github.com/khoivan/android-native-security).
+
+Within a month, it had 500 stars and developers from around the world were contributing improvements. Someone even ported it to iOS, which was ironic since I barely understand Objective-C.
+
+## What's Next
+
+We're now working on version 2.0. The plan includes:
+- Rust instead of C++ (memory safety!)
+- Hardware security module integration
+- Biometric-locked keys
+- Post-quantum cryptography (yes, we're thinking that far ahead)
+
+Looking back at that 2 AM wake-up call, I'm grateful it happened. It pushed me out of my comfort zone and into native development. I learned more in those six months than in the previous two years.
+
+## Final Thoughts
+
+If you're building a security-sensitive Android app, here's my advice:
+
+1. **Start with the basics**: Use Android Keystore, enable ProGuard, certificate pinning
+2. **Go native for sensitive operations**: It's not bulletproof, but it raises the bar significantly
+3. **Add active protections**: Anti-debugging, anti-tampering, integrity checks
+4. **Monitor everything**: Log suspicious behavior (without violating privacy)
+5. **Stay humble**: There's always someone smarter trying to break your security
+
+The native library now protects millions of transactions every day. It's not perfect - nothing is - but it's good enough that attackers move on to easier targets. In security, that's often the best you can hope for.
+
+Sometimes I still wake up at 2 AM, worried that someone found a vulnerability. But then I remember: we've built something solid, we monitor it carefully, and we're ready to respond if needed. That's all you can do.
+
+Oh, and that security researcher who called our anti-debugging "annoying as hell"? He's now on our security team. Sometimes the best way to beat them is to hire them.
+
+---
+
+*If you're interested in Android native development or have questions about our implementation, reach out on [Twitter](https://twitter.com/khoivan). I can't share all the details (obviously), but I'm happy to discuss the general approaches and lessons learned.*
+
+*And if you manage to crack our security... please do the responsible thing and report it. We have a bug bounty program. Don't be the person who wakes me up at 2 AM again.*
