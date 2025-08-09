@@ -1,0 +1,199 @@
+---
+export interface Props {
+  code: string
+  lang?: string
+  filename?: string
+  showLineNumbers?: boolean
+  highlightLines?: number[]
+}
+
+const { code, lang = 'text', filename, showLineNumbers = false, highlightLines = [] } = Astro.props
+
+// Generate unique ID for this code block
+const id = Math.random().toString(36).substring(7)
+---
+
+<div class="code-block-wrapper group relative my-6">
+  {filename && (
+    <div class="code-block-header flex items-center justify-between rounded-t-lg border-b border-gray-700 bg-gray-900 px-4 py-2">
+      <span class="text-sm font-medium text-gray-400">{filename}</span>
+      <span class="text-xs uppercase tracking-wider text-gray-500">{lang}</span>
+    </div>
+  )}
+  
+  <div class="code-block-container relative">
+    <pre
+      id={`code-${id}`}
+      class={`overflow-x-auto ${filename ? 'rounded-b-lg' : 'rounded-lg'} bg-gray-900 p-4 text-sm`}
+      data-lang={lang}
+    ><code class="language-{lang}">{code}</code></pre>
+    
+    <button
+      id={`copy-${id}`}
+      aria-label="Copy code"
+      class="copy-button absolute right-2 top-2 rounded-md bg-gray-800 p-2 text-gray-400 opacity-0 transition-all duration-200 hover:bg-gray-700 hover:text-gray-200 group-hover:opacity-100"
+      data-code={code}
+    >
+      <svg
+        class="copy-icon h-5 w-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+        ></path>
+      </svg>
+      <svg
+        class="check-icon hidden h-5 w-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M5 13l4 4L19 7"
+        ></path>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<style>
+  .code-block-wrapper {
+    @apply relative;
+  }
+
+  .code-block-header {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  pre {
+    @apply !m-0;
+    tab-size: 2;
+    line-height: 1.6;
+  }
+
+  pre code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.875rem;
+    font-feature-settings: 'liga' 1, 'calt' 1;
+    @apply text-gray-300;
+  }
+
+  /* Syntax highlighting colors */
+  .language-javascript,
+  .language-typescript,
+  .language-jsx,
+  .language-tsx {
+    @apply text-gray-300;
+  }
+
+  /* Keywords */
+  .token.keyword,
+  .token.control,
+  .token.conditional,
+  .token.loop {
+    @apply text-purple-400;
+  }
+
+  /* Strings */
+  .token.string,
+  .token.char,
+  .token.attr-value {
+    @apply text-green-400;
+  }
+
+  /* Functions */
+  .token.function {
+    @apply text-blue-400;
+  }
+
+  /* Comments */
+  .token.comment,
+  .token.block-comment,
+  .token.prolog,
+  .token.doctype,
+  .token.cdata {
+    @apply text-gray-500 italic;
+  }
+
+  /* Numbers */
+  .token.number,
+  .token.boolean {
+    @apply text-orange-400;
+  }
+
+  /* Variables */
+  .token.variable,
+  .token.constant,
+  .token.property {
+    @apply text-cyan-400;
+  }
+
+  /* Classes */
+  .token.class-name {
+    @apply text-yellow-400;
+  }
+
+  /* Operators */
+  .token.operator,
+  .token.punctuation {
+    @apply text-gray-400;
+  }
+
+  /* Dark mode adjustments */
+  :global(.dark) .code-block-container {
+    @apply shadow-xl;
+  }
+
+  :global(.dark) pre {
+    @apply bg-gray-950;
+  }
+
+  :global(.dark) .code-block-header {
+    @apply bg-gray-950 border-gray-800;
+  }
+</style>
+
+<script>
+  // Copy functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const copyButtons = document.querySelectorAll('[id^="copy-"]')
+    
+    copyButtons.forEach((button) => {
+      button.addEventListener('click', async () => {
+        const code = button.getAttribute('data-code')
+        if (!code) return
+        
+        try {
+          await navigator.clipboard.writeText(code)
+          
+          // Show success state
+          const copyIcon = button.querySelector('.copy-icon')
+          const checkIcon = button.querySelector('.check-icon')
+          
+          if (copyIcon && checkIcon) {
+            copyIcon.classList.add('hidden')
+            checkIcon.classList.remove('hidden')
+            
+            // Reset after 2 seconds
+            setTimeout(() => {
+              copyIcon.classList.remove('hidden')
+              checkIcon.classList.add('hidden')
+            }, 2000)
+          }
+        } catch (err) {
+          console.error('Failed to copy code:', err)
+        }
+      })
+    })
+  })
+</script>
