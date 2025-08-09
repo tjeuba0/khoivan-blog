@@ -3,7 +3,7 @@ title: 'Kotlin Coroutines & Flow - Xử lý bất đồng bộ như một Pro'
 description: 'Deep dive vào Kotlin Coroutines và Flow, từ basic concepts đến advanced patterns trong Android development'
 pubDate: 2024-01-20
 author: 'Khoi Van'
-category: 'article'
+category: 'engineering'
 tags: ['kotlin', 'coroutines', 'flow', 'android', 'async', 'reactive']
 featured: true
 language: 'vi'

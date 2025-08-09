@@ -5,7 +5,7 @@ pubDate: 2024-01-10
 author: 'Khoi Van'
 # heroImage: '/blog-placeholder-1.jpg'
 # heroImageAlt: 'Clean Architecture diagram for Android'
-category: 'tutorial'
+category: 'engineering'
 tags: ['android', 'clean-architecture', 'kotlin', 'mvvm', 'jetpack-compose']
 featured: true
 language: 'vi'

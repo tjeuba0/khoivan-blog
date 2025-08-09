@@ -3,7 +3,7 @@ title: 'Android Security Best Practices cho Banking Apps'
 description: 'Hướng dẫn chi tiết về security trong Android apps, đặc biệt cho Banking và Fintech applications'
 pubDate: 2024-01-25
 author: 'Khoi Van'
-category: 'article'
+category: 'engineering'
 tags: ['android', 'security', 'banking', 'encryption', 'biometric', 'fintech']
 featured: false
 language: 'vi'

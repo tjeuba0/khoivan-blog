@@ -32,9 +32,12 @@ const blog = defineCollection({
         heroImage: image().optional(),
         heroImageAlt: z.string().optional(),
 
-        // Categorization
-        category: z.enum(['tutorial', 'article', 'opinion', 'case-study']).default('article'),
+        // Categorization - Simpler, more human categories
+        category: z.enum(['engineering', 'life', 'notes', 'projects']).default('notes'),
         tags: z.array(z.string()).default([]),
+        
+        // Mood/tone for personal posts
+        mood: z.enum(['technical', 'personal', 'reflective', 'humorous']).optional(),
 
         // Series/Multi-part posts
         series: z.string().optional(),

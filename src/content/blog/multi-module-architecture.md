@@ -3,7 +3,7 @@ title: 'Multi-Module Architecture trong Android - Scale your app đúng cách'
 description: 'Hướng dẫn xây dựng Multi-Module Architecture cho Android apps, từ setup đến best practices'
 pubDate: 2024-01-30
 author: 'Khoi Van'
-category: 'case-study'
+category: 'projects'
 tags: ['android', 'architecture', 'multi-module', 'gradle', 'kotlin', 'scalability']
 featured: false
 language: 'vi'

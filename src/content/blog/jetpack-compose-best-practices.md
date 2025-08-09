@@ -3,7 +3,7 @@ title: 'Jetpack Compose Best Practices - Từ cơ bản đến nâng cao'
 description: 'Tổng hợp các best practices khi làm việc với Jetpack Compose, từ performance optimization đến state management'
 pubDate: 2024-01-15
 author: 'Khoi Van'
-category: 'tutorial'
+category: 'engineering'
 tags: ['jetpack-compose', 'android', 'kotlin', 'ui', 'performance']
 featured: false
 language: 'vi'
