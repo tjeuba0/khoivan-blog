@@ -3,43 +3,24 @@ import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import BlogCard from '../components/BlogCard.astro'
 
-// Get recent posts
+// Get all posts
 const allPosts = await getCollection('blog')
-const recentPosts = allPosts
+const posts = allPosts
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 5)
 ---
 
-<BaseLayout title="Khoi Van - Android Developer" description="Personal blog about Android development, software engineering, and life in Saigon">
+<BaseLayout title="Khoi Van" description="Personal blog about Android development, software engineering, and life in Saigon">
   <div class="mx-auto max-w-3xl px-4 py-12">
-    <!-- Simple intro -->
-    <section class="mb-12">
-      <h1 class="mb-4 text-3xl font-serif font-semibold text-gray-900 dark:text-gray-100">
-        Khoi Van
-      </h1>
-      <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
-        Android Developer based in Saigon. Currently building banking apps for millions of users at VietinBank. 
-        Writing about software engineering, mobile development, and occasional life stories.
-      </p>
-    </section>
+    <!-- Page title -->
+    <h1 class="mb-2 text-3xl font-bold">Posts</h1>
+    <p class="mb-12 text-gray-600 italic">All the articles I've posted.</p>
 
-    <!-- Recent posts -->
-    <section>
-      <h2 class="mb-8 text-2xl font-serif font-semibold text-gray-900 dark:text-gray-100">
-        Recent Posts
-      </h2>
-      <div class="space-y-0">
-        {recentPosts.map((post) => (
-          <BlogCard post={post} />
-        ))}
-      </div>
-      
-      <div class="mt-12 text-center">
-        <a href="/blog" class="text-blue-600 hover:underline dark:text-blue-400">
-          View all posts →
-        </a>
-      </div>
-    </section>
+    <!-- Posts list -->
+    <div>
+      {posts.map((post) => (
+        <BlogCard post={post} />
+      ))}
+    </div>
   </div>
 </BaseLayout>
