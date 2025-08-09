@@ -1,11 +1,184 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content'
+import Layout from '../layouts/Layout.astro'
+import Card from '../components/Card.astro'
+import BlogCard from '../components/BlogCard.astro'
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// Get recent posts for homepage
+const allPosts = await getCollection('blog')
+const recentPosts = allPosts
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3)
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Khoi Van - Android Developer">
+  <main>
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1>Xin chào, tôi là <span class="gradient-text">Khoi Van</span></h1>
+      <p class="tagline">
+        Android Developer với 8 năm kinh nghiệm<br />
+        Chuyên về Clean Architecture, Jetpack Compose & Multi-Module
+      </p>
+      <div class="cta-buttons">
+        <a href="/blog" class="btn btn-primary">Đọc Blog</a>
+        <a href="/about" class="btn btn-secondary">Về tôi</a>
+      </div>
+    </section>
+
+    <!-- Featured Section -->
+    <section class="features">
+      <h2>Chuyên môn</h2>
+      <ul role="list" class="link-card-grid">
+        <Card
+          href="/blog"
+          title="Clean Architecture"
+          body="Xây dựng ứng dụng Android với kiến trúc sạch, dễ maintain và scale."
+        />
+        <Card
+          href="/blog"
+          title="Jetpack Compose"
+          body="UI toolkit hiện đại cho Android với declarative approach."
+        />
+        <Card
+          href="/blog"
+          title="Multi-Module"
+          body="Tổ chức code theo modules độc lập, build time nhanh hơn."
+        />
+        <Card
+          href="/blog"
+          title="Kotlin Coroutines"
+          body="Xử lý bất đồng bộ hiệu quả với Coroutines và Flow."
+        />
+      </ul>
+    </section>
+
+    <!-- Recent Posts Preview -->
+    <section class="recent-posts">
+      <h2>Bài viết mới nhất</h2>
+      {
+        recentPosts.length > 0 ? (
+          <div class="blog-grid">
+            {recentPosts.map((post) => (
+              <BlogCard post={post} />
+            ))}
+          </div>
+        ) : (
+          <p class="no-posts">Đang cập nhật nội dung...</p>
+        )
+      }
+      <p class="view-all"><a href="/blog">Xem tất cả →</a></p>
+    </section>
+  </main>
 </Layout>
+
+<style>
+  main {
+    margin: auto;
+    padding: 1rem;
+    width: 800px;
+    max-width: calc(100% - 2rem);
+  }
+
+  .hero {
+    text-align: center;
+    padding: 4rem 0;
+  }
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 1em;
+  }
+
+  .gradient-text {
+    background-image: linear-gradient(45deg, #4f39fa, #da62c4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .tagline {
+    font-size: 1.25rem;
+    color: #666;
+    margin-bottom: 2rem;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .btn {
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 0.2s;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .btn-primary {
+    background: linear-gradient(45deg, #4f39fa, #da62c4);
+    color: white;
+  }
+
+  .btn-secondary {
+    border: 2px solid #4f39fa;
+    color: #4f39fa;
+  }
+
+  .features {
+    padding: 2rem 0;
+  }
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .link-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
+    gap: 1rem;
+    padding: 0;
+  }
+
+  .recent-posts {
+    padding: 2rem 0;
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .no-posts {
+    text-align: center;
+    color: #666;
+    padding: 2rem;
+  }
+
+  .view-all {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .view-all a {
+    color: #4f39fa;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .view-all a:hover {
+    text-decoration: underline;
+  }
+</style>

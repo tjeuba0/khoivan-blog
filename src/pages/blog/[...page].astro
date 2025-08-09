@@ -1,0 +1,165 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import BlogCard from '../../components/BlogCard.astro'
+import Pagination from '../../components/Pagination.astro'
+
+export async function getStaticPaths({ paginate }) {
+  const allPosts = await getCollection('blog')
+
+  // Filter out drafts and sort by date (newest first)
+  const publishedPosts = allPosts
+    .filter((post) => !post.data.draft)
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+
+  // Generate paginated pages
+  return paginate(publishedPosts, {
+    pageSize: 6,
+  })
+}
+
+const { page } = Astro.props
+
+// Get featured posts for the sidebar (only on first page)
+const allPosts = await getCollection('blog')
+const featuredPosts =
+  page.currentPage === 1
+    ? allPosts
+        .filter((post) => !post.data.draft && post.data.featured)
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+        .slice(0, 3)
+    : []
+
+const pageTitle =
+  page.currentPage === 1
+    ? 'Blog - Android Development & Tech Articles'
+    : `Blog - Trang ${page.currentPage}`
+
+const pageDescription =
+  'Chia sẻ kiến thức về Android, Clean Architecture, Jetpack Compose, và các công nghệ mobile hiện đại.'
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <!-- Page Header -->
+    <div class="mb-12 text-center">
+      <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+        Blog & Technical Articles
+      </h1>
+      <p class="mt-4 text-lg text-gray-600">
+        {pageDescription}
+      </p>
+    </div>
+
+    <div class="grid gap-8 lg:grid-cols-3">
+      <!-- Main Content - Blog Posts -->
+      <div class="lg:col-span-2">
+        {
+          page.data.length > 0 ? (
+            <>
+              <div class="grid gap-8 md:grid-cols-2">
+                {page.data.map((post) => (
+                  <BlogCard post={post} />
+                ))}
+              </div>
+
+              {page.lastPage > 1 && (
+                <div class="mt-12">
+                  <Pagination page={page} />
+                </div>
+              )}
+            </>
+          ) : (
+            <div class="rounded-lg bg-gray-50 p-8 text-center">
+              <svg
+                class="mx-auto h-12 w-12 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                />
+              </svg>
+              <h3 class="mt-2 text-sm font-medium text-gray-900">Chưa có bài viết</h3>
+              <p class="mt-1 text-sm text-gray-500">Đang cập nhật nội dung mới.</p>
+            </div>
+          )
+        }
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="lg:col-span-1">
+        {/* Featured Posts - Only show on first page */}
+        {
+          featuredPosts.length > 0 && (
+            <div class="mb-8 rounded-lg bg-white p-6 shadow">
+              <h2 class="mb-4 text-lg font-semibold text-gray-900">Bài viết nổi bật</h2>
+              <div class="space-y-4">
+                {featuredPosts.map((post) => (
+                  <a href={`/blog/${post.id}/`} class="group block">
+                    <h3 class="text-sm font-medium text-gray-900 group-hover:text-blue-600">
+                      {post.data.title}
+                    </h3>
+                    <p class="mt-1 text-xs text-gray-500">
+                      {post.data.pubDate.toLocaleDateString('vi-VN')}
+                    </p>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )
+        }
+
+        {/* Categories */}
+        <div class="mb-8 rounded-lg bg-white p-6 shadow">
+          <h2 class="mb-4 text-lg font-semibold text-gray-900">Danh mục</h2>
+          <div class="space-y-2">
+            <a
+              href="/blog/category/tutorial"
+              class="block text-sm text-gray-600 hover:text-blue-600"
+            >
+              Tutorials
+            </a>
+            <a
+              href="/blog/category/article"
+              class="block text-sm text-gray-600 hover:text-blue-600"
+            >
+              Articles
+            </a>
+            <a
+              href="/blog/category/opinion"
+              class="block text-sm text-gray-600 hover:text-blue-600"
+            >
+              Opinions
+            </a>
+            <a
+              href="/blog/category/case-study"
+              class="block text-sm text-gray-600 hover:text-blue-600"
+            >
+              Case Studies
+            </a>
+          </div>
+        </div>
+
+        {/* About */}
+        <div class="rounded-lg bg-white p-6 shadow">
+          <h2 class="mb-4 text-lg font-semibold text-gray-900">Về tác giả</h2>
+          <p class="text-sm text-gray-600">
+            Khoi Van - Android Developer với 8+ năm kinh nghiệm. Chuyên về Clean Architecture,
+            Jetpack Compose, và phát triển ứng dụng Banking/Fintech.
+          </p>
+          <a
+            href="/about"
+            class="mt-4 inline-block text-sm font-medium text-blue-600 hover:text-blue-500"
+          >
+            Xem thêm →
+          </a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
