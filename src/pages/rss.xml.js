@@ -21,7 +21,7 @@ export async function GET(context) {
       author: post.data.author,
       categories: [post.data.category, ...post.data.tags],
       // Compute the link from the post slug
-      link: `/blog/${post.id}/`,
+      link: `/blog/${post.id}`,
     })),
     customData: `<language>vi-vn</language>`,
     stylesheet: '/rss-styles.xsl',

@@ -15,7 +15,7 @@ export interface Props {
 }
 
 const { post } = Astro.props
-const url = `/blog/${post.id}/`
+const url = `/blog/${post.id}`
 
 // Format date for display
 const formattedDate = post.data.pubDate.toLocaleDateString('vi-VN', {
