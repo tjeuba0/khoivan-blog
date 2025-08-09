@@ -1,0 +1,154 @@
+---
+title: 'Android CI/CD với GitHub Actions trong 15 phút'
+description: 'Setup automated testing và deployment cho Android app'
+pubDate: 2025-01-07
+author: 'Khoi Van'
+category: 'engineering'
+tags: ['android', 'ci-cd', 'github-actions']
+mood: 'technical'
+---
+
+import Callout from '../../components/mdx/Callout.astro'
+import CodeDemo from '../../components/mdx/CodeDemo.astro'
+
+Tired của việc manual build và test? Setup CI/CD một lần, relax forever.
+
+## Basic Workflow
+
+<CodeDemo title=".github/workflows/android.yml">
+```yaml
+name: Android CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    
+    - name: Cache Gradle
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+    
+    - name: Run Tests
+      run: ./gradlew test
+    
+    - name: Upload Test Reports
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-reports
+        path: app/build/reports/tests
+```
+</CodeDemo>
+
+<Callout type="info">
+Cache Gradle dependencies giảm build time từ 8 phút xuống 3 phút.
+</Callout>
+
+## Build & Sign APK
+
+<CodeDemo title="Secure Signing">
+```yaml
+- name: Decode Keystore
+  env:
+    KEYSTORE: ${{ secrets.KEYSTORE_BASE64 }}
+  run: |
+    echo $KEYSTORE | base64 --decode > app/keystore.jks
+
+- name: Build Release APK
+  env:
+    KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+    KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+    KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+  run: |
+    ./gradlew assembleRelease \
+      -Pandroid.injected.signing.store.file=keystore.jks \
+      -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
+      -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
+      -Pandroid.injected.signing.key.password=$KEY_PASSWORD
+```
+</CodeDemo>
+
+<Callout type="warning" title="Security">
+Store keystore as base64 trong GitHub Secrets. NEVER commit keystore file!
+</Callout>
+
+## Deploy to Play Store
+
+<CodeDemo title="Auto Deploy">
+```yaml
+- name: Deploy to Play Store
+  uses: r0adkll/upload-google-play@v1
+  with:
+    serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT }}
+    packageName: com.yourapp.package
+    releaseFiles: app/build/outputs/bundle/release/app-release.aab
+    track: internal
+    status: draft
+```
+</CodeDemo>
+
+## Slack Notifications
+
+<CodeDemo title="Notify Team">
+```yaml
+- name: Notify Slack
+  if: always()
+  uses: 8398a7/action-slack@v3
+  with:
+    status: ${{ job.status }}
+    text: |
+      Build ${{ job.status }}
+      Branch: ${{ github.ref }}
+      Commit: ${{ github.sha }}
+    webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+```
+</CodeDemo>
+
+## Matrix Testing
+
+<CodeDemo title="Test Multiple Versions">
+```yaml
+strategy:
+  matrix:
+    api-level: [29, 31, 33]
+    
+- name: Run Instrumented Tests
+  uses: reactivecircus/android-emulator-runner@v2
+  with:
+    api-level: ${{ matrix.api-level }}
+    script: ./gradlew connectedCheck
+```
+</CodeDemo>
+
+<Callout type="success">
+Result: Auto test trên 3 API levels, build signed APK, deploy to Play Store Internal Testing. Total time: 12 minutes.
+</Callout>
+
+## Cost Optimization
+
+- **Free tier**: 2,000 phút/tháng cho private repos
+- **Self-hosted runners**: Dùng Mac Mini cũ cho iOS builds
+- **Skip unnecessary builds**: Use `[skip ci]` trong commit message
+
+<CodeDemo title="Conditional Build">
+```yaml
+if: "!contains(github.event.head_commit.message, '[skip ci]')"
+```
+</CodeDemo>
