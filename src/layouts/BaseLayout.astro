@@ -2,7 +2,6 @@
 import SEO from '../components/SEO.astro'
 import ThemeToggle from '../components/ThemeToggle.astro'
 import Analytics from '../components/Analytics.astro'
-import { ClientRouter } from 'astro:transitions'
 import '../styles/global.css'
 
 export interface Props {
@@ -74,18 +73,15 @@ const {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-    <!-- View Transitions -->
-    <ClientRouter />
-
     <!-- Analytics -->
     <Analytics />
   </head>
-  <body class="antialiased transition-colors duration-300" style="background-color: rgb(var(--color-white)); color: rgb(var(--color-gray-900));">
+  <body class="antialiased bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
     <!-- Header -->
     <header class="py-6 md:py-8">
       <nav class="mx-auto max-w-3xl px-4">
         <div class="flex items-center justify-between">
-          <a href="/" class="text-xl md:text-2xl font-bold" style="color: rgb(var(--color-black));">
+          <a href="/" class="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">
             Khoi Van
           </a>
 
@@ -105,7 +101,7 @@ const {
     </header>
 
     <!-- Main Content -->
-    <main transition:animate="slide" class="min-h-screen">
+    <main class="min-h-screen">
       <slot />
     </main>
 
