@@ -14,20 +14,37 @@
    - Tap nút "+" để tạo file mới
    - Đặt tên file: `my-new-post.mdx`
 
-3. **Format bài viết**
+3. **Format bài viết - QUAN TRỌNG**
+   
+   ⚠️ **LƯU Ý YAML - Tránh lỗi build:**
+   - **LUÔN dùng dấu ngoặc kép (") thay vì ngoặc đơn (')**
+   - **KHÔNG thêm fields không tồn tại**
+   
+   ✅ **Format ĐÚNG:**
    ```mdx
    ---
    title: "Tiêu đề bài viết"
    description: "Mô tả ngắn"
    pubDate: 2025-01-10
    author: "Khoi Van"
-   category: "life" hoặc "engineering"
+   category: "engineering"
    tags: ["android", "life"]
-   mood: "reflective"
+   mood: "technical"
    ---
 
    Nội dung bài viết ở đây...
    ```
+   
+   📝 **Fields cho phép:**
+   - `title` (bắt buộc)
+   - `description` (bắt buộc)  
+   - `pubDate` (bắt buộc) - Format: YYYY-MM-DD
+   - `author` (tùy chọn) - Mặc định "Khoi Van"
+   - `category` - "engineering" hoặc "life"
+   - `tags` - Array của strings
+   - `mood` - "technical", "reflective", hoặc "peaceful"
+   
+   ❌ **KHÔNG dùng:** featured, language, readingTime, heroImage
 
 4. **Thêm ảnh**
    - Upload ảnh vào `public/blog-images/` 
