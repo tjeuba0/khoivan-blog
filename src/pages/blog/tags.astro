@@ -24,7 +24,7 @@ const sortedTags = Array.from(tagCounts.entries()).sort((a, b) => {
 <BaseLayout title="All Tags" description="All tags used in posts">
   <div class="mx-auto max-w-3xl px-4 py-12">
     <!-- Simple header like mckerlie -->
-    <p class="mb-8 text-gray-700">All the tags used in posts.</p>
+    <p class="mb-8 text-gray-700 dark:text-gray-300">All the tags used in posts.</p>
 
     <!-- Tags inline list - matching mckerlie.com format -->
     <div class="space-y-2 text-base">
@@ -33,11 +33,11 @@ const sortedTags = Array.from(tagCounts.entries()).sort((a, b) => {
           <>
             <a
               href={`/blog/tag/${tag}/`}
-              class="inline-block mr-4 mb-3 text-[#0969da] no-underline hover:underline hover:decoration-dashed hover:underline-offset-4"
+              class="inline-block mr-4 mb-3 text-[#0969da] dark:text-[#4692e0] no-underline hover:underline hover:decoration-dashed hover:underline-offset-4"
             >
               {tag} ({count})
             </a>
-            {index < sortedTags.length - 1 && <span class="text-gray-400 mr-4">  </span>}
+            {index < sortedTags.length - 1 && <span class="text-gray-400 dark:text-gray-500 mr-4">  </span>}
           </>
         ))
       }
