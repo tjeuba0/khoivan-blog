@@ -1,28 +1,50 @@
-title: “Mobile Platform Intel — Weekly — 2025-08-10”
+title: ‘Mobile Platform Intel — Weekly — 2025-08-10’
 
-
-
-description: “Bản tin Android/iOS dành cho mobile banking: bảo mật, policy, attestation, WebView, cùng checklist hành động.”
-
-
+description: ‘Bản tin Android/iOS cho mobile banking: bảo mật, policy, attestation, WebView; kèm checklist hành động chi tiết.’
 
 pubDate: 2025-08-10
 
-
-
-author: “Khoi Van”
-
-
-
-category: “engineering”
+author: ‘Khoi Van’
 
 
 
-tags: [“android”,“ios”,“policy”,“security”,“attestation”,“rasp”]
+
+
+heroImage: ‘/blog-images/mobile-platform-intel-2025-08-10.jpg’
 
 
 
-mood: “focused”
+
+
+
+
+heroImageAlt: ‘Monthly highlights for Android/iOS security and policy’
+
+
+
+
+
+
+
+category: ‘engineering’
+
+
+
+tags: [‘android’, ‘ios’, ‘policy’, ‘security’, ‘attestation’, ‘rasp’]
+
+
+
+featured: true
+
+
+
+language: ‘vi’
+
+
+
+readingTime: ‘12 min read’
+
+
 
 
 
@@ -34,7 +56,7 @@ TL;DR
 
 
 
-Android phát hành Security Bulletin 2025-08 yêu cầu patch level 2025-08-05; Pixel có bulletin riêng. Google Play bắt buộc targetSdkVersion=35 (Android 15) cho bản phát hành/cập nhật từ 2025-08-31. Chrome/WebView 139 ngừng hỗ trợ Android 8/9 → rủi ro bảo mật và khác biệt rendering. iOS/iPadOS 18.6 vá nhiều CVE, gồm WebKit; cần regression kỹ với WKWebView. Cập nhật thiết bị test ngay, nâng target SDK, chuẩn hoá RASP/attestation và ma trận kiểm thử web.
+Android công bố Security Bulletin 2025-08 (yêu cầu patch level 2025-08-05) và Pixel Update Bulletin riêng. Google Play bắt buộc targetSdkVersion=35 (Android 15) cho app mới/cập nhật từ 2025-08-31. Chrome/WebView 139 ngừng hỗ trợ Android 8/9, làm tăng rủi ro bảo mật và khác biệt rendering. iOS/iPadOS 18.6 vá hàng chục CVE (bao gồm WebKit), cần regression kỹ với WKWebView. Frida 17.2.15 thay đổi footprint trên iOS/Android, cần cập nhật heuristic RASP và kiểm tra attestation.
 
 
 
@@ -46,12 +68,12 @@ Android phát hành Security Bulletin 2025-08 yêu cầu patch level 2025-08-05;
 
 
 
-[P0] android/security_patch — Android Security Bulletin 2025-08: vá RCE/priv-esc trong System và thành phần vendor; yêu cầu patch level 2025-08-05.
-[P1] android/store_policy — Google Play target API: app mới/cập nhật phải target API 35 từ 2025-08-31; một số form factor còn 34.
-[P1] ios/security_patch — iOS/iPadOS 18.6: nhiều fix bảo mật, gồm WebKit; tác động trực tiếp tới WKWebView.
-[P2] android/sdk_tooling — Chrome/WebView 139: ngừng hỗ trợ Android 8/9; thiết bị cũ không còn cập nhật bảo mật.
-[P2] cross-platform/security_patch — WebKitGTK/WPE Advisory: danh sách CVE trùng họ với iOS 18.6, hữu ích cho đối chiếu.
-[P2] root_jailbreak/hook_tamper — Frida 17.2.15: cập nhật hỗ trợ iOS 26 và tối ưu Android; cần làm mới heuristic RASP.
+[P0] android/security_patch — Android Security Bulletin 2025-08: vá RCE/priv-esc; yêu cầu patch level 2025-08-05 cho baseline QA.
+[P1] android/store_policy — Google Play target API: app mới/cập nhật phải target API 35 từ 2025-08-31; Wear/Auto/TV vẫn 34.
+[P1] ios/security_patch — iOS/iPadOS 18.6: nhiều vá WebKit; tác động trực tiếp tới WKWebView trong app.
+[P2] android/sdk_tooling — Chrome/WebView 139: ngừng hỗ trợ Android 8/9; tăng rủi ro bảo mật trên thiết bị cũ.
+[P2] cross-platform/security_patch — WebKitGTK/WPE WSA-2025-0005: CVE đồng bộ với iOS 18.6, hữu ích để map phạm vi.
+[P2] root_jailbreak/hook_tamper — Frida 17.2.15: cập nhật đáng kể cho iOS 26 và bridge Android; cần làm mới cơ chế phát hiện.
 
 
 
@@ -80,8 +102,8 @@ Android Security Bulletin — August 2025
 
 
 
-Tăng rủi ro tấn công zero-click qua web/media và đặc quyền hệ thống.
-Có thể ảnh hưởng đến đăng nhập, OTP, camera check KYC, phát nội dung web.
+Rủi ro tấn công zero-click qua bề mặt web/media và thành phần hệ thống có đặc quyền.
+Có thể ảnh hưởng đến đăng nhập, OTP, giao dịch, xác minh camera KYC và tính ổn định WebView.
 
 
 
@@ -90,16 +112,16 @@ Hành động khuyến nghị
 
 
 
-Chuẩn hoá baseline thiết bị test: patch level ≥ 2025-08-05; chạy smoke test đăng nhập/OTP/giao dịch.
-Theo dõi crash/ANR liên quan WebView, media, codec; bật alert theo phiên bản OS.
-Rà soát RASP/anti-debug; đảm bảo fallback/UX khi thiết bị không đạt integrity.
+Chuẩn hoá baseline: thiết bị QA ở patch level ≥ 2025-08-05; chạy smoke test đăng nhập/OTP/giao dịch, camera và nội dung web.
+Giám sát crash/ANR theo phiên bản OS/WebView; đặt cảnh báo khi spike bất thường.
+Rà soát RASP/anti-debug; đảm bảo UX fallback khi thiết bị không đạt Play Integrity.
 
 
 
 
 
 
-Google Play policy — Target API 35 (2025-08-31)
+Pixel Update Bulletin — August 2025
 
 
 
@@ -109,8 +131,36 @@ Google Play policy — Target API 35 (2025-08-31)
 
 
 
-App/bản cập nhật không đạt target có thể bị chặn phát hành hoặc giảm khả dụng với người dùng mới trên OS mới.
-Liên quan disclosure mới cho Health/Body Sensor và các runtime permissions phát sinh.
+Pixel nhận bản vá bổ sung song song ASB, có các sửa lỗi liên quan modem/telephony.
+OTP qua SMS/telephony và các luồng xác thực số có thể bị tác động nếu firmware chưa cập nhật.
+
+
+
+
+Hành động khuyến nghị
+
+
+
+Cập nhật mọi thiết bị Pixel test lên patch 2025-08-05; test lại SMS OTP, gọi xác minh, push notification.
+Theo dõi sự khác biệt hành vi modem/telephony sau khi cập nhật.
+
+
+
+
+
+
+Google Play policy — Target API 35 (từ 2025-08-31)
+
+
+
+
+
+Ảnh hưởng
+
+
+
+App mới và mọi bản cập nhật phải target API 35; app tồn tại phải target API 34+ để tiếp tục hiển thị với người dùng mới trên OS mới.
+Cần rà soát disclosure và flow xin quyền cho nhóm Health/Body Sensor.
 
 
 
@@ -120,8 +170,8 @@ Hành động khuyến nghị
 
 
 Nâng targetSdkVersion=35; cập nhật AGP/Gradle và pipeline CI.
-Dùng SDK Upgrade Assistant và chạy regression theo matrix API 29→35.
-Chuẩn bị phương án gia hạn (deadline phụ đến 2025-11-01) nếu không kịp.
+Dùng SDK Upgrade Assistant; regression matrix API 29 → 35 cho path nâng cấp.
+Lập phương án xin gia hạn (nếu áp dụng) để tránh gián đoạn phát hành.
 
 
 
@@ -138,8 +188,8 @@ Chrome/WebView 139 ngừng hỗ trợ Android 8/9
 
 
 
-Thiết bị 8/9 không còn cập nhật Chrome/WebView → rủi ro bảo mật, khác biệt rendering/JS.
-Ảnh hưởng luồng 3DS, statement viewer, rich content trong app.
+Thiết bị 8/9 không còn cập nhật Chrome/WebView ⇒ rủi ro bảo mật và khác biệt rendering/JS.
+Tác động trực tiếp tới 3DS, statement viewer, OAuth/SSO in-app.
 
 
 
@@ -148,44 +198,10 @@ Hành động khuyến nghị
 
 
 
-Điều chỉnh matrix test yêu cầu Android 10+ cho kịch bản web nhạy cảm.
-Áp dụng guardrail: hạn chế chức năng nhạy cảm khi WebView quá cũ; hiển thị cảnh báo nâng OS.
-Giám sát chỉ số crash, WebView version, và tỉ lệ thiết bị 8/9 trong sản xuất.
+Điều chỉnh matrix test yêu cầu Android 10+ cho luồng web nhạy cảm.
+Áp dụng guardrail: hạn chế chức năng nhạy cảm trên WebView lạc hậu; cảnh báo nâng OS.
+Theo dõi tỷ lệ thiết bị 8/9 và lên lộ trình khuyến khích nâng cấp.
 
-
-
-
-Bảng tóm tắt deadline/khoá kỹ thuật
-
-Chủ đề
-
-Yêu cầu chính
-
-Mốc thời gian
-
-Target API (Google Play)
-
-target API 35 cho app mới/cập nhật
-
-2025-08-31
-
-Gia hạn target API
-
-Có thể xin gia hạn
-
-đến 2025-11-01
-
-WebView hỗ trợ
-
-Chrome/WebView 139 yêu cầu Android 10+
-
-hiệu lực từ 2025-08
-
-ASB
-
-Patch level tối thiểu cho QA
-
-2025-08-05
 
 
 
@@ -213,8 +229,8 @@ iOS/iPadOS 18.6 — Security Content
 
 
 
-WKWebView chịu tác động từ nhiều CVE WebKit; rủi ro crash/khai thác trình duyệt in-app.
-Có thể ảnh hưởng đến SSO, 3DS, trình xem statement (HTML/PDF), deep link.
+WKWebView bị ảnh hưởng bởi nhiều CVE WebKit (bao gồm CVE đã khai thác thực tế).
+Nguy cơ crash/khai thác trình duyệt in-app; ảnh hưởng SSO, 3DS, statement viewer, deep link.
 
 
 
@@ -223,9 +239,9 @@ Hành động khuyến nghị
 
 
 
-Nâng baseline QA lên iOS/iPadOS 18.6; chạy regression web: đăng nhập, OTP auto-fill, 3DS, link statement.
-Theo dõi Rapid Security Responses (RSR) và map CVE với WebKitGTK/WPE để đánh giá phạm vi ảnh hưởng.
-Đảm bảo ATS/pinning ổn định khi WebKit nâng phiên bản; kiểm tra UI spoofing/phishing protections.
+Nâng baseline QA lên iOS/iPadOS 18.6; regression web: đăng nhập, OTP auto-fill, 3DS, link statement/PDF.
+Theo dõi Rapid Security Responses (RSR) và map CVE với WebKitGTK/WPE để ước lượng phạm vi trên cross-platform.
+Xác minh ATS/pinning và các biện pháp chống UI spoofing/phishing sau khi nâng WebKit.
 
 
 
@@ -254,8 +270,8 @@ Frida 17.2.15
 
 
 
-Cải thiện khả năng instrument trên iOS 26 và tối ưu bridge trên Android; dấu hiệu nhận diện hook có thể thay đổi.
-Rủi ro bị bypass RASP nếu heuristic cũ dựa vào tên tiến trình/lib hoặc pattern đã lỗi thời.
+Cải thiện instrument trên iOS 26, tối ưu bridge trên Android; footprint thay đổi có thể ảnh hưởng heuristic phát hiện hook.
+Heuristic cũ (tên tiến trình/lib, pipe/port) có nguy cơ bỏ lọt khi đối thủ nâng phiên bản.
 
 
 
@@ -264,9 +280,9 @@ Hành động khuyến nghị
 
 
 
-Cập nhật heuristic RASP: kiểm tra process injection, libfrida*, named pipe/port, hành vi IPC bất thường.
-Tăng cường attestation (Play Integrity/App Attest) tại màn hình nhạy cảm và trước giao dịch.
-Ghi nhận telemetry ẩn danh để theo dõi tỉ lệ thiết bị nghi vấn hook/root và tác động đến chuyển đổi.
+Cập nhật heuristic RASP: phát hiện process injection, libfrida*, named pipe/port, và hành vi IPC bất thường.
+Tăng lớp attestation (Play Integrity/App Attest) tại màn hình nhạy cảm và trước khi thực hiện giao dịch.
+Thu thập telemetry ẩn danh để theo dõi tỷ lệ thiết bị nghi vấn hook/root và tác động tới conversion.
 
 
 
@@ -291,9 +307,9 @@ Act now
 
 
 
-Cập nhật thiết bị test: Android patch 2025-08-05 và iOS/iPadOS 18.6.
-Chạy smoke/regression: đăng nhập, OTP, giao dịch, WebView/WKWebView, camera KYC.
-Bật cảnh báo & UX fallback khi Integrity/Biometric không đạt hoặc WebView lạc hậu.
+Cập nhật thiết bị test: Android 2025-08-05 và iOS/iPadOS 18.6.
+Smoke/regression: đăng nhập, OTP, giao dịch, WebView/WKWebView, camera KYC.
+Bật cảnh báo & UX fallback khi Integrity/Biometric không đạt hoặc WebView quá cũ.
 
 
 
@@ -306,10 +322,10 @@ Plan
 
 
 
-Nâng targetSdkVersion=35; cập nhật AGP/Gradle; chuẩn hoá pipeline CI.
+Nâng targetSdkVersion=35; cập nhật AGP/Gradle, chuẩn hoá pipeline CI/CD.
 Rà soát disclosure Health/Body Sensor; cập nhật privacy notes trong store.
 Chuẩn hoá danh sách thiết bị tối thiểu (Android 10+ cho luồng web nhạy cảm).
-Hoàn thiện kịch bản chaos/regression cho WebView/WKWebView (3DS, statement viewer, OAuth/SSO).
+Bổ sung kịch bản chaos/regression cho WebView/WKWebView (3DS, statement viewer, OAuth/SSO).
 
 
 
@@ -324,8 +340,8 @@ Monitor
 
 Theo dõi Pixel Update Bulletin và advisory WebKit/Chromium tiếp theo.
 Giám sát crash/ANR theo phiên bản OS/WebView; lập báo cáo xu hướng hàng tuần.
-Cập nhật định kỳ rule phát hiện hook cho Frida 17.2.x; kiểm thử bypass phổ biến.
-Quan sát tỉ lệ người dùng Android 8/9; lên lộ trình thúc đẩy nâng cấp thiết bị.
+Cập nhật định kỳ rule phát hiện hook cho Frida 17.2.x; kiểm tra bypass phổ biến.
+Quan sát tỷ lệ người dùng Android 8/9; lộ trình thúc đẩy nâng cấp thiết bị.
 
 
 
@@ -345,8 +361,7 @@ Nguồn tham khảo
 Android Security Bulletin — August 2025
 Pixel Update Bulletin — August 2025
 Meet Google Play’s target API level requirement
-Chrome support forum: Sunsetting Chrome support for Android 8/9 (Chrome 139+)
-Chrome Enterprise release notes (Android support changes)
+Sunsetting Chrome support for Android 8/9 (Chrome 139+)
 About the security content of iOS 18.6 and iPadOS 18.6
 WebKitGTK/WPE Security Advisory WSA-2025-0005
 Frida — 17.2.15 release
