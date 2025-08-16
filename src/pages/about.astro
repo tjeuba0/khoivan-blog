@@ -2,63 +2,89 @@
 import BaseLayout from '../layouts/BaseLayout.astro'
 
 const skills = {
-  Languages: ['Kotlin', 'Java', 'TypeScript', 'JavaScript', 'Swift'],
-  Android: [
+  'Core Expertise': [
+    'Android Architecture',
+    'Performance Optimization',
+    'Security Best Practices',
+    'Code Review & Mentoring',
+    'Technical Leadership',
+    'System Design',
+  ],
+  'Android Stack': [
     'Jetpack Compose',
-    'Clean Architecture',
-    'MVVM',
-    'Coroutines',
-    'Flow',
-    'Hilt/Dagger',
-    'Room',
-    'Retrofit',
+    'Kotlin Coroutines & Flow',
+    'MVVM/Clean Architecture',
+    'Dependency Injection (Hilt/Dagger)',
+    'Android Jetpack Libraries',
+    'Material Design 3',
   ],
   'Banking/Fintech': [
-    'Payment Integration',
-    'Biometric Auth',
-    'Security Best Practices',
-    'Data Encryption',
-    'PCI DSS',
+    'Mobile Banking Architecture',
+    'Payment Gateway Integration',
+    'Biometric & PIN Security',
+    'End-to-End Encryption',
+    'PCI DSS Compliance',
+    'Third-party SDK Integration',
   ],
-  Tools: ['Git', 'Jenkins', 'GitHub Actions', 'Firebase', 'Jira', 'Figma'],
+  'Engineering Practices': [
+    'Agile/Scrum Leadership',
+    'CI/CD Pipeline Design',
+    'Unit & UI Testing',
+    'Git Flow Strategy',
+    'Documentation',
+    'Team Collaboration',
+  ],
 }
 
 const experience = [
   {
     company: 'VietinBank',
     role: 'Senior Android Developer',
-    period: '2020 - Present',
+    period: 'Jun 2024 - Present',
     description:
-      'Lead development of VietinBank iPay mobile banking app serving millions of users.',
+      'Leading Android team for VietinBank\'s corporate banking application. Responsible for technical architecture, code quality, and mentoring team members.',
+  },
+  {
+    company: 'Freelance (Upwork)',
+    role: 'Android Developer',
+    period: 'Apr 2024 - Present',
+    description:
+      'Developing Android applications for international clients, providing technical consultation and performance optimization.',
+  },
+  {
+    company: 'VNPAY',
+    role: 'Android Developer',
+    period: 'Oct 2018 - Apr 2024',
+    description:
+      'Developed mobile banking applications for 8+ major Vietnamese banks. Key member in flagship projects including Agribank OMNI, VietinBank eFAST, and HDBank Mobile Banking.',
   },
   {
     company: 'FPT Software',
     role: 'Android Developer',
-    period: '2018 - 2020',
-    description: 'Developed enterprise mobile solutions for banking and finance clients.',
-  },
-  {
-    company: 'Freelance',
-    role: 'Mobile Developer',
-    period: '2016 - 2018',
-    description: 'Built various mobile applications for startups and SMEs.',
+    period: 'Oct 2017 - Oct 2018',
+    description:
+      'Developed automotive and Android TV applications for international clients including Pioneer and Netgear.',
   },
 ]
 ---
 
 <BaseLayout
-  title="About - Khoi Van"
-  description="Android Developer với 8+ năm kinh nghiệm trong phát triển ứng dụng mobile"
+  title="About - Phạm Đình Khôi Văn"
+  description="Senior Android Developer với 8+ năm kinh nghiệm chuyên sâu trong phát triển ứng dụng mobile banking, lead các dự án fintech quy mô lớn tại Việt Nam"
 >
   <div class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
     <!-- Header -->
     <div class="text-center">
-      <div class="mx-auto h-32 w-32 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600">
-      </div>
-      <h1 class="mt-6 text-4xl font-bold tracking-tight text-gray-900">Khoi Van</h1>
+      <img 
+        src="/avatar.jpg" 
+        alt="Phạm Đình Khôi Văn"
+        class="mx-auto h-32 w-32 rounded-full object-cover shadow-lg"
+      />
+      <h1 class="mt-6 text-4xl font-bold tracking-tight text-gray-900">Phạm Đình Khôi Văn</h1>
       <p class="mt-2 text-xl text-gray-600">Senior Android Developer</p>
+      <p class="mt-1 text-gray-500">Hanoi, Vietnam</p>
       <div class="mt-4 flex justify-center gap-4">
-        <a href="https://github.com" target="_blank" class="text-gray-600 hover:text-blue-600">
+        <a href="https://github.com/phamdinhkhoivan" target="_blank" class="text-gray-600 hover:text-blue-600">
           <span class="sr-only">GitHub</span>
           <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
             <path
@@ -66,7 +92,7 @@ const experience = [
             ></path>
           </svg>
         </a>
-        <a href="https://linkedin.com" target="_blank" class="text-gray-600 hover:text-blue-600">
+        <a href="https://www.linkedin.com/in/khoivan" target="_blank" class="text-gray-600 hover:text-blue-600">
           <span class="sr-only">LinkedIn</span>
           <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
             <path
@@ -74,7 +100,7 @@ const experience = [
             ></path>
           </svg>
         </a>
-        <a href="mailto:contact@khoivan.dev" class="text-gray-600 hover:text-blue-600">
+        <a href="mailto:phamdinhkhoivan@gmail.com" class="text-gray-600 hover:text-blue-600">
           <span class="sr-only">Email</span>
           <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -90,29 +116,37 @@ const experience = [
 
     <!-- About Section -->
     <section class="mt-12">
-      <h2 class="text-2xl font-bold text-gray-900">Về tôi</h2>
+      <h2 class="text-2xl font-bold text-gray-900">About Me</h2>
       <div class="prose prose-lg mt-4 text-gray-600">
         <p>
-          Xin chào! Tôi là Khoi Van, một Android Developer với hơn 8 năm kinh nghiệm trong phát
-          triển ứng dụng mobile. Hiện tại, tôi đang làm việc tại VietinBank, nơi tôi lead team phát
-          triển ứng dụng iPay Mobile Banking.
+          Hi! I'm Pham Dinh Khoi Van, a Senior Android Developer with over 8 years of experience 
+          specializing in mobile banking applications. Currently, I'm working at VietinBank, one of 
+          Vietnam's largest banks, where I lead the Android team for corporate banking solutions.
         </p>
         <p>
-          Tôi đam mê việc xây dựng các ứng dụng Android chất lượng cao với Clean Architecture, luôn
-          tìm kiếm các giải pháp tối ưu về performance và user experience. Đặc biệt, tôi có kinh
-          nghiệm sâu trong lĩnh vực Banking/Fintech với focus vào security và scalability.
+          Throughout my career, I've contributed to mobile banking solutions for most major Vietnamese 
+          banks including VPBank, HDBank, Agribank, CPBank, SGBank, and ABBank. As a key member of 
+          the Agribank OMNI project, I helped deliver one of Vietnam's largest digital banking 
+          transformations, serving millions of customers nationwide.
         </p>
         <p>
-          Ngoài công việc chính, tôi thích chia sẻ kiến thức qua blog này, contribute open source,
-          và mentoring cho các developer trẻ. Tôi tin rằng việc chia sẻ kiến thức không chỉ giúp
-          cộng đồng mà còn giúp bản thân mình phát triển.
+          As a Senior Developer, I focus not only on writing clean, maintainable code but also on 
+          mentoring junior developers, conducting architecture reviews, and making critical technical 
+          decisions. My deep passion for Android internals - from custom ROMs to system-level 
+          optimizations - enables me to design high-performance, secure solutions that meet the 
+          stringent requirements of banking applications.
+        </p>
+        <p>
+          Outside of work, I enjoy challenging myself through sports like football, running, and 
+          especially trail running. This blog is where I share technical insights, lessons learned, 
+          and stories from my journey as an Android Developer in Vietnam's dynamic fintech landscape.
         </p>
       </div>
     </section>
 
     <!-- Experience -->
     <section class="mt-12">
-      <h2 class="text-2xl font-bold text-gray-900">Kinh nghiệm</h2>
+      <h2 class="text-2xl font-bold text-gray-900">Experience</h2>
       <div class="mt-6 space-y-6">
         {
           experience.map((job) => (
@@ -132,7 +166,7 @@ const experience = [
 
     <!-- Skills -->
     <section class="mt-12">
-      <h2 class="text-2xl font-bold text-gray-900">Kỹ năng</h2>
+      <h2 class="text-2xl font-bold text-gray-900">Technical Skills</h2>
       <div class="mt-6 grid gap-6 md:grid-cols-2">
         {
           Object.entries(skills).map(([category, items]) => (
@@ -155,14 +189,14 @@ const experience = [
     <section class="mt-12 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 p-8 text-center">
       <h2 class="text-2xl font-bold text-white">Let's Connect!</h2>
       <p class="mt-2 text-blue-100">
-        Tôi luôn sẵn sàng trao đổi về công nghệ, chia sẻ kinh nghiệm, hoặc hợp tác trong các dự án
-        thú vị.
+        I'm always open to discussing technology, sharing experiences, or collaborating on
+        interesting projects.
       </p>
       <a
-        href="mailto:contact@khoivan.dev"
+        href="mailto:phamdinhkhoivan@gmail.com"
         class="mt-6 inline-block rounded-md bg-white px-6 py-3 font-semibold text-blue-600 hover:bg-blue-50"
       >
-        Liên hệ với tôi
+        Get in Touch
       </a>
     </section>
   </div>

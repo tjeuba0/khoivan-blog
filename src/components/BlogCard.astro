@@ -23,23 +23,24 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
 })
 ---
 
-<article class="mb-12">
+<article class="mb-12 pb-12 border-b border-gray-200 dark:border-orange-500/20 last:border-0">
   <h2 class="mb-2">
-    <a href={url} class="text-[#0969da] dark:text-[#4692e0] text-2xl md:text-[1.75rem] font-semibold leading-tight inline-block
-                         no-underline hover:underline hover:decoration-dashed hover:decoration-2 hover:underline-offset-4
+    <a href={url} class="text-gray-900 dark:text-white text-2xl md:text-[1.75rem] font-semibold leading-tight inline-block
+                         no-underline hover:text-blue-600 dark:hover:text-orange-500
                          transition-all duration-200">
       {post.data.title}
     </a>
   </h2>
   
   <div class="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-3">
-    <time datetime={post.data.pubDate.toISOString()}>
+    <time datetime={post.data.pubDate.toISOString()} class="dark:text-orange-500">
       {formattedDate}
     </time>
     {post.data.tags && post.data.tags.length > 0 && (
       <div class="flex gap-2">
         {post.data.tags.slice(0, 3).map((tag) => (
-          <span class="inline-block px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded text-xs">
+          <span class="inline-block px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-orange-400 
+                       border border-gray-200 dark:border-orange-500/20 rounded text-xs">
             {tag}
           </span>
         ))}
