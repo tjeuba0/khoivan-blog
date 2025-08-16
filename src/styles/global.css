@@ -16,8 +16,8 @@
   .dark {
     /* Dark theme with navy background and orange accent */
     --color-bg: 33 39 55;              /* Navy background */
-    --color-text: 243 244 246;         /* Light text */
-    --color-text-light: 209 213 219;   /* Secondary light text */
+    --color-text: 255 255 255;         /* Pure white text */
+    --color-text-light: 229 231 235;   /* Light gray for secondary text */
     --color-border: 255 107 1;         /* Orange border */
     --color-accent: 255 107 1;         /* Orange accent */
     --color-card: 41 48 66;            /* Card background */
@@ -65,13 +65,13 @@
 
   /* Selection color */
   ::selection {
-    background-color: rgb(var(--color-accent));
-    color: white;
+    background-color: rgb(var(--color-text));
+    color: rgb(var(--color-bg));
   }
   
   .dark ::selection {
     background-color: rgb(var(--color-accent));
-    color: rgb(var(--color-bg));
+    color: white;
   }
 
   /* Code blocks */
