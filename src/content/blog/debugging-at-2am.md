@@ -23,7 +23,7 @@ Thế là leo dậy, pha ly cà phê sữa đá (lúc này quán cà phê nào m
 ```kotlin
 // Logcat shows this beauty
 Fatal Exception: java.lang.NullPointerException
-at com.vietinbank.auth.LoginViewModel.kt:156
+at com.bankingapp.auth.LoginViewModel.kt:156
 ```
 
 Line 156? Cái line mà tôi commit 3 tháng trước, chạy ngon lành qua 2 môi trường test, 1 môi trường staging, và production gần 100 ngày?

@@ -1,5 +1,5 @@
 ---
-title: "Building a Native Security Library for VietinBank's Android App"
+title: "Building a Native Security Library for a Banking Android App"
 description: "The story of how I built a C++ security layer to protect sensitive banking data, from basic Java encryption to a full native library with anti-tampering"
 pubDate: 2025-01-09
 author: "Khoi Van"
@@ -10,7 +10,7 @@ mood: "technical"
 
 It was 2:17 AM on a Tuesday when my phone started buzzing. Not the gentle notification buzz, but the angry, continuous vibration that meant something was seriously wrong. Our security team had detected unusual patterns in the API traffic - someone was attempting to reverse engineer our banking app's encryption keys.
 
-I rolled out of bed, opened my laptop, and stared at the Slack messages flooding in. The VietinBank Android app, used by over 2 million customers, was under attack. Not a data breach - thankfully - but sophisticated attempts to understand our security implementation. That night changed how I think about mobile security forever.
+I rolled out of bed, opened my laptop, and stared at the Slack messages flooding in. Our banking app, used by over 2 million customers, was under attack. Not a data breach - thankfully - but sophisticated attempts to understand our security implementation. That night changed how I think about mobile security forever.
 
 ## The Problem We Were Facing
 
@@ -57,7 +57,7 @@ My initial reaction was to use Android's built-in Keystore system. It seemed lik
 ```kotlin
 // SecurityManagerV2.kt - Using Android Keystore
 class SecurityManagerV2(context: Context) {
-    private val keyAlias = "VietinBankKey"
+    private val keyAlias = "BankingAppKey"
     private val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
     
     init {
@@ -117,7 +117,7 @@ I started simple, just moving the encryption logic to JNI:
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 
 extern "C" JNIEXPORT jbyteArray JNICALL
-Java_com_vietinbank_security_NativeSecurityLib_encryptNative(
+Java_com_bankingapp_security_NativeSecurityLib_encryptNative(
     JNIEnv* env,
     jobject /* this */,
     jbyteArray data) {

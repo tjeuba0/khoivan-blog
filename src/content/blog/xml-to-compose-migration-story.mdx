@@ -1,6 +1,6 @@
 ---
 title: "From XML Hell to Jetpack Compose: Migrating 100,000 Lines of UI Code"
-description: "The real story of migrating VietinBank's Android app to Jetpack Compose - the wins, the failures, and that one time we broke production"
+description: "The real story of migrating a banking Android app to Jetpack Compose - the wins, the failures, and that one time we broke production"
 pubDate: 2025-01-08
 author: "Khoi Van"
 category: "engineering"
@@ -178,7 +178,7 @@ fun LoginScreen(
     ) {
         Image(
             painter = painterResource(R.drawable.logo),
-            contentDescription = "VietinBank Logo",
+            contentDescription = "Bank Logo",
             modifier = Modifier.size(120.dp)
         )
         
@@ -293,7 +293,7 @@ The first step was setting up interoperability:
 
 // In Activity/Fragment
 composeView.setContent {
-    VietinBankTheme {
+    BankingAppTheme {
         // Compose content here
         TransactionCard(transaction = currentTransaction)
     }
@@ -304,7 +304,7 @@ This let us migrate component by component. We started with leaf components - th
 
 ```kotlin
 // Before: Custom XML view for transaction status badge
-<com.vietinbank.ui.views.TransactionStatusBadge
+<com.bankingapp.ui.views.TransactionStatusBadge
     android:id="@+id/status_badge"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -354,7 +354,7 @@ In Compose, we decided to fix this once and for all:
 
 ```kotlin
 // ui/theme/Color.kt
-object VietinBankColors {
+object BankingColors {
     val Primary = Color(0xFF0B74B8)  // The ONE true primary
     val PrimaryVariant = Color(0xFF085A91)
     val Secondary = Color(0xFFF39200)
@@ -370,25 +370,25 @@ object VietinBankColors {
 
 // ui/theme/Theme.kt
 @Composable
-fun VietinBankTheme(
+fun BankingAppTheme(
     darkTheme: Boolean = isSystemInDarkModeEnabled(),
     content: @Composable () -> Unit
 ) {
     val colors = if (darkTheme) {
         darkColorScheme(
-            primary = VietinBankColors.Primary,
+            primary = BankingColors.Primary,
             // ... dark theme colors
         )
     } else {
         lightColorScheme(
-            primary = VietinBankColors.Primary,
+            primary = BankingColors.Primary,
             // ... light theme colors
         )
     }
     
     MaterialTheme(
         colorScheme = colors,
-        typography = VietinBankTypography,
+        typography = BankingTypography,
         content = content
     )
 }

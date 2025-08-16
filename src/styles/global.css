@@ -1,149 +1,146 @@
 @import 'tailwindcss';
 
-/* Minimalist color palette inspired by mckerlie.com */
+/* Minimalist color system with CSS variables */
 @layer base {
   :root {
-    --color-black: 0 0 0;
-    --color-gray-900: 17 17 17;
-    --color-gray-700: 51 51 51;
-    --color-gray-500: 102 102 102;
-    --color-gray-300: 153 153 153;
-    --color-gray-100: 245 245 245;
-    --color-white: 255 255 255;
-    --color-link: 0 102 204; /* Simple blue for links */
+    /* Light theme colors */
+    --color-bg: 251 254 251;           /* Very light background */
+    --color-text: 40 39 40;             /* Dark gray text */
+    --color-text-light: 102 102 102;   /* Secondary text */
+    --color-border: 229 231 235;       /* Light gray border */
+    --color-accent: 0 108 172;         /* Blue accent */
+    --color-card: 246 248 250;         /* Card background */
+    --color-card-muted: 239 241 243;   /* Muted card background */
   }
 
-  :root.dark {
-    --color-black: 255 255 255;
-    --color-gray-900: 238 238 238;
-    --color-gray-700: 204 204 204;
-    --color-gray-500: 153 153 153;
-    --color-gray-300: 102 102 102;
-    --color-gray-100: 26 26 26;
-    --color-white: 17 17 17;
-    --color-link: 70 146 221;
+  .dark {
+    /* Dark theme with navy background and orange accent */
+    --color-bg: 33 39 55;              /* Navy background */
+    --color-text: 243 244 246;         /* Light text */
+    --color-text-light: 209 213 219;   /* Secondary light text */
+    --color-border: 255 107 1;         /* Orange border */
+    --color-accent: 255 107 1;         /* Orange accent */
+    --color-card: 41 48 66;            /* Card background */
+    --color-card-muted: 49 57 77;      /* Muted card background */
   }
 
   html {
-    @apply scroll-smooth;
-    font-size: 16px;
-    line-height: 1.75;
-  }
-  
-  @media (min-width: 768px) {
-    html {
-      font-size: 18px;
-    }
+    @apply scroll-smooth antialiased;
   }
 
+  /* Apply monospace font to entire body */
   body {
-    background-color: rgb(var(--color-white));
-    color: rgb(var(--color-gray-900));
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Space Grotesk', Helvetica, Arial, sans-serif;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  /* Typography - Matching mckerlie sizes */
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-top: 2.5rem;
-    margin-bottom: 1rem;
-    color: rgb(var(--color-black));
-  }
-
-  h1 { font-size: 2rem; }
-  h2 { font-size: 1.75rem; }
-  h3 { font-size: 1.5rem; }
-  h4 { font-size: 1.25rem; }
-  h5 { font-size: 1.125rem; }
-  h6 { font-size: 1rem; }
-  
-  @media (min-width: 768px) {
-    h1 { font-size: 2.5rem; }
-    h2 { font-size: 2rem; }
-    h3 { font-size: 1.75rem; }
-    h4 { font-size: 1.5rem; }
-    h5 { font-size: 1.25rem; }
-    h6 { font-size: 1.125rem; }
-  }
-
-  p {
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
+    @apply font-mono transition-colors duration-200;
+    background-color: rgb(var(--color-bg));
+    color: rgb(var(--color-text));
+    font-family: 'IBM Plex Mono', monospace;
     line-height: 1.75;
-    font-size: 1.05rem;
   }
 
-  code, pre {
-    font-family: 'JetBrains Mono', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-    font-size: 0.85em;
+  /* Typography hierarchy */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-mono font-semibold tracking-tight;
+    color: rgb(var(--color-text));
   }
 
-  /* Inline code - minimal styling */
-  code:not(pre code) {
-    padding: 0.2em 0.4em;
-    background-color: rgb(var(--color-gray-100));
-    border-radius: 3px;
-    font-size: 0.9em;
-  }
+  h1 { @apply text-3xl md:text-4xl mb-6 mt-0; }
+  h2 { @apply text-2xl md:text-3xl mb-4 mt-12; }
+  h3 { @apply text-xl md:text-2xl mb-3 mt-8; }
+  h4 { @apply text-lg md:text-xl mb-2 mt-6; }
+  h5 { @apply text-base md:text-lg mb-2 mt-4; }
+  h6 { @apply text-sm md:text-base mb-1 mt-4; }
 
-  /* Links - no underline by default */
+  /* Links with dashed underline */
   a {
-    color: rgb(var(--color-link));
-    text-decoration: none;
-  }
-
-  a:hover {
+    color: rgb(var(--color-accent));
+    @apply transition-colors;
     text-decoration: underline;
     text-decoration-style: dashed;
     text-underline-offset: 4px;
   }
 
+  a:hover {
+    @apply opacity-80;
+  }
+
   /* Selection color */
   ::selection {
-    background-color: rgb(var(--color-gray-300));
-    color: rgb(var(--color-white));
+    background-color: rgba(var(--color-accent), 0.7);
+    color: rgb(var(--color-bg));
+  }
+
+  /* Code blocks */
+  code {
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* Inline code */
+  code:not(pre code) {
+    @apply px-1 py-0.5 rounded;
+    background-color: rgba(var(--color-card), 0.5);
+    color: rgb(var(--color-text));
+  }
+
+  /* Pre blocks */
+  pre {
+    @apply rounded-lg p-4 overflow-x-auto;
+    background-color: rgb(var(--color-card));
+    border: 1px solid rgba(var(--color-border), 0.2);
+  }
+
+  /* Focus styles */
+  *:focus {
+    outline: none;
+  }
+
+  *:focus-visible {
+    outline: 2px dashed rgb(var(--color-accent));
+    outline-offset: 1px;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgb(var(--color-bg));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--color-card));
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--color-card-muted));
   }
 }
 
-/* Prose/Article styling - Using Tailwind Typography */
+/* Layout constraints */
 @layer components {
+  /* Single column, centered layout */
+  .container-narrow {
+    @apply mx-auto max-w-3xl px-4;
+  }
+
+  /* Prose content styling */
   .prose-content {
-    @apply mx-auto;
-    max-width: 650px;
+    @apply mx-auto max-w-3xl px-4 font-mono;
   }
 
   .prose-content h1,
   .prose-content h2,
   .prose-content h3,
   .prose-content h4 {
-    font-weight: 600;
-    color: rgb(var(--color-black));
-  }
-
-  .prose-content h1 {
-    @apply mb-6 mt-0 text-3xl;
-  }
-
-  .prose-content h2 {
-    @apply mb-4 mt-12 text-2xl;
-  }
-
-  .prose-content h3 {
-    @apply mb-3 mt-8 text-xl;
-  }
-
-  .prose-content h4 {
-    @apply mb-2 mt-6 text-lg;
+    @apply font-semibold;
+    color: rgb(var(--color-text));
   }
 
   .prose-content p {
-    @apply mb-6;
-    line-height: 1.8;
+    @apply mb-6 leading-relaxed;
+    color: rgb(var(--color-text));
   }
 
   .prose-content ul,
@@ -152,84 +149,158 @@
   }
 
   .prose-content li {
-    @apply mb-2;
-    line-height: 1.8;
+    @apply mb-2 leading-relaxed;
+    color: rgb(var(--color-text));
   }
 
+  .prose-content li::marker {
+    color: rgb(var(--color-accent));
+  }
+
+  /* Blockquotes with left border */
   .prose-content blockquote {
-    @apply my-6 border-l-2 border-gray-300 pl-6 italic;
-    color: rgb(var(--color-gray-700));
+    @apply my-6 pl-6 italic;
+    border-left: 3px solid rgba(var(--color-accent), 0.5);
+    color: rgba(var(--color-text), 0.8);
   }
 
-  /* Code blocks - Shiki handles the syntax highlighting */
-  .prose-content pre {
-    @apply my-8 overflow-x-auto;
-    background-color: #0d1117 !important; /* GitHub dark theme background */
-    padding: 2rem !important;
-    border-radius: 0.75rem !important;
-    border: 1px solid #30363d;
-  }
-
-  .prose-content pre code {
-    background: transparent !important;
-    padding: 0 !important;
-    font-family: 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
-    font-size: 0.875rem !important;
-    line-height: 1.7 !important;
-  }
-
-  /* Shiki code block container */
-  .astro-code {
-    @apply my-8 overflow-x-auto;
-    background-color: #0d1117 !important;
-    padding: 1.75rem !important;
-    border-radius: 0.75rem !important;
-    border: 1px solid #30363d !important;
-    font-size: 0.875rem !important;
-  }
-
-  .astro-code code {
-    background: transparent !important;
-    padding: 0 !important;
-    font-family: 'JetBrains Mono', Menlo, Monaco, Consolas, monospace !important;
-    font-size: 0.875rem !important;
-    line-height: 1.7 !important;
-  }
-
-  .prose-content img {
-    @apply my-6;
-  }
-
+  /* Tables */
   .prose-content table {
-    @apply my-6 w-full;
-    border-collapse: collapse;
+    @apply my-6 w-full border-collapse;
   }
 
   .prose-content th {
-    @apply border-b-2 px-4 py-2 text-left;
-    border-color: rgb(var(--color-gray-300));
+    @apply px-4 py-2 text-left font-semibold;
+    border-bottom: 2px solid rgba(var(--color-border), 0.3);
   }
 
   .prose-content td {
-    @apply border-b px-4 py-2;
-    border-color: rgb(var(--color-gray-100));
+    @apply px-4 py-2;
+    border-bottom: 1px solid rgba(var(--color-border), 0.2);
   }
 
+  /* Images */
+  .prose-content img {
+    @apply mx-auto my-6 rounded-lg;
+    border: 2px solid rgba(var(--color-border), 0.2);
+  }
+
+  /* Horizontal rules */
   .prose-content hr {
-    @apply my-8 border-t;
-    border-color: rgb(var(--color-gray-100));
+    @apply my-8;
+    border-color: rgba(var(--color-border), 0.2);
+  }
+
+  /* Code blocks in prose */
+  .prose-content pre {
+    @apply my-8 rounded-lg p-6 overflow-x-auto;
+    background-color: rgb(var(--color-card));
+    border: 1px solid rgba(var(--color-border), 0.2);
+  }
+
+  .prose-content code:not(pre code) {
+    @apply px-1 py-0.5 rounded;
+    background-color: rgba(var(--color-card-muted), 0.5);
+    color: rgb(var(--color-accent));
+  }
+
+  /* Blog card styles */
+  .blog-card {
+    @apply p-6 rounded-lg transition-all;
+    background-color: rgb(var(--color-card));
+    border: 1px solid rgba(var(--color-border), 0.1);
+  }
+
+  .blog-card:hover {
+    border-color: rgba(var(--color-accent), 0.3);
+  }
+
+  /* Tag styles */
+  .tag {
+    @apply px-2 py-1 rounded text-xs;
+    background-color: rgba(var(--color-card-muted), 0.5);
+    color: rgb(var(--color-accent));
+    border: 1px solid rgba(var(--color-accent), 0.2);
+  }
+
+  .tag:hover {
+    background-color: rgba(var(--color-accent), 0.1);
+    border-color: rgba(var(--color-accent), 0.5);
+  }
+
+  /* Button styles */
+  .btn-primary {
+    @apply px-4 py-2 rounded font-semibold transition-all;
+    background-color: rgb(var(--color-accent));
+    color: rgb(var(--color-bg));
+  }
+
+  .btn-primary:hover {
+    @apply opacity-90;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 rounded font-semibold transition-all;
+    background-color: transparent;
+    color: rgb(var(--color-accent));
+    border: 2px solid rgb(var(--color-accent));
+  }
+
+  .btn-secondary:hover {
+    background-color: rgba(var(--color-accent), 0.1);
   }
 }
 
-/* Dark mode support - minimal */
+/* SVG icon styles */
 @layer utilities {
-  /* Focus styles - minimal */
-  *:focus {
-    outline: none;
+  /* Default SVG icons fill current color */
+  svg {
+    fill: currentColor;
   }
 
-  *:focus-visible {
-    outline: 2px solid rgb(var(--color-link));
-    outline-offset: 2px;
+  svg:hover {
+    color: rgb(var(--color-accent));
+  }
+
+  /* Tabler icons use stroke */
+  .icon-tabler {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .icon-tabler:hover {
+    @apply scale-110;
+    stroke: rgb(var(--color-accent));
+  }
+}
+
+/* Dark mode specific overrides */
+@layer utilities {
+  /* Header in dark mode */
+  .dark header {
+    background-color: rgba(33, 39, 55, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(var(--color-border), 0.2);
+  }
+
+  /* Footer in dark mode */
+  .dark footer {
+    background-color: rgb(41, 48, 66);
+    border-top: 1px solid rgba(var(--color-border), 0.2);
+  }
+
+  /* Dividers in dark mode */
+  .dark hr {
+    border-color: rgba(var(--color-border), 0.3);
+  }
+
+  /* Code blocks maintain contrast in dark mode */
+  .dark .astro-code,
+  .dark pre {
+    background-color: rgb(41, 48, 66) !important;
+    border-color: rgba(var(--color-border), 0.2);
   }
 }

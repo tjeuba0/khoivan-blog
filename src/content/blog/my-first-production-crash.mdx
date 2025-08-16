@@ -60,14 +60,14 @@ When I finally got to my desk and opened Crashlytics, the stack trace made no se
 
 ```
 Fatal Exception: java.lang.IllegalStateException: 
-    SharedPreferences file /data/data/com.vietinbank.app/shared_prefs/user_prefs.xml 
+    SharedPreferences file /data/data/com.bankingapp/shared_prefs/user_prefs.xml 
     already exists but is not readable
     
     at android.app.SharedPreferencesImpl.loadFromDisk(SharedPreferencesImpl.java:115)
     at android.app.SharedPreferencesImpl.<init>(SharedPreferencesImpl.java:73)
     at android.app.ContextImpl.getSharedPreferences(ContextImpl.java:419)
-    at com.vietinbank.app.data.PreferencesMigration.migrate(PreferencesMigration.kt:8)
-    at com.vietinbank.app.MainActivity.onCreate(MainActivity.kt:47)
+    at com.bankingapp.data.PreferencesMigration.migrate(PreferencesMigration.kt:8)
+    at com.bankingapp.MainActivity.onCreate(MainActivity.kt:47)
 ```
 
 "Already exists but is not readable"? How is that possible?
@@ -89,9 +89,9 @@ File permissions. On Android. Each app has its own sandbox, so permissions shoul
 I SSH'd into our test device (yes, we had rooted test devices for exactly this purpose) and checked:
 
 ```bash
-vietinbank_test:/ $ su
-vietinbank_test:/ # cd /data/data/com.vietinbank.app/shared_prefs/
-vietinbank_test:/data/data/com.vietinbank.app/shared_prefs # ls -la
+banking_test:/ $ su
+banking_test:/ # cd /data/data/com.bankingapp/shared_prefs/
+banking_test:/data/data/com.bankingapp/shared_prefs # ls -la
 
 -rw-rw---- 1 u0_a142 u0_a142   4096 Jun 15 06:30 user_prefs.xml
 -rw-rw---- 1 u0_a142 u0_a142    512 Jun 15 06:30 user_prefs.xml.bak
@@ -244,7 +244,7 @@ We had an emergency update mechanism built into the app (for exactly this kind o
 ```kotlin
 class EmergencyPatcher {
     fun checkAndApplyPatch() {
-        val patchUrl = "https://cdn.vietinbank.com/emergency/patch_3.7.1.jar"
+        val patchUrl = "https://cdn.bankingapp.com/emergency/patch_3.7.1.jar"
         
         // Download patch
         val patchFile = downloadPatch(patchUrl)
@@ -263,7 +263,7 @@ class EmergencyPatcher {
         )
         
         // Replace broken class with patched version
-        val patchedClass = dexLoader.loadClass("com.vietinbank.app.EmergencyPreferencesFix")
+        val patchedClass = dexLoader.loadClass("com.bankingapp.EmergencyPreferencesFix")
         val fixMethod = patchedClass.getMethod("fixPermissions", Context::class.java)
         
         // Apply fix
@@ -285,7 +285,7 @@ By noon, 90% of affected users were fixed. But we still had 5,000 users whose ap
 
 We sent SMS messages (we're a bank, we have everyone's phone number) with a link to download a standalone fixer app:
 
-"VietinBank: We detected an issue with your app. Please install this fix: https://fix.vietinbank.com/repair"
+"BankingApp: We detected an issue with your app. Please install this fix: https://fix.bankingapp.com/repair"
 
 The repair app was simple - it just needed permission to access the main app's data directory and fix the permissions. Not elegant, but effective.
 
