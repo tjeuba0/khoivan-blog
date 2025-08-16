@@ -3,21 +3,81 @@
   <head>
     <meta charset="utf-8" />
     <meta name="robots" content="noindex" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>Khoi Van Blog - Content Manager</title>
     
-    <!-- Mobile-friendly CSS adjustments -->
+    <!-- Community-tested Responsive CSS for Decap CMS -->
+    <link rel="stylesheet" 
+          href="https://cdn.jsdelivr.net/gh/hithismani/responsive-decap@main/dist/responsive.min.css">
+    
+    <!-- Additional mobile optimizations -->
     <style>
-      /* Better mobile experience */
+      /* Hide preview pane on mobile to save space */
       @media (max-width: 768px) {
-        .nc-app-sidebar {
-          width: 100% !important;
+        .nc-entryEditor-preview {
+          display: none !important;
         }
+        
+        /* Full width editor on mobile */
+        .nc-entryEditor-editor {
+          width: 100% !important;
+          max-width: 100% !important;
+        }
+        
+        /* Fix image display in media library */
+        .nc-mediaLibrary-card img,
+        .nc-imageControl-imageWrapper img {
+          width: 100% !important;
+          height: auto !important;
+          object-fit: contain !important;
+          max-height: 200px !important;
+        }
+        
+        /* Larger touch targets for mobile */
+        button, .nc-button {
+          min-height: 44px !important;
+          min-width: 44px !important;
+        }
+        
+        /* Better font size for mobile editing */
+        .nc-markdownWidget-editor,
+        .nc-textWidget-input,
+        textarea, input {
+          font-size: 16px !important; /* Prevents zoom on iOS */
+        }
+        
+        /* Fix modal display on mobile */
+        .nc-modal {
+          max-width: 95% !important;
+          margin: 10px !important;
+        }
+        
+        /* Single column layout for collections */
         .nc-entryListing-cardGrid {
           grid-template-columns: 1fr !important;
+          padding: 10px !important;
         }
+        
+        /* Responsive media grid */
         .nc-mediaLibrary-cardGrid {
           grid-template-columns: repeat(2, 1fr) !important;
+          gap: 10px !important;
+          padding: 10px !important;
+        }
+      }
+      
+      /* Landscape mode adjustments */
+      @media (max-width: 896px) and (orientation: landscape) {
+        .nc-entryEditor-editor {
+          max-height: 70vh !important;
+          overflow-y: auto !important;
+        }
+      }
+      
+      /* iOS specific fixes */
+      @supports (-webkit-touch-callout: none) {
+        body {
+          -webkit-text-size-adjust: 100%;
         }
       }
     </style>
