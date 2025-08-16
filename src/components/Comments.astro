@@ -4,15 +4,20 @@
 // 1. Enable GitHub Discussions on your repository
 // 2. Install Giscus app: https://github.com/apps/giscus
 // 3. Configure settings at: https://giscus.app
+// Note: Giscus has built-in anti-spam features:
+// - Requires GitHub login to comment (prevents anonymous spam)
+// - GitHub's built-in spam detection
+// - Can enable moderation in GitHub Discussions settings
 ---
 
-<section class="mt-16 border-t border-current opacity-20 pt-8">
+<section class="mt-16 border-t pt-8" style="border-color: rgba(var(--color-border), 0.2);">
   <h2 class="mb-8 text-2xl font-bold">Comments</h2>
+  <div class="giscus"></div>
   <script
     src="https://giscus.app/client.js"
-    data-repo="khoivan/khoivan-blog"
+    data-repo="tjeuba0/khoivan-blog"
     data-repo-id="R_kgDONqJLIQ"
-    data-category="Announcements"
+    data-category="General"
     data-category-id="DIC_kwDONqJLIc4ClF-7"
     data-mapping="pathname"
     data-strict="0"
@@ -20,7 +25,7 @@
     data-emit-metadata="0"
     data-input-position="top"
     data-theme="preferred_color_scheme"
-    data-lang="vi"
+    data-lang="en"
     data-loading="lazy"
     crossorigin="anonymous"
     async></script>
