@@ -1,0 +1,38 @@
+---
+// Utterances comments component - Alternative to Giscus
+// Simpler setup, uses GitHub Issues instead of Discussions
+// Anti-spam: Requires GitHub login to comment
+---
+
+<section class="mt-16 border-t pt-8" style="border-color: rgba(var(--color-border), 0.2);">
+  <h2 class="mb-8 text-2xl font-bold">Comments</h2>
+  
+  <div id="utterances-container"></div>
+</section>
+
+<script>
+  // Load Utterances after page loads
+  const script = document.createElement('script');
+  script.src = 'https://utteranc.es/client.js';
+  script.setAttribute('repo', 'tjeuba0/khoivan-blog');
+  script.setAttribute('issue-term', 'pathname');
+  script.setAttribute('label', 'comments');
+  script.setAttribute('theme', 'preferred-color-scheme');
+  script.setAttribute('crossorigin', 'anonymous');
+  script.async = true;
+  
+  const container = document.getElementById('utterances-container');
+  if (container) {
+    container.appendChild(script);
+  }
+</script>
+
+<style>
+  .utterances {
+    max-width: 100% !important;
+  }
+  
+  .utterances-frame {
+    border: none !important;
+  }
+</style>
