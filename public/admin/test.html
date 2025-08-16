@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>OAuth Test</title>
+</head>
+<body>
+  <h1>OAuth Test Page</h1>
+  <button onclick="testOAuth()">Test GitHub OAuth</button>
+  <div id="result"></div>
+  
+  <script>
+    function testOAuth() {
+      const authUrl = 'https://decap-oauth-khoivan.khoivandev.workers.dev/auth';
+      const authWindow = window.open(authUrl, 'auth', 'width=600,height=700');
+      
+      window.addEventListener('message', function(e) {
+        console.log('Received message:', e.data);
+        document.getElementById('result').innerHTML = 
+          '<pre>' + JSON.stringify(e.data, null, 2) + '</pre>';
+      });
+    }
+  </script>
+</body>
+</html>
