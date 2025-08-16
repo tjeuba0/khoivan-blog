@@ -65,7 +65,12 @@
 
   /* Selection color */
   ::selection {
-    background-color: rgba(var(--color-accent), 0.7);
+    background-color: rgb(var(--color-accent));
+    color: white;
+  }
+  
+  .dark ::selection {
+    background-color: rgb(var(--color-accent));
     color: rgb(var(--color-bg));
   }
 
