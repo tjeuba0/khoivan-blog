@@ -10,7 +10,10 @@
       "Bash(git push:*)",
       "Bash(find:*)",
       "Bash(git rm:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:chrismckerlie.com)",
+      "mcp__zen__codereview"
     ],
     "deny": [],
     "ask": []

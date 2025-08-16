@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Giscus Comments</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            font-family: -apple-system, sans-serif;
+        }
+        h1 {
+            color: #333;
+        }
+        .info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        code {
+            background: #e0e0e0;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Giscus Comments cho khoivan-blog</h1>
+    
+    <div class="info">
+        <h3>Cấu hình hiện tại:</h3>
+        <ul>
+            <li>Repository: <code>tjeuba0/khoivan-blog</code></li>
+            <li>Repo ID: <code>R_kgDOPbBwEw</code></li>
+            <li>Category: <code>General</code></li>
+            <li>Category ID: <code>DIC_kwDOPbBwE84CkwzH</code></li>
+        </ul>
+    </div>
+
+    <h2>Comments Section:</h2>
+    
+    <script src="https://giscus.app/client.js"
+        data-repo="tjeuba0/khoivan-blog"
+        data-repo-id="R_kgDOPbBwEw"
+        data-category="General"
+        data-category-id="DIC_kwDOPbBwE84CkwzH"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="light"
+        data-lang="en"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+    </script>
+
+    <div class="info" style="margin-top: 40px;">
+        <h3>Nếu không thấy comments:</h3>
+        <ol>
+            <li>Kiểm tra đã bật GitHub Discussions chưa: 
+                <a href="https://github.com/tjeuba0/khoivan-blog/settings" target="_blank">
+                    Settings → Features → ✓ Discussions
+                </a>
+            </li>
+            <li>Kiểm tra đã cài Giscus app chưa: 
+                <a href="https://github.com/apps/giscus" target="_blank">
+                    Install Giscus App
+                </a>
+            </li>
+            <li>Tạo category "General" trong Discussions nếu chưa có:
+                <a href="https://github.com/tjeuba0/khoivan-blog/discussions/categories/new" target="_blank">
+                    New Category
+                </a>
+            </li>
+        </ol>
+    </div>
+</body>
+</html>
