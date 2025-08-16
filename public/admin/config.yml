@@ -90,4 +90,5 @@ collections:
 
 # Customize editor settings
 editor:
-  preview: true  # Show preview pane
+  preview: true  # Show preview pane (CSS will hide on mobile)
+  frame: false   # Disable iframe preview for better performance

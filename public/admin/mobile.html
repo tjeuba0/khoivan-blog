@@ -1,0 +1,163 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Quick Post - Khoi Van Blog</title>
+    
+    <!-- Decap CMS -->
+    <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
+    
+    <!-- Mobile-first design -->
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #f5f5f5;
+      }
+      
+      /* Mobile-only: No preview, full editor */
+      .nc-entryEditor-preview {
+        display: none !important;
+      }
+      
+      .nc-entryEditor-editor {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      }
+      
+      /* Large, mobile-friendly form elements */
+      input, textarea, select, button {
+        font-size: 16px !important;
+        padding: 12px !important;
+        border-radius: 8px !important;
+      }
+      
+      /* Better touch targets */
+      button, .nc-button, a {
+        min-height: 48px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      
+      /* Simplified toolbar */
+      .nc-entryEditor-toolbar {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 100 !important;
+        background: white !important;
+        border-bottom: 1px solid #ddd !important;
+        padding: 10px !important;
+      }
+      
+      /* Full-width modals */
+      .nc-modal {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+      }
+      
+      /* Responsive image uploads */
+      .nc-mediaLibrary-card img {
+        width: 100% !important;
+        height: auto !important;
+        object-fit: cover !important;
+        aspect-ratio: 1 !important;
+      }
+      
+      /* Quick action buttons */
+      .quick-actions {
+        position: fixed;
+        bottom: env(safe-area-inset-bottom, 20px);
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: space-around;
+        background: white;
+        border-top: 1px solid #ddd;
+        padding: 10px;
+        z-index: 1000;
+      }
+      
+      .quick-actions button {
+        flex: 1;
+        margin: 0 5px;
+        background: #ff6b01;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      // Initialize CMS with mobile-optimized config
+      CMS.init({
+        config: {
+          backend: {
+            name: 'github',
+            repo: 'tjeuba0/khoivan-blog',
+            branch: 'main',
+            base_url: 'https://decap-oauth-khoivan.khoivandev.workers.dev',
+            auth_endpoint: 'auth',
+            api_root: 'https://api.github.com'
+          },
+          media_folder: 'public/blog-images',
+          public_folder: '/blog-images',
+          editor: {
+            preview: false  // No preview on mobile
+          },
+          collections: [
+            {
+              name: 'quick',
+              label: 'Quick Post',
+              folder: 'src/content/blog',
+              create: true,
+              slug: 'mobile-{{year}}{{month}}{{day}}-{{hour}}{{minute}}',
+              extension: 'mdx',
+              fields: [
+                { name: 'title', label: 'Title', widget: 'string' },
+                { name: 'description', label: 'Description', widget: 'text' },
+                { name: 'pubDate', label: 'Date', widget: 'datetime', format: 'MMM DD YYYY', default: '' },
+                { name: 'author', label: 'Author', widget: 'hidden', default: 'Khoi Van' },
+                { name: 'category', label: 'Category', widget: 'select', options: ['life', 'engineering'], default: 'life' },
+                { name: 'tags', label: 'Tags', widget: 'list', default: ['mobile', 'quick'] },
+                { name: 'body', label: 'Content', widget: 'markdown', minimal: true }
+              ]
+            }
+          ]
+        }
+      });
+      
+      // OAuth handler
+      window.addEventListener('message', function(e) {
+        if (typeof e.data === 'string' && e.data.startsWith('authorization:github:success:')) {
+          try {
+            const data = JSON.parse(e.data.replace('authorization:github:success:', ''));
+            if (data.token) {
+              localStorage.setItem('decap-cms-user', JSON.stringify({
+                backendName: 'github',
+                login: 'github',
+                token: data.token,
+                api_version: 2
+              }));
+              window.location.reload();
+            }
+          } catch(err) {
+            console.error('OAuth error:', err);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
