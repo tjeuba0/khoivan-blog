@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import BlogCard from '../components/BlogCard.astro'
+import HeroSection from '../components/HeroSection.astro'
 
 // Get all posts
 const allPosts = await getCollection('blog')
@@ -11,8 +12,12 @@ const posts = allPosts
 ---
 
 <BaseLayout title="Khoi Van" description="Personal blog about Android development, software engineering, and life in Saigon">
-  <div class="container-narrow py-16">
-    <!-- Clean, simple posts list -->
+  <!-- Hero Section with Bio -->
+  <HeroSection />
+  
+  <!-- Blog Posts -->
+  <div class="container-narrow pb-16">
+    <h2 class="text-xl font-semibold mb-8">Recent Posts</h2>
     <div class="space-y-6">
       {posts.map((post) => (
         <BlogCard post={post} />
