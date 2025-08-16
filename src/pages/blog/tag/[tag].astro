@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import BlogCard from '../../../components/BlogCard.astro'
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog')
+  const uniqueTags = [...new Set(
+    allPosts.flatMap(post => post.data.tags.map(tag => 
+      tag.toLowerCase().replace(/\s+/g, '-')
+    ))
+  )]
+  
+  return uniqueTags.map(tag => ({
+    params: { tag },
+    props: { 
+      originalTag: allPosts
+        .flatMap(post => post.data.tags)
+        .find(t => t.toLowerCase().replace(/\s+/g, '-') === tag)
+    }
+  }))
+}
+
+const { tag } = Astro.params
+const { originalTag } = Astro.props
+
+const allPosts = await getCollection('blog')
+const posts = allPosts
+  .filter(post => !post.data.draft)
+  .filter(post => post.data.tags.some(t => 
+    t.toLowerCase().replace(/\s+/g, '-') === tag
+  ))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+---
+
+<BaseLayout title={`Posts tagged with "${originalTag}"`} description={`All posts tagged with ${originalTag}`}>
+  <div class="container-narrow py-12">
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold mb-2">
+        Posts tagged with "{originalTag}"
+      </h1>
+      <p class="opacity-75">
+        {posts.length} post{posts.length !== 1 ? 's' : ''} found
+      </p>
+    </div>
+
+    <div class="space-y-6">
+      {posts.map(post => (
+        <BlogCard post={post} />
+      ))}
+    </div>
+
+    <div class="mt-12">
+      <a href="/blog/tags" class="text-sm opacity-75 hover:opacity-100">
+        ← View all tags
+      </a>
+    </div>
+  </div>
+</BaseLayout>
