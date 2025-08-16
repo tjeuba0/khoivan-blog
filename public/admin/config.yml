@@ -6,7 +6,7 @@ backend:
   name: github
   repo: tjeuba0/khoivan-blog  # Your GitHub repo
   branch: main
-  base_url: https://decap-oauth.khoivan.dev  # OAuth proxy URL (will setup in step 3)
+  base_url: https://decap-oauth-khoivan.khoivandev.workers.dev  # Your Cloudflare Worker URL
   auth_endpoint: auth
   
 media_folder: "public/blog-images"
