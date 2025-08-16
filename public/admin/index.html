@@ -25,5 +25,30 @@
   <body>
     <!-- Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3/dist/decap-cms.js"></script>
+    
+    <!-- Fix OAuth message handling -->
+    <script>
+      // Override the auth message handler
+      window.addEventListener('message', function(e) {
+        if (typeof e.data === 'string' && e.data.startsWith('authorization:github:success:')) {
+          try {
+            const data = JSON.parse(e.data.replace('authorization:github:success:', ''));
+            if (data.token) {
+              // Save token to localStorage for Decap CMS
+              localStorage.setItem('decap-cms-user', JSON.stringify({
+                backendName: 'github',
+                login: 'github',
+                token: data.token,
+                api_version: 2
+              }));
+              // Reload to apply authentication
+              window.location.reload();
+            }
+          } catch(err) {
+            console.error('OAuth error:', err);
+          }
+        }
+      });
+    </script>
   </body>
 </html>
