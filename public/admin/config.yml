@@ -1,0 +1,92 @@
+site_url: https://khoivan.dev
+display_url: https://khoivan.dev
+logo_url: https://khoivan.dev/favicon.svg
+
+backend:
+  name: github
+  repo: tjeuba0/khoivan-blog  # Your GitHub repo
+  branch: main
+  base_url: https://decap-oauth.khoivan.dev  # OAuth proxy URL (will setup in step 3)
+  auth_endpoint: auth
+  
+media_folder: "public/blog-images"
+public_folder: "/blog-images"
+
+# Optional: Enable editorial workflow for draft/review/publish flow
+# publish_mode: editorial_workflow
+
+collections:
+  - name: "blog"
+    label: "Blog Posts"
+    label_singular: "Blog Post"
+    folder: "src/content/blog"
+    create: true
+    slug: "{{slug}}"
+    extension: "mdx"
+    format: "frontmatter"
+    preview_path: "blog/{{slug}}"
+    summary: "{{title}} - {{pubDate | date('MMM DD, YYYY')}}"
+    sortable_fields: ["pubDate", "title"]
+    fields:
+      - { name: title, label: Title, widget: string, required: true }
+      - { name: description, label: Description, widget: text, required: true }
+      - { name: pubDate, label: "Publish Date", widget: datetime, format: "MMM DD YYYY", date_format: "MMM DD YYYY", time_format: false }
+      - { name: author, label: Author, widget: string, default: "Khoi Van" }
+      - { 
+          name: category, 
+          label: Category, 
+          widget: select, 
+          options: ["life", "engineering"],
+          default: "engineering"
+        }
+      - { 
+          name: tags, 
+          label: Tags, 
+          widget: list,
+          field: { name: tag, label: Tag, widget: string },
+          hint: "Add tags like: android, kotlin, jetpack-compose, etc."
+        }
+      - { name: heroImage, label: "Hero Image", widget: image, required: false, allow_multiple: false }
+      - { name: draft, label: "Draft", widget: boolean, default: false, required: false }
+      - { 
+          name: updatedDate, 
+          label: "Updated Date", 
+          widget: datetime, 
+          required: false,
+          format: "MMM DD YYYY",
+          date_format: "MMM DD YYYY",
+          time_format: false,
+          hint: "Leave empty for new posts, set when updating existing posts"
+        }
+      - { name: body, label: Body, widget: markdown }
+
+  # Quick notes collection for mobile-daily posts
+  - name: "daily"
+    label: "Daily Notes"
+    label_singular: "Daily Note"
+    folder: "src/content/blog"
+    create: true
+    slug: "mobile-daily-{{year}}{{month}}{{day}}"
+    extension: "mdx"
+    format: "frontmatter"
+    preview_path: "blog/{{slug}}"
+    summary: "Daily {{pubDate | date('MMM DD')}}"
+    fields:
+      - { name: title, label: Title, widget: string, default: "Mobile Daily {{year}}/{{month}}/{{day}}" }
+      - { name: description, label: Description, widget: text, default: "Quick thoughts and learnings from today" }
+      - { name: pubDate, label: "Date", widget: datetime, default: "", format: "MMM DD YYYY", date_format: "MMM DD YYYY", time_format: false }
+      - { name: author, label: Author, widget: hidden, default: "Khoi Van" }
+      - { name: category, label: Category, widget: hidden, default: "life" }
+      - { 
+          name: tags, 
+          label: Tags, 
+          widget: list,
+          default: ["life", "opinion"],
+          field: { name: tag, label: Tag, widget: string }
+        }
+      - { name: mood, label: "Today's Mood", widget: string, required: false }
+      - { name: body, label: "Content", widget: markdown, hint: "What happened today? What did you learn?" }
+
+# Customize editor settings
+editor:
+  preview: true  # Show preview pane
