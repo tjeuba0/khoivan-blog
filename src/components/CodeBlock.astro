@@ -16,8 +16,8 @@ const id = Math.random().toString(36).substring(7)
 <div class="code-block-wrapper group relative my-6">
   {filename && (
     <div class="code-block-header flex items-center justify-between rounded-t-lg border-b border-gray-700 bg-gray-900 px-4 py-2">
-      <span class="text-sm font-medium text-gray-400">{filename}</span>
-      <span class="text-xs uppercase tracking-wider text-gray-500">{lang}</span>
+      <span class="text-sm font-medium opacity-70">{filename}</span>
+      <span class="text-xs uppercase tracking-wider opacity-60">{lang}</span>
     </div>
   )}
   
@@ -31,7 +31,7 @@ const id = Math.random().toString(36).substring(7)
     <button
       id={`copy-${id}`}
       aria-label="Copy code"
-      class="copy-button absolute right-2 top-2 rounded-md bg-gray-800 p-2 text-gray-400 opacity-0 transition-all duration-200 hover:bg-gray-700 hover:text-gray-200 group-hover:opacity-100"
+      class="copy-button absolute right-2 top-2 rounded-md bg-gray-800 p-2 opacity-70 opacity-0 transition-all duration-200 hover:bg-gray-700 hover:text-gray-200 group-hover:opacity-100"
       data-code={code}
     >
       <svg
@@ -122,7 +122,7 @@ const id = Math.random().toString(36).substring(7)
   .token.prolog,
   .token.doctype,
   .token.cdata {
-    @apply text-gray-500 italic;
+    @apply opacity-60 italic;
   }
 
   /* Numbers */
@@ -146,7 +146,7 @@ const id = Math.random().toString(36).substring(7)
   /* Operators */
   .token.operator,
   .token.punctuation {
-    @apply text-gray-400;
+    @apply opacity-70;
   }
 
   /* Dark mode adjustments */

@@ -35,7 +35,7 @@ const pageTitle = page.currentPage === 1 ? `Tag: ${tag}` : `Tag: ${tag} - Trang 
   <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
     <!-- Page Header -->
     <div class="mb-12">
-      <div class="flex items-center gap-2 text-sm text-gray-500">
+      <div class="flex items-center gap-2 text-sm opacity-60">
         <a href="/" class="hover:text-blue-600">Trang chủ</a>
         <span>/</span>
         <a href="/blog" class="hover:text-blue-600">Blog</a>
@@ -43,10 +43,10 @@ const pageTitle = page.currentPage === 1 ? `Tag: ${tag}` : `Tag: ${tag} - Trang 
         <span>Tag</span>
       </div>
 
-      <h1 class="mt-4 text-4xl font-bold tracking-tight text-gray-900">
+      <h1 class="mt-4 text-4xl font-bold tracking-tight ">
         Tag: <span class="text-blue-600">#{tag}</span>
       </h1>
-      <p class="mt-2 text-gray-600">
+      <p class="mt-2 ">
         {page.total} bài viết với tag này
       </p>
     </div>
@@ -69,7 +69,7 @@ const pageTitle = page.currentPage === 1 ? `Tag: ${tag}` : `Tag: ${tag} - Trang 
         </>
       ) : (
         <div class="rounded-lg bg-gray-50 p-8 text-center">
-          <p class="text-gray-600">Không có bài viết nào với tag này.</p>
+          <p class="">Không có bài viết nào với tag này.</p>
         </div>
       )
     }

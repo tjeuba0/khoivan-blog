@@ -80,11 +80,11 @@ const experience = [
         alt="Phạm Đình Khôi Văn"
         class="mx-auto h-32 w-32 rounded-full object-cover shadow-lg"
       />
-      <h1 class="mt-6 text-4xl font-bold tracking-tight text-gray-900">Phạm Đình Khôi Văn</h1>
-      <p class="mt-2 text-xl text-gray-600">Senior Android Developer</p>
-      <p class="mt-1 text-gray-500">Hanoi, Vietnam</p>
+      <h1 class="mt-6 text-4xl font-bold tracking-tight">Phạm Đình Khôi Văn</h1>
+      <p class="mt-2 text-xl opacity-75">Senior Android Developer</p>
+      <p class="mt-1 opacity-60">Hanoi, Vietnam</p>
       <div class="mt-4 flex justify-center gap-4">
-        <a href="https://github.com/phamdinhkhoivan" target="_blank" class="text-gray-600 hover:text-blue-600">
+        <a href="https://github.com/phamdinhkhoivan" target="_blank" class="opacity-75 hover:opacity-100">
           <span class="sr-only">GitHub</span>
           <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
             <path
@@ -92,7 +92,7 @@ const experience = [
             ></path>
           </svg>
         </a>
-        <a href="https://www.linkedin.com/in/khoivan" target="_blank" class="text-gray-600 hover:text-blue-600">
+        <a href="https://www.linkedin.com/in/khoivan" target="_blank" class="opacity-75 hover:opacity-100">
           <span class="sr-only">LinkedIn</span>
           <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
             <path
@@ -100,7 +100,7 @@ const experience = [
             ></path>
           </svg>
         </a>
-        <a href="mailto:phamdinhkhoivan@gmail.com" class="text-gray-600 hover:text-blue-600">
+        <a href="mailto:phamdinhkhoivan@gmail.com" class="opacity-75 hover:opacity-100">
           <span class="sr-only">Email</span>
           <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -116,8 +116,8 @@ const experience = [
 
     <!-- About Section -->
     <section class="mt-12">
-      <h2 class="text-2xl font-bold text-gray-900">About Me</h2>
-      <div class="prose prose-lg mt-4 text-gray-600">
+      <h2 class="text-2xl font-bold">About Me</h2>
+      <div class="prose-content mt-4">
         <p>
           Hi! I'm Pham Dinh Khoi Van, a Senior Android Developer with over 8 years of experience 
           specializing in mobile banking applications. Currently, I'm working at VietinBank, one of 
@@ -146,17 +146,17 @@ const experience = [
 
     <!-- Experience -->
     <section class="mt-12">
-      <h2 class="text-2xl font-bold text-gray-900">Experience</h2>
+      <h2 class="text-2xl font-bold">Experience</h2>
       <div class="mt-6 space-y-6">
         {
           experience.map((job) => (
             <div class="relative pl-8 before:absolute before:top-2 before:left-0 before:h-full before:w-0.5 before:bg-gray-200">
               <div class="absolute top-2 -left-2 h-4 w-4 rounded-full bg-blue-600" />
               <div>
-                <h3 class="text-lg font-semibold text-gray-900">{job.role}</h3>
+                <h3 class="text-lg font-semibold">{job.role}</h3>
                 <p class="text-blue-600">{job.company}</p>
-                <p class="text-sm text-gray-500">{job.period}</p>
-                <p class="mt-2 text-gray-600">{job.description}</p>
+                <p class="text-sm opacity-60">{job.period}</p>
+                <p class="mt-2 opacity-90">{job.description}</p>
               </div>
             </div>
           ))
@@ -166,12 +166,12 @@ const experience = [
 
     <!-- Skills -->
     <section class="mt-12">
-      <h2 class="text-2xl font-bold text-gray-900">Technical Skills</h2>
+      <h2 class="text-2xl font-bold">Technical Skills</h2>
       <div class="mt-6 grid gap-6 md:grid-cols-2">
         {
           Object.entries(skills).map(([category, items]) => (
             <div>
-              <h3 class="mb-3 font-semibold text-gray-900">{category}</h3>
+              <h3 class="mb-3 font-semibold">{category}</h3>
               <div class="flex flex-wrap gap-2">
                 {items.map((skill) => (
                   <span class="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800">
