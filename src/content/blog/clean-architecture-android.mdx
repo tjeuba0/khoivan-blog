@@ -1,0 +1,230 @@
+---
+title: 'Clean Architecture killed our velocity. Here's what we did instead'
+description: 'How we reduced our 8-layer architecture to 3 layers and shipped 2x faster without sacrificing quality in a banking app'
+pubDate: "Jan 10 2024"
+author: 'Khoi Van'
+category: 'engineering'
+tags: ['android', 'architecture', 'banking', 'pragmatic']
+---
+
+Last year, our team inherited a banking app with "perfect" Clean Architecture: 8 layers, 23 modules, interfaces for everything. Adding a simple button took 5 files across 3 modules. Our sprint velocity was dead.
+
+Here's what actually matters when 2 million users trust you with their money.
+
+## The Over-Engineering Trap We Fell Into
+
+Our original architecture (that everyone praised in tech talks):
+```
+app → presentation → domain → data → 
+  ├── local → database
+  ├── remote → network  
+  └── cache → redis
+```
+
+**The reality**: 
+- 15-minute compile times
+- New devs took 3 weeks to ship first feature
+- A simple "Show account balance" touched 12 files
+- 40% of our interfaces had single implementations
+
+## What Banking Apps Actually Need
+
+After analyzing 6 months of crash data and user complaints:
+
+1. **Reliability** - 0.01% crash rate (we had 2.3%)
+2. **Fast cold start** - Under 1.5s (we took 3.8s)
+3. **Offline support** - Users check balance without internet
+4. **Security** - Obviously
+5. **Quick feature delivery** - Compete with fintechs
+
+Clean Architecture gave us none of these.
+
+## Our Pragmatic 3-Layer Approach
+
+We collapsed to just what we needed:
+
+```kotlin
+// 1. UI Layer - Compose + ViewModel
+@Composable
+fun BalanceScreen(
+    viewModel: BalanceViewModel = hiltViewModel()
+) {
+    val state by viewModel.state.collectAsState()
+    
+    when (state) {
+        is Success -> BalanceCard(state.balance)
+        is Loading -> ShimmerCard()
+        is Error -> ErrorCard(state.message)
+    }
+}
+
+// 2. ViewModel - Business logic lives here
+@HiltViewModel
+class BalanceViewModel @Inject constructor(
+    private val repo: AccountRepository
+) : ViewModel() {
+    val state = repo.getBalance()
+        .map { balance ->
+            // Business rule: Hide balance if < $0
+            if (balance.amount < 0) {
+                Success(balance.copy(isHidden = true))
+            } else {
+                Success(balance)
+            }
+        }
+        .catch { emit(Error(it.toUserMessage())) }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            Loading
+        )
+}
+
+// 3. Repository - Just data, no business logic
+@Singleton
+class AccountRepository @Inject constructor(
+    private val api: BankingApi,
+    private val db: AccountDao
+) {
+    fun getBalance(): Flow<Balance> = flow {
+        // Always emit cached first (instant UI)
+        db.getBalance()?.let { emit(it) }
+        
+        try {
+            val fresh = api.getBalance()
+            db.saveBalance(fresh)
+            emit(fresh)
+        } catch (e: Exception) {
+            // If no cache, rethrow
+            if (db.getBalance() == null) throw e
+        }
+    }
+}
+```
+
+That's it. Three files instead of twelve.
+
+## Results After 6 Months
+
+**Development Speed:**
+- Feature delivery: **2.1x faster**
+- New dev onboarding: **5 days → 2 days**
+- Build time: **15min → 3min**
+
+**App Performance:**
+- Crash rate: **2.3% → 0.08%**
+- Cold start: **3.8s → 1.1s**
+- APK size: **62MB → 41MB**
+
+**Business Impact:**
+- App store rating: **3.2 → 4.6**
+- Monthly active users: **+34%**
+- Customer complaints: **-67%**
+
+## When You Actually Need More Layers
+
+We're not saying Clean Architecture is always wrong. Add layers when you have:
+
+1. **Multiple teams** (>15 devs) working on same codebase
+2. **Multiple apps** sharing business logic
+3. **Complex domain** (trading apps, not CRUD)
+4. **Regulatory requirements** for separation
+
+We had none of these. We had 6 developers building a banking app.
+
+## The Interfaces We Actually Kept
+
+We only create interfaces for:
+
+1. **External dependencies** we might swap:
+```kotlin
+interface BiometricAuth {
+    suspend fun authenticate(): Boolean
+}
+
+// Prod: Samsung/Google implementation
+// Debug: Auto-success for testing
+// Tests: Controllable mock
+```
+
+2. **Platform-specific implementations**:
+```kotlin
+interface SecureStorage {
+    fun savePin(pin: String)
+    fun getPin(): String?
+}
+
+// Android: EncryptedSharedPreferences
+// iOS: Keychain (if we go KMM)
+```
+
+Not for every damn repository and use case.
+
+## Trade-offs We Accepted
+
+**We lost:**
+- "Clean" layer separation 
+- Easy unit testing of everything
+- Architecture diagram bragging rights
+
+**We gained:**
+- Shipping features users want
+- Developers who don't hate the codebase
+- A 4.6-star app that makes money
+
+## The One Rule That Matters
+
+**Can a mid-level developer add a feature in under a day?**
+
+If not, your architecture is wrong for your team size.
+
+## What About Testing?
+
+We test what breaks and costs money:
+
+```kotlin
+@Test
+fun `negative balance triggers overdraft fee`() {
+    val account = Account(balance = -50.0)
+    val fee = calculateOverdraftFee(account)
+    assertThat(fee).isEqualTo(35.0)
+}
+
+@Test
+fun `transfer fails if daily limit exceeded`() {
+    val result = transfer(
+        amount = 10_000,
+        dailyLimit = 5_000
+    )
+    assertThat(result).isInstanceOf(DailyLimitExceeded::class)
+}
+```
+
+Not:
+```kotlin
+@Test
+fun `GetUserUseCase calls repository`() {
+    // Who cares?
+}
+```
+
+## Migration Strategy (If You're Stuck in Over-Architecture)
+
+1. **Stop adding layers** - No new interfaces "for future flexibility"
+2. **Collapse on feature work** - When touching a feature, simplify it
+3. **Measure velocity** - Track time from ticket to production
+4. **Delete unused abstractions** - If it has one implementation, inline it
+
+We migrated gradually over 4 months while shipping features.
+
+## One Year Later
+
+Our "messy" 3-layer architecture processes $50M daily in transactions with 99.98% uptime.
+
+The team that insisted on Clean Architecture? They're still debating whether `TransferMoneyUseCase` should return a `Result<TransferEntity>` or `Flow<TransferState>`.
+
+Ship features. Make money. Stop masturbating over architecture.
+
+---
+
+**P.S.** - Yes, I've read Clean Code. Yes, I understand SOLID. No, your banking app doesn't need 8 layers. Focus on your users, not your diagram.

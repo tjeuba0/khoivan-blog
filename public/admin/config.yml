@@ -62,29 +62,6 @@ collections:
         }
       - { name: body, label: Body, widget: markdown }
 
-  # Collection for .md blog posts
-  - name: "blog_md"
-    label: "Blog Posts (Markdown)"
-    label_singular: "Blog Post MD"
-    folder: "src/content/blog"
-    create: false  # Don't create new .md files
-    delete: true  # Allow deletion
-    extension: "md"
-    format: "frontmatter"
-    preview_path: "blog/{{slug}}"
-    summary: "{{title}} - {{pubDate | date('MMM DD, YYYY')}}"
-    sortable_fields: ["pubDate", "title"]
-    fields:
-      - { name: title, label: Title, widget: string, required: true }
-      - { name: description, label: Description, widget: text, required: true }
-      - { name: pubDate, label: "Publish Date", widget: datetime, format: "MMM DD YYYY", date_format: "MMM DD YYYY", time_format: false, picker_utc: false }
-      - { name: author, label: Author, widget: string, default: "Khoi Van" }
-      - { name: category, label: Category, widget: select, options: ["life", "engineering"], default: "engineering" }
-      - { name: tags, label: Tags, widget: list, field: { name: tag, label: Tag, widget: string } }
-      - { name: heroImage, label: "Hero Image", widget: image, required: false }
-      - { name: draft, label: "Draft", widget: boolean, default: false, required: false }
-      - { name: body, label: Body, widget: markdown }
-
   # Quick notes collection for mobile-daily posts
   - name: "daily"
     label: "Daily Notes"
