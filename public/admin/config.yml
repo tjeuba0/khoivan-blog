@@ -22,6 +22,7 @@ collections:
     label_singular: "Blog Post"
     folder: "src/content/blog"
     create: true
+    delete: true  # Cho phép xóa post từ Decap CMS
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     extension: "mdx"
     format: "frontmatter"
@@ -67,6 +68,7 @@ collections:
     label_singular: "Daily Note"
     folder: "src/content/blog"
     create: true
+    delete: true  # Cho phép xóa daily notes từ Decap CMS
     slug: "mobile-daily-{{year}}{{month}}{{day}}"
     extension: "mdx"
     format: "frontmatter"
