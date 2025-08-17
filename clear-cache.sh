@@ -9,13 +9,12 @@ echo "================================"
 # Method 1: Clear server-side cache
 echo "1. Clearing server cache..."
 ssh -p 2222 khoivan@172.104.173.100 << 'EOF'
-  # Reload Nginx to clear cache
-  sudo nginx -s reload
-  
-  # Optional: Clear any file-based cache if exists
-  # sudo rm -rf /var/cache/nginx/*
-  
-  echo "✅ Server cache cleared"
+  # Note: Nginx reload requires sudo password
+  # You need to run this manually on the server
+  echo "⚠️  Note: To fully clear cache, SSH to server and run:"
+  echo "   sudo nginx -s reload"
+  echo ""
+  echo "Or use browser tricks below to bypass cache"
 EOF
 
 # Method 2: Test with curl (bypass cache)
