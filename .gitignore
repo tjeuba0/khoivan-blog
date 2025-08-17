@@ -20,3 +20,19 @@ yarn-error.log*
 # editor
 .vscode/
 .idea/
+
+# Sensitive documentation - NEVER commit these
+CLAUDE.md
+PROJECT_SUMMARY.md
+DEPLOYMENT.md
+MOBILE_POSTING_GUIDE.md
+specs/
+docs/
+*.local.json
+.claude/
+
+# Keep only README.md visible
+*.md
+!README.md
+!src/content/blog/*.md
+!src/content/blog/*.mdx
