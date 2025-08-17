@@ -25,5 +25,4 @@ jobs:
           REMOTE_PORT: 2222
           SOURCE: 'dist/'
           TARGET: '/var/www/khoivan.dev/'
-          SCRIPT_BEFORE: |
-            rm -rf /var/www/khoivan.dev/*
+          EXCLUDE: '.git,.github'
