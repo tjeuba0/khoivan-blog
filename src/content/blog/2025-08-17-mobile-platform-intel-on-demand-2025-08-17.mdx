@@ -1,0 +1,141 @@
+---
+title: Mobile Platform Intel - On-demand - 2025-08-17
+description: "Bản tin Android/iOS cho mobile banking: bảo mật, policy,
+  attestation, WebView; kèm checklist hành động chi tiết."
+pubDate: Aug 17 2025
+author: Khoi Van
+category: engineering
+tags:
+  - android
+  - ios
+  - policy
+  - attestation
+draft: false
+---
+Điểm nhấn
+
+	•	\[P1] Google Play yêu cầu target API 35 (Android 15) từ 2025-08-31 cho app mới và bản cập nhật; có thể xin gia hạn đến 2025-11-01 trong Play Console — android/store_policy. Hành động: rà soát targetSdkVersion=35 · lập kế hoạch rollout theo track nội bộ · kiểm thử regression đăng ký/OTP/3DS trên Android 15.  ￼ ￼
+
+	•	\[P0] Android Security Bulletin 2025-08 có System RCE (Critical); Pixel yêu cầu SPL 2025-08-05 — android/security_patch. Hành động: cập nhật thiết bị lab lên patch 2025-08-05 · kiểm tra crash/ANR sau cập nhật · cập nhật tài liệu hardening và cảnh báo SOC.  ￼
+
+Android
+
+	•	Android Security Bulletin (2025-08, SPL 2025-08-01/05) · Critical/P0 · official
+
+	•	Vì sao quan trọng: có lỗ hổng System RCE (Critical) và EoP framework; Pixel vá ở mức 2025-08-05.
+
+	•	Ảnh hưởng: login · OTP · 3DS
+
+	•	Act now: nâng patch level thiết bị test lên 2025-08-05 · chạy smoke test (đăng nhập, chuyển tiền, 3DS) · giám sát crash/error 48h sau cập nhật.
+
+	•	Test: Android API 29–35 / WebView 139.x.  ￼ ￼
+
+	•	Pixel Update Bulletin — 2025-08 (SPL 2025-08-05) · High/P1 · official
+
+	•	Vì sao quan trọng: vá bổ sung cho Pixel (bao gồm modem) phát hành cùng ngày.
+
+	•	Ảnh hưởng: login · OTP · 3DS
+
+	•	Act now: cập nhật Pixel lab lên 2025-08-05 · kiểm thử OTP SMS/voice sau OTA · theo dõi báo cáo sự cố.
+
+	•	Test: Android API 29–35 / WebView 139.x.  ￼
+
+	•	Google Play — Target API 35 (Android 15) · High/P1 · official · guide
+
+	•	Vì sao quan trọng: không đạt yêu cầu sẽ bị chặn submit/cập nhật; có thể xin gia hạn đến 2025-11-01.
+
+	•	Ảnh hưởng: store · build/release
+
+	•	Act now: đặt targetSdkVersion=35 · cập nhật dependency bị chặn (permission/file access) · chạy compatibility test Android 15 (predictive back, behavior changes).
+
+	•	Test: Android 15 (API 35) / Behavior changes.  ￼ ￼
+
+	•	Android Studio Narwhal Feature Drop 2025.1.2 · Low/P3 · release notes · blog
+
+	•	Vì sao quan trọng: bản stable mới cho team Android; đồng bộ hoá plugin/Gradle để build ổn định.
+
+	•	Ảnh hưởng: build
+
+	•	Act now: chuẩn hoá version IDE/AGP trên CI · sync/clean build · soát cảnh báo AGP/lint mới.
+
+	•	Test: AGP/Gradle trên CI.  ￼ ￼
+
+
+
+⸻
+
+
+
+iOS
+
+	•	iOS/iPadOS 18.6.1 (2025-08-14) · Medium/P2 · Apple security releases
+
+	•	Vì sao quan trọng: bản bảo mật gần nhất cho iOS 18; tại thời điểm phát hành chưa công bố CVE.
+
+	•	Ảnh hưởng: login · OTP · 3DS
+
+	•	Act now: cập nhật thiết bị QA lên 18.6.1 · chạy hồi quy App Attest/DeviceCheck · kiểm tra hiệu năng WKWebView checkout.
+
+	•	Test: iOS 18.6.1 / WKWebView 18.6.x.  ￼
+
+
+
+⸻
+
+
+
+Cross-platform / Browser
+
+	•	Flutter 3.35 (stable, 2025-08-13) · Low/P3 · release notes
+
+	•	Vì sao quan trọng: bản stable mới; xem xét nâng nếu app cross-platform.
+
+	•	Ảnh hưởng: build · UI
+
+	•	Act now: kiểm tra breaking changes package · chạy flutter test trên pipeline · đo kích thước bundle sau nâng.
+
+	•	Test: Flutter 3.35 / Dart tương ứng.  ￼
+
+	•	React Native 0.79.x (nhánh 0.79, cập nhật gần đây) · Low/P3 · blog 0.79 · releases
+
+	•	Vì sao quan trọng: bugfix cho nhánh 0.79; cân nhắc nâng nếu đang ở 0.79.x.
+
+	•	Ảnh hưởng: build · runtime
+
+	•	Act now: đọc changelog phạm vi Android/iOS · chạy E2E Detox/QA flows · kiểm tra tương thích AGP/Xcode hiện tại.
+
+	•	Test: RN 0.79.x / Hermes mặc định.  ￼ ￼
+
+
+
+⸻
+
+
+
+Root / Jailbreak / Hook
+
+	•	Frida 17.2.16 (2025-08-12) · Medium/P2 · official
+
+	•	Vì sao quan trọng: cập nhật tool hook; cần điều chỉnh kịch bản phát hiện/hardening nếu RASP có rule theo version.
+
+	•	Ảnh hưởng: RASP/hook_tamper
+
+	•	Act now: cập nhật test rig Frida lên 17.2.16 · xác nhận rule phát hiện injection/ptrace vẫn hiệu lực · kiểm tra anti-hook ở màn đăng nhập/KYC.
+
+	•	Test: Android 14–15 / iOS 17–18.
+
+
+
+⸻
+
+
+
+Watchlist (nguồn cộng đồng, chờ official)
+
+	•	VOZ: Play Integrity/Integrity Box free chỉ trả BASIC sau cập nhật Play Store; thảo luận PIF/Tsupport/YuriKeybox không đạt Strong — 4 tác giả, 6 post · low-trust · https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308 .
+
+	•	VOZ: bindhost/NextDNS chặn Zimperium cho MBBank; khác biệt giữa KernelSU và Magisk alpha, cần đổi “mode” và tắt unmount cho app MB — 5 tác giả, 10 post · low-trust · https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308 .
+
+	•	VOZ: Magisk alpha 302 bị phản ánh “bank fail”, người dùng rollback 301 thì ổn — 2 tác giả, 3 post · low-trust · https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-309 .
+
+	•	VOZ: VietinBank phát hiện lại sau thời gian pass; cập nhật Zygisk + LSPosed giúp khôi phục — 1 tác giả, 1 post · low-trust · https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308 .
