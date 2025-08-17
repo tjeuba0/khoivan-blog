@@ -22,7 +22,7 @@ collections:
     label_singular: "Blog Post"
     folder: "src/content/blog"
     create: true
-    slug: "{{slug}}"
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     extension: "mdx"
     format: "frontmatter"
     preview_path: "blog/{{slug}}"
@@ -86,9 +86,10 @@ collections:
           field: { name: tag, label: Tag, widget: string }
         }
       - { name: mood, label: "Today's Mood", widget: string, required: false }
+      - { name: heroImage, label: "Photo", widget: image, required: false, allow_multiple: false, hint: "Optional: Add a photo from today" }
       - { name: body, label: "Content", widget: markdown, hint: "What happened today? What did you learn?" }
 
-# Customize editor settings
+# Customize editor settings for mobile
 editor:
-  preview: true  # Show preview pane (CSS will hide on mobile)
-  frame: false   # Disable iframe preview for better performance
+  preview: false  # Disable preview for better mobile performance
+  frame: false   # Disable iframe preview
