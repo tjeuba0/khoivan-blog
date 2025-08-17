@@ -1,6 +1,6 @@
 ---
-title: "Mobile Banking Security Weekly #1 - Critical Android Updates & API Requirements"
-description: "Weekly security bulletin for mobile banking teams: Android 15 deadline, critical patches, iOS updates, and root detection bypass reports"
+title: "Mobile Banking Security Weekly #1"
+description: "Critical Android updates, API requirements, and community reports for mobile banking teams"
 pubDate: Aug 17 2025
 author: Khoi Van
 category: engineering
@@ -13,281 +13,213 @@ tags:
 draft: false
 ---
 
-## 🚨 Critical Updates This Week
+## Critical Updates
 
-<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
-  <h3 style="margin: 0; color: white;">⚡ Priority Actions</h3>
-  <ul style="margin: 0.5rem 0 0 0;">
-    <li><strong>P0:</strong> Android Security Bulletin has critical System RCE - Update test devices to SPL 2025-08-05 immediately</li>
-    <li><strong>P1:</strong> Google Play requires API 35 (Android 15) by Aug 31 - Extension available until Nov 1</li>
-  </ul>
+**ANDROID SECURITY BULLETIN** · <span style="color: #DC2626;">CRITICAL</span>  
+System RCE vulnerability · SPL 2025-08-05  
+Update test devices immediately
+
+**GOOGLE PLAY API 35** · HIGH  
+Required by August 31, 2025  
+Extension available until November 1
+
+---
+
+## Android
+
+### Security Bulletin · August 2025
+<div style="border-left: 2px solid #DC2626; padding-left: 1rem; margin: 1rem 0;">
+
+**Critical** · SPL 2025-08-01/05
+
+System RCE vulnerability and framework EoP. Pixel devices patched at 2025-08-05 level.
+
+**Impact**: Login flows, OTP verification, 3DS authentication
+
+**Actions**:
+- Update test devices to SPL 2025-08-05
+- Run smoke tests (login, transfers, 3DS)
+- Monitor crash rates for 48h post-update
+
+**Test Matrix**: Android API 29-35 / WebView 139.x
 </div>
 
-## 📊 Security Impact Summary
+### Pixel Update Bulletin · August 2025
+<div style="padding-left: 1rem; margin: 1rem 0;">
 
-<div style="display: grid; gap: 1rem; margin: 1rem 0;">
-  <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-      <span style="font-weight: 600;">🤖 Android</span>
-      <span style="background: #ef4444; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">✅ Immediate</span>
-    </div>
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-      <span style="background: #fef2f2; color: #ef4444; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">1 Critical</span>
-      <span style="background: #fff7ed; color: #f97316; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">2 High</span>
-      <span style="background: #f0fdf4; color: #10b981; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">1 Low</span>
-    </div>
-  </div>
-  
-  <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-      <span style="font-weight: 600;">🍎 iOS</span>
-      <span style="background: #eab308; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">⚠️ This week</span>
-    </div>
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-      <span style="background: #fefce8; color: #eab308; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">1 Medium</span>
-    </div>
-  </div>
-  
-  <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-      <span style="font-weight: 600;">🌐 Cross-platform</span>
-      <span style="background: #10b981; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">ℹ️ Optional</span>
-    </div>
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-      <span style="background: #f0fdf4; color: #10b981; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">2 Low</span>
-    </div>
-  </div>
+**High** · SPL 2025-08-05
+
+Additional patches for Pixel devices including modem fixes.
+
+**Impact**: Login flows, SMS/Voice OTP, 3DS authentication
+
+**Actions**:
+- Update Pixel lab devices to 2025-08-05
+- Test SMS/Voice OTP after OTA
+- Monitor incident reports
+
+**Test Matrix**: Android API 29-35 / WebView 139.x
+</div>
+
+### Google Play API 35 Requirement
+<div style="padding-left: 1rem; margin: 1rem 0;">
+
+**High** · Deadline: August 31, 2025
+
+Apps failing requirement will be blocked from submission/updates. Extension available until November 1.
+
+**Impact**: Store submission, Build/Release pipeline
+
+**Actions**:
+- Set `targetSdkVersion=35`
+- Update blocked dependencies (permissions/file access)
+- Run Android 15 compatibility tests
+  - Predictive back gesture
+  - Behavior changes
+
+**Test Matrix**: Android 15 (API 35)
+</div>
+
+### Android Studio Narwhal 2025.1.2
+<div style="padding-left: 1rem; margin: 1rem 0;">
+
+**Low** · Stable Release
+
+New stable version for Android teams.
+
+**Optional Actions**:
+- Standardize IDE/AGP version on CI
+- Sync/clean build
+- Review new AGP/lint warnings
+
+**Test Matrix**: AGP/Gradle on CI
 </div>
 
 ---
 
-## 🤖 Android Updates
+## iOS
 
-### 🔴 Android Security Bulletin (August 2025)
-<div style="border-left: 4px solid #ef4444; padding-left: 1rem; margin: 1rem 0;">
-  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-    <span style="background: #ef4444; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">CRITICAL P0</span>
-    <span style="color: #6b7280;">SPL 2025-08-01/05</span>
-  </div>
-  
-  **Why it matters:** System RCE vulnerability (Critical) and framework EoP. Pixel devices patched at 2025-08-05 level.
-  
-  **Impact Areas:**
-  - 🔐 Login flows
-  - 📱 OTP verification  
-  - 💳 3DS authentication
-  
-  **Required Actions:**
-  1. ✅ Update test devices to SPL 2025-08-05
-  2. ✅ Run smoke tests (login, transfers, 3DS)
-  3. ✅ Monitor crash/error rates for 48h post-update
-  
-  **Test Matrix:** Android API 29-35 / WebView 139.x
-</div>
+### iOS/iPadOS 18.6.1 Security Update
+<div style="padding-left: 1rem; margin: 1rem 0;">
 
-### 🟠 Pixel Update Bulletin (August 2025)
-<div style="border-left: 4px solid #f97316; padding-left: 1rem; margin: 1rem 0;">
-  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-    <span style="background: #f97316; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">HIGH P1</span>
-    <span style="color: #6b7280;">SPL 2025-08-05</span>
-  </div>
-  
-  **Why it matters:** Additional patches for Pixel devices including modem fixes, released same day.
-  
-  **Impact Areas:**
-  - 🔐 Login flows
-  - 📱 SMS/Voice OTP
-  - 💳 3DS authentication
-  
-  **Required Actions:**
-  1. ⚠️ Update Pixel lab devices to 2025-08-05
-  2. ⚠️ Test SMS/Voice OTP after OTA
-  3. ⚠️ Monitor incident reports
-  
-  **Test Matrix:** Android API 29-35 / WebView 139.x
-</div>
+**Medium** · Released: August 14, 2025
 
-### 🟠 Google Play API 35 Requirement
-<div style="border-left: 4px solid #f97316; padding-left: 1rem; margin: 1rem 0;">
-  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-    <span style="background: #f97316; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">HIGH P1</span>
-    <span style="color: #6b7280;">Deadline: Aug 31, 2025</span>
-    <span style="background: #10b981; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">Extension: Nov 1</span>
-  </div>
-  
-  **Why it matters:** Apps failing to meet requirement will be blocked from submission/updates.
-  
-  **Impact Areas:**
-  - 📱 Store submission
-  - 🏗️ Build/Release pipeline
-  
-  **Required Actions:**
-  1. ⚠️ Set `targetSdkVersion=35`
-  2. ⚠️ Update blocked dependencies (permissions/file access)
-  3. ⚠️ Run Android 15 compatibility tests
-     - Predictive back gesture
-     - Behavior changes
-  
-  **Test Matrix:** Android 15 (API 35)
-</div>
+Latest security patch for iOS 18. CVEs not disclosed at release.
 
-### 🟢 Android Studio Narwhal 2025.1.2
-<div style="border-left: 4px solid #10b981; padding-left: 1rem; margin: 1rem 0;">
-  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-    <span style="background: #10b981; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">LOW P3</span>
-    <span style="color: #6b7280;">Stable Release</span>
-  </div>
-  
-  **Why it matters:** New stable version for Android teams; sync plugin/Gradle for stable builds.
-  
-  **Optional Actions:**
-  - ℹ️ Standardize IDE/AGP version on CI
-  - ℹ️ Sync/clean build
-  - ℹ️ Review new AGP/lint warnings
-  
-  **Test Matrix:** AGP/Gradle on CI
+**Impact**: Login flows, OTP verification, 3DS authentication
+
+**Actions**:
+- Update QA devices to 18.6.1
+- Run App Attest/DeviceCheck regression
+- Test WKWebView checkout performance
+
+**Test Matrix**: iOS 18.6.1 / WKWebView 18.6.x
 </div>
 
 ---
 
-## 🍎 iOS Updates
+## Cross-Platform
 
-### 🟡 iOS/iPadOS 18.6.1 Security Update
-<div style="border-left: 4px solid #eab308; padding-left: 1rem; margin: 1rem 0;">
-  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-    <span style="background: #eab308; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">MEDIUM P2</span>
-    <span style="color: #6b7280;">Released: Aug 14, 2025</span>
-  </div>
-  
-  **Why it matters:** Latest security patch for iOS 18; CVEs not disclosed at release time.
-  
-  **Impact Areas:**
-  - 🔐 Login flows
-  - 📱 OTP verification
-  - 💳 3DS authentication
-  
-  **Required Actions:**
-  1. ⚠️ Update QA devices to 18.6.1
-  2. ⚠️ Run App Attest/DeviceCheck regression
-  3. ⚠️ Test WKWebView checkout performance
-  
-  **Test Matrix:** iOS 18.6.1 / WKWebView 18.6.x
+### Flutter 3.35 Stable
+<div style="padding-left: 1rem; margin: 1rem 0;">
+
+**Low** · Released: August 13, 2025
+
+New stable version. Consider upgrading cross-platform apps.
+
+**Optional Actions**:
+- Check package breaking changes
+- Run flutter test on pipeline
+- Measure bundle size after upgrade
+
+**Test Matrix**: Flutter 3.35 / Dart
+</div>
+
+### React Native 0.79.x
+<div style="padding-left: 1rem; margin: 1rem 0;">
+
+**Low** · Branch 0.79
+
+Bugfixes for 0.79 branch.
+
+**Optional Actions**:
+- Review Android/iOS changelog
+- Run E2E Detox/QA flows
+- Check AGP/Xcode compatibility
+
+**Test Matrix**: RN 0.79.x / Hermes
 </div>
 
 ---
 
-## 🌐 Cross-Platform Updates
+## Security & Tamper Detection
 
-### 🟢 Flutter 3.35 Stable Release
-<div style="border-left: 4px solid #10b981; padding-left: 1rem; margin: 1rem 0;">
-  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-    <span style="background: #10b981; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">LOW P3</span>
-    <span style="color: #6b7280;">Released: Aug 13, 2025</span>
-  </div>
-  
-  **Why it matters:** New stable version; consider upgrading cross-platform apps.
-  
-  **Optional Actions:**
-  - ℹ️ Check package breaking changes
-  - ℹ️ Run flutter test on pipeline
-  - ℹ️ Measure bundle size after upgrade
-  
-  **Test Matrix:** Flutter 3.35 / Dart
-</div>
+### Frida 17.2.16
+<div style="padding-left: 1rem; margin: 1rem 0;">
 
-### 🟢 React Native 0.79.x Updates
-<div style="border-left: 4px solid #10b981; padding-left: 1rem; margin: 1rem 0;">
-  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-    <span style="background: #10b981; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">LOW P3</span>
-    <span style="color: #6b7280;">Branch 0.79</span>
-  </div>
-  
-  **Why it matters:** Bugfixes for 0.79 branch; consider if on 0.79.x.
-  
-  **Optional Actions:**
-  - ℹ️ Review Android/iOS changelog
-  - ℹ️ Run E2E Detox/QA flows
-  - ℹ️ Check AGP/Xcode compatibility
-  
-  **Test Matrix:** RN 0.79.x / Hermes
+**Medium** · Released: August 12, 2025
+
+Hook tool update. Adjust detection/hardening if RASP has version-specific rules.
+
+**Impact**: RASP/Hook tamper detection
+
+**Actions**:
+- Update Frida test rig to 17.2.16
+- Verify injection/ptrace detection rules
+- Test anti-hook at login/KYC screens
+
+**Test Matrix**: Android 14-15 / iOS 17-18
 </div>
 
 ---
 
-## 🛡️ Security & Tamper Detection
+## Community Watchlist
 
-### 🟡 Frida 17.2.16 Released
-<div style="border-left: 4px solid #eab308; padding-left: 1rem; margin: 1rem 0;">
-  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-    <span style="background: #eab308; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">MEDIUM P2</span>
-    <span style="color: #6b7280;">Released: Aug 12, 2025</span>
-  </div>
-  
-  **Why it matters:** Hook tool update; adjust detection/hardening if RASP has version-specific rules.
-  
-  **Impact Areas:**
-  - 🔒 RASP/Hook tamper detection
-  
-  **Required Actions:**
-  1. ⚠️ Update Frida test rig to 17.2.16
-  2. ⚠️ Verify injection/ptrace detection rules
-  3. ⚠️ Test anti-hook at login/KYC screens
-  
-  **Test Matrix:** Android 14-15 / iOS 17-18
+<div style="background: #F9FAFB; padding: 1rem; margin: 1rem 0;">
+
+**Unverified community reports** - awaiting official confirmation
+
+### Play Integrity API Changes
+
+**VOZ Report #1**: Play Integrity/Integrity Box free tier only returning BASIC after Play Store update
+- Discussion about PIF/Tsupport/YuriKeybox not achieving Strong integrity
+- Source: 4 authors, 6 posts · low-trust
+- [https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308](https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308)
+
+### Banking App Detection Bypasses
+
+**VOZ Report #2**: MBBank detection methods and bypasses
+- bindhost/NextDNS reportedly blocking Zimperium detection for MBBank
+- Differences between KernelSU and Magisk alpha - need to change "mode" and disable unmount for MB app
+- Source: 5 authors, 10 posts · low-trust
+- [https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308](https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308)
+
+**VOZ Report #3**: Magisk alpha 302 issues
+- Users reporting "bank fail" with Magisk alpha 302
+- Rollback to 301 resolves issues
+- Source: 2 authors, 3 posts · low-trust
+- [https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-309](https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-309)
+
+**VOZ Report #4**: VietinBank detection patterns
+- VietinBank detecting root after initial pass period
+- Updating Zygisk + LSPosed reportedly helps restore functionality
+- Source: 1 author, 1 post · low-trust
+- [https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308](https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308)
 </div>
 
 ---
 
-## 👁️ Community Watchlist
+## Next Week
 
-<div style="background: #f3f4f6; border: 1px solid #e5e7eb; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-  <p style="margin: 0 0 1rem 0; color: #6b7280; font-size: 0.875rem;">⚠️ <strong>Unverified community reports</strong> - awaiting official confirmation</p>
-  
-  ### Play Integrity API Changes
-  
-  **🔍 VOZ Report #1:** Play Integrity/Integrity Box free tier only returning BASIC after Play Store update
-  - Discussion about PIF/Tsupport/YuriKeybox not achieving Strong integrity
-  - **Source:** 4 authors, 6 posts • low-trust
-  - **Link:** [https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308](https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308)
-  
-  ### Banking App Detection Bypasses
-  
-  **🔍 VOZ Report #2:** MBBank detection methods and bypasses
-  - bindhost/NextDNS reportedly blocking Zimperium detection for MBBank
-  - Differences between KernelSU and Magisk alpha - need to change "mode" and disable unmount for MB app
-  - **Source:** 5 authors, 10 posts • low-trust
-  - **Link:** [https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308](https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308)
-  
-  **🔍 VOZ Report #3:** Magisk alpha 302 issues
-  - Users reporting "bank fail" with Magisk alpha 302
-  - Rollback to 301 resolves issues
-  - **Source:** 2 authors, 3 posts • low-trust
-  - **Link:** [https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-309](https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-309)
-  
-  **🔍 VOZ Report #4:** VietinBank detection patterns
-  - VietinBank detecting root after initial pass period
-  - Updating Zygisk + LSPosed reportedly helps restore functionality
-  - **Source:** 1 author, 1 post • low-trust
-  - **Link:** [https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308](https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308)
-</div>
-
----
-
-## 📅 Looking Ahead
-
-**Next Week's Focus:**
 - Android 15 compatibility testing
 - Play Integrity API monitoring
 - iOS 18.7 beta evaluation
 
-**Stay Updated:**
-Subscribe to receive Mobile Banking Security Weekly every Saturday.
-
 ---
 
-<div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
-  <p style="color: #6b7280; font-size: 0.875rem;">
-    Mobile Banking Security Weekly #1 • August 17, 2025<br/>
-    Questions? Contact security@yourbank.com
+<div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #E5E7EB;">
+  <p style="color: #666; font-size: 0.875rem;">
+    Mobile Banking Security Weekly #1 · August 17, 2025<br/>
+    security@yourbank.com
   </p>
 </div>
