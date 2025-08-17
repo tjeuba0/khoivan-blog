@@ -13,171 +13,175 @@ tags:
 draft: false
 ---
 
-## Critical Updates
+## 🔴 Critical Updates
 
-**ANDROID SECURITY BULLETIN** · <span style="color: #DC2626;">CRITICAL</span>  
+<div style="background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+
+**ANDROID SECURITY BULLETIN** · <span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;">CRITICAL</span>  
 System RCE vulnerability · SPL 2025-08-05  
 Update test devices immediately
 
-**GOOGLE PLAY API 35** · HIGH  
+**GOOGLE PLAY API 35** · <span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;">HIGH</span>  
 Required by August 31, 2025  
 Extension available until November 1
 
+</div>
+
 ---
 
-## Android
+## 🤖 Android
 
 ### Security Bulletin · August 2025
-<div style="border-left: 2px solid #DC2626; padding-left: 1rem; margin: 1rem 0;">
+<div style="background: #FAFAFA; border-left: 3px solid #DC2626; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
 
-**Critical** · SPL 2025-08-01/05
+<span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">CRITICAL</span> **SPL 2025-08-01/05**
 
 System RCE vulnerability and framework EoP. Pixel devices patched at 2025-08-05 level.
 
-**Impact**: Login flows, OTP verification, 3DS authentication
+**Impact:** Login flows, OTP verification, 3DS authentication
 
-**Actions**:
+**Actions:**
 - Update test devices to SPL 2025-08-05
 - Run smoke tests (login, transfers, 3DS)
 - Monitor crash rates for 48h post-update
 
-**Test Matrix**: Android API 29-35 / WebView 139.x
+**Test Matrix:** Android API 29-35 / WebView 139.x
 </div>
 
 ### Pixel Update Bulletin · August 2025
-<div style="padding-left: 1rem; margin: 1rem 0;">
+<div style="background: #FAFAFA; border-left: 3px solid #EA580C; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
 
-**High** · SPL 2025-08-05
+<span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">HIGH</span> **SPL 2025-08-05**
 
 Additional patches for Pixel devices including modem fixes.
 
-**Impact**: Login flows, SMS/Voice OTP, 3DS authentication
+**Impact:** Login flows, SMS/Voice OTP, 3DS authentication
 
-**Actions**:
+**Actions:**
 - Update Pixel lab devices to 2025-08-05
 - Test SMS/Voice OTP after OTA
 - Monitor incident reports
 
-**Test Matrix**: Android API 29-35 / WebView 139.x
+**Test Matrix:** Android API 29-35 / WebView 139.x
 </div>
 
 ### Google Play API 35 Requirement
-<div style="padding-left: 1rem; margin: 1rem 0;">
+<div style="background: #FAFAFA; border-left: 3px solid #EA580C; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
 
-**High** · Deadline: August 31, 2025
+<span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">HIGH</span> **Deadline: August 31, 2025**
 
 Apps failing requirement will be blocked from submission/updates. Extension available until November 1.
 
-**Impact**: Store submission, Build/Release pipeline
+**Impact:** Store submission, Build/Release pipeline
 
-**Actions**:
+**Actions:**
 - Set `targetSdkVersion=35`
 - Update blocked dependencies (permissions/file access)
 - Run Android 15 compatibility tests
   - Predictive back gesture
   - Behavior changes
 
-**Test Matrix**: Android 15 (API 35)
+**Test Matrix:** Android 15 (API 35)
 </div>
 
 ### Android Studio Narwhal 2025.1.2
-<div style="padding-left: 1rem; margin: 1rem 0;">
+<div style="background: #FAFAFA; border-left: 3px solid #059669; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
 
-**Low** · Stable Release
+<span style="background: #059669; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">LOW</span> **Stable Release**
 
 New stable version for Android teams.
 
-**Optional Actions**:
+**Optional Actions:**
 - Standardize IDE/AGP version on CI
 - Sync/clean build
 - Review new AGP/lint warnings
 
-**Test Matrix**: AGP/Gradle on CI
+**Test Matrix:** AGP/Gradle on CI
 </div>
 
 ---
 
-## iOS
+## 🍎 iOS
 
 ### iOS/iPadOS 18.6.1 Security Update
-<div style="padding-left: 1rem; margin: 1rem 0;">
+<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
 
-**Medium** · Released: August 14, 2025
+<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Released: August 14, 2025**
 
 Latest security patch for iOS 18. CVEs not disclosed at release.
 
-**Impact**: Login flows, OTP verification, 3DS authentication
+**Impact:** Login flows, OTP verification, 3DS authentication
 
-**Actions**:
+**Actions:**
 - Update QA devices to 18.6.1
 - Run App Attest/DeviceCheck regression
 - Test WKWebView checkout performance
 
-**Test Matrix**: iOS 18.6.1 / WKWebView 18.6.x
+**Test Matrix:** iOS 18.6.1 / WKWebView 18.6.x
 </div>
 
 ---
 
-## Cross-Platform
+## 🌐 Cross-Platform
 
 ### Flutter 3.35 Stable
-<div style="padding-left: 1rem; margin: 1rem 0;">
+<div style="background: #FAFAFA; border-left: 3px solid #059669; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
 
-**Low** · Released: August 13, 2025
+<span style="background: #059669; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">LOW</span> **Released: August 13, 2025**
 
 New stable version. Consider upgrading cross-platform apps.
 
-**Optional Actions**:
+**Optional Actions:**
 - Check package breaking changes
 - Run flutter test on pipeline
 - Measure bundle size after upgrade
 
-**Test Matrix**: Flutter 3.35 / Dart
+**Test Matrix:** Flutter 3.35 / Dart
 </div>
 
 ### React Native 0.79.x
-<div style="padding-left: 1rem; margin: 1rem 0;">
+<div style="background: #FAFAFA; border-left: 3px solid #059669; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
 
-**Low** · Branch 0.79
+<span style="background: #059669; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">LOW</span> **Branch 0.79**
 
 Bugfixes for 0.79 branch.
 
-**Optional Actions**:
+**Optional Actions:**
 - Review Android/iOS changelog
 - Run E2E Detox/QA flows
 - Check AGP/Xcode compatibility
 
-**Test Matrix**: RN 0.79.x / Hermes
+**Test Matrix:** RN 0.79.x / Hermes
 </div>
 
 ---
 
-## Security & Tamper Detection
+## 🛡️ Security & Tamper Detection
 
 ### Frida 17.2.16
-<div style="padding-left: 1rem; margin: 1rem 0;">
+<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
 
-**Medium** · Released: August 12, 2025
+<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Released: August 12, 2025**
 
 Hook tool update. Adjust detection/hardening if RASP has version-specific rules.
 
-**Impact**: RASP/Hook tamper detection
+**Impact:** RASP/Hook tamper detection
 
-**Actions**:
+**Actions:**
 - Update Frida test rig to 17.2.16
 - Verify injection/ptrace detection rules
 - Test anti-hook at login/KYC screens
 
-**Test Matrix**: Android 14-15 / iOS 17-18
+**Test Matrix:** Android 14-15 / iOS 17-18
 </div>
 
 ---
 
-## Community Watchlist
+## 👁️ Community Watchlist
 
-<div style="background: #F9FAFB; padding: 1rem; margin: 1rem 0;">
+<div style="background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
 
-**Unverified community reports** - awaiting official confirmation
+⚠️ **Unverified community reports** - awaiting official confirmation
 
 ### Play Integrity API Changes
 
@@ -218,8 +222,8 @@ Hook tool update. Adjust detection/hardening if RASP has version-specific rules.
 ---
 
 <div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #E5E7EB;">
-  <p style="color: #666; font-size: 0.875rem;">
+  <p style="color: #6B7280; font-size: 0.875rem;">
     Mobile Banking Security Weekly #1 · August 17, 2025<br/>
-    security@yourbank.com
+    Questions? Contact <a href="mailto:security@yourbank.com" style="color: #059669;">security@yourbank.com</a>
   </p>
 </div>
