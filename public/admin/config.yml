@@ -31,7 +31,7 @@ collections:
     fields:
       - { name: title, label: Title, widget: string, required: true }
       - { name: description, label: Description, widget: text, required: true }
-      - { name: pubDate, label: "Publish Date", widget: datetime, format: "MMM DD YYYY", date_format: "MMM DD YYYY", time_format: false }
+      - { name: pubDate, label: "Publish Date", widget: datetime, format: "MMM DD YYYY", date_format: "MMM DD YYYY", time_format: false, picker_utc: false }
       - { name: author, label: Author, widget: string, default: "Khoi Van" }
       - { 
           name: category, 
@@ -75,7 +75,7 @@ collections:
     fields:
       - { name: title, label: Title, widget: string, default: "Mobile Daily {{year}}/{{month}}/{{day}}" }
       - { name: description, label: Description, widget: text, default: "Quick thoughts and learnings from today" }
-      - { name: pubDate, label: "Date", widget: datetime, default: "", format: "MMM DD YYYY", date_format: "MMM DD YYYY", time_format: false }
+      - { name: pubDate, label: "Date", widget: datetime, default: "", format: "MMM DD YYYY", date_format: "MMM DD YYYY", time_format: false, picker_utc: false }
       - { name: author, label: Author, widget: hidden, default: "Khoi Van" }
       - { name: category, label: Category, widget: hidden, default: "life" }
       - { 
