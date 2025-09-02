@@ -1,0 +1,261 @@
+---
+title: "Mobile Banking Security Weekly #2"
+description: "16KB page size mandate, iOS zero-day patch, and WebView 140 updates for banking apps"
+pubDate: Sep 02 2025
+author: Khoi Van
+category: engineering
+tags:
+  - android
+  - ios
+  - security
+  - banking
+  - weekly-bulletin
+draft: false
+---
+
+## 🔴 Critical Updates
+
+<div style="background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+
+**16KB PAGE SIZE MANDATE** · <span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;">CRITICAL</span>  
+Google Play requirement for all apps with native code  
+Deadline: November 1, 2025
+
+**iOS 18.6.2 ZERO-DAY** · <span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;">CRITICAL</span>  
+CVE-2025-43300 actively exploited  
+Update immediately
+
+</div>
+
+---
+
+## 🤖 Android
+
+### 16KB Page Size Requirement · NEW
+<div style="background: #FEF2F2; border-left: 3px solid #DC2626; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+
+<span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">CRITICAL</span> **Deadline: November 1, 2025**
+
+All apps targeting Android 15+ with native code must support 16KB page sizes. Apps failing this requirement will be blocked from Google Play submission.
+
+**Why This Matters:**
+- Modern devices with 12GB+ RAM adopting 16KB pages for performance
+- 3-30% faster app launches, 4.5% battery improvement
+- 8% faster boot times, 4.5-6.6% faster camera starts
+
+**Impact:** Build pipeline, NDK libraries, Payment SDKs
+
+**Immediate Actions:**
+- Enable 16KB page size emulator for testing
+- Rebuild all NDK libraries with latest toolchain
+- Update third-party SDKs to 16KB-compatible versions
+- Run APK Analyzer in Android Studio 2025.1.2
+
+**Test Matrix:** Android 15+ with 16KB page configuration
+</div>
+
+### Play Billing Library v7 Requirement
+<div style="background: #FAFAFA; border-left: 3px solid #EA580C; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+
+<span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">HIGH</span> **Deadline: November 1, 2025**
+
+Play Billing Library v5/v6 deprecated. Upgrade to v7.x required for all payment flows.
+
+**Impact:** In-app purchases, Subscription management
+
+**Actions:**
+- Migrate from `com.android.billingclient:billing:6.x` to `7.x`
+- Test purchase flows on production track
+- Verify subscription upgrade/downgrade scenarios
+
+**Test Matrix:** Android API 29-36 with PBL v7
+</div>
+
+### Chrome/WebView 140 Early Stable
+<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+
+<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Rolling out: August 27, 2025**
+
+Chrome 140 introduces Local Network Access permission requirements affecting OAuth/SSO flows.
+
+**Key Changes:**
+- Permission prompts for local network requests
+- Restricts public → local IP/loopback requests
+- Enhanced CSRF protection for local devices
+
+**Impact:** SSO/OAuth, 3DS WebView, Internal APIs
+
+**Actions:**
+- Test OAuth flows in WebView 140
+- Review CSP headers for local API calls
+- Update network permission manifests
+- Monitor crash reports after auto-update
+
+**Test Matrix:** Android API 29-36 / WebView 140.x
+</div>
+
+---
+
+## 🍎 iOS
+
+### iOS 18.6.2 Zero-Day Patch
+<div style="background: #FEF2F2; border-left: 3px solid #DC2626; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+
+<span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">CRITICAL</span> **CVE-2025-43300 (CVSS 8.8)**
+
+ImageIO out-of-bounds write vulnerability actively exploited in targeted attacks. Processing malicious images can lead to memory corruption and RCE.
+
+**Attack Vector:** Malicious images via email/messaging/web
+
+**Impact:** Camera/KYC flows, Document scanning, Profile uploads
+
+**Immediate Actions:**
+- Update all test devices to iOS 18.6.2
+- Review image processing pipelines
+- Test camera/document capture flows
+- Monitor ImageIO crash signatures
+
+**Test Matrix:** iOS 18.6.2 / WKWebView 18.6.x
+</div>
+
+### macOS Sequoia 15.6.1 · Related Update
+<div style="background: #FAFAFA; border-left: 3px solid #EA580C; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+
+<span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">HIGH</span> **Same CVE-2025-43300**
+
+Desktop apps and internal tools also affected. Update development machines.
+
+**Actions:**
+- Update macOS dev machines to 15.6.1
+- Rebuild iOS simulators after update
+- Test Catalyst apps if applicable
+
+</div>
+
+---
+
+## 🌐 Cross-Platform
+
+### React Native 0.81
+<div style="background: #FAFAFA; border-left: 3px solid #059669; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+
+<span style="background: #059669; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">LOW</span> **Released: August 12, 2025**
+
+Major update with Android 16 support and edge-to-edge requirements.
+
+**Breaking Changes:**
+- SafeAreaView deprecated (use react-native-safe-area-context)
+- Edge-to-edge mandatory on Android 16
+- JavaScriptCore moved to community package
+
+**New Features:**
+- 10x faster iOS builds (experimental)
+- Native Android 16 support
+- 16KB page size compliant
+
+**Migration Actions:**
+- Replace SafeAreaView implementations
+- Test edge-to-edge on tablets
+- Update to Hermes or add JSC package
+
+**Test Matrix:** Android API 29-36 / iOS 17-18
+</div>
+
+---
+
+## 🛡️ Security & Tamper Detection
+
+### Frida 17.2.17 Update
+<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+
+<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Released: August 20, 2025**
+
+New Interceptor behavior on iOS. Update detection patterns.
+
+**Impact:** RASP/Anti-tampering, Hook detection
+
+**Actions:**
+- Update Frida detection signatures
+- Test ptrace/injection detection
+- Verify hook detection at sensitive screens
+- Review symbol/port detection logic
+
+**Test Matrix:** Android 13-16 / iOS 17-18
+</div>
+
+### Magisk v30.2 Pre-release
+<div style="background: #FAFAFA; border-left: 3px solid #059669; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+
+<span style="background: #059669; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">LOW</span> **Pre-release: August 2025**
+
+Zygisk/denylist improvements. Monitor for banking app detection changes.
+
+**Actions:**
+- Test against Magisk stable vs v30.2
+- Check ro.debuggable/su detection
+- Update Play Integrity rules
+- Monitor root detection bypass reports
+
+**Test Matrix:** Android 13-16 with various root configurations
+</div>
+
+---
+
+## 👁️ Community Watchlist
+
+<div style="background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+
+⚠️ **Unverified community reports** - awaiting official confirmation
+
+### Enhanced Banking App Detection
+
+**VOZ Report #1**: MBBank/VNeID increasing root detection
+- Reports of ReZygisk/HMA/KernelSU Next detection
+- Zimperium blocking via bindhost/NextDNS
+- Source: 7+ posts last 7 days · low-trust
+- [VOZ Thread Page 312](https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-312)
+
+### Play Integrity Changes
+
+**VOZ Report #2**: MEETS_STRONG_INTEGRITY requirements
+- Some devices achieving STRONG but apps only checking BASIC
+- GPay compatibility discussions
+- Source: Multiple reports · low-trust
+- [VOZ Thread Page 313](https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-313)
+
+</div>
+
+---
+
+## 📊 Week-over-Week Changes
+
+### New This Week
+- ✅ 16KB page size mandate (November 1 deadline)
+- ✅ iOS 18.6.2 zero-day (CVE-2025-43300)
+- ✅ Chrome/WebView 140 rollout
+- ✅ React Native 0.81 with Android 16 support
+- ✅ Play Billing Library v7 requirement
+
+### Continuing from Last Week
+- Google Play API 35 requirement (extended to Nov 1)
+- Android Security Bulletin SPL 2025-08-05
+- Flutter 3.35 stable release
+
+---
+
+## Next Week Preview
+
+- iOS 18.7 beta evaluation
+- Android 16 compatibility deep-dive
+- 16KB page size migration guide
+- WebView 140 production metrics
+
+---
+
+<div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #E5E7EB;">
+  <p style="color: #6B7280; font-size: 0.875rem;">
+    Mobile Banking Security Weekly #2 · September 2, 2025<br/>
+    Critical updates require immediate action · Plan your November 1 compliance<br/>
+    Questions? Contact <a href="mailto:security@yourbank.com" style="color: #059669;">security@yourbank.com</a>
+  </p>
+</div>
