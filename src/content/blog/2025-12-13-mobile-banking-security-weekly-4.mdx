@@ -1,0 +1,392 @@
+---
+title: "Mobile Banking Security Weekly #4"
+description: "Android December 2025 critical patch with actively exploited vulnerabilities, iOS 26.2 WebKit zero-days, Google Play US policy changes, and Magisk v30.6 Rust rewrite"
+pubDate: Dec 13 2025
+author: Khoi Van
+category: engineering
+tags:
+  - android
+  - ios
+  - security
+  - banking
+  - weekly-bulletin
+draft: false
+---
+
+## Critical Updates
+
+<div style="background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+
+**Android December 2025 Security Bulletin** · <span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;">CRITICAL</span>
+Actively exploited vulnerabilities patched (critical remote DoS in Framework) – update devices to 2025-12-05 or later
+*Released: Dec 4, 2025*
+
+**iOS 26.2 Security Update** · <span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;">CRITICAL</span>
+Apple patches 20+ vulnerabilities (2 WebKit zero-days under active exploit) – update iPhones/iPads
+*Released: Dec 12, 2025*
+
+**Google Play US Policy Changes** · <span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;">HIGH</span>
+Alternative billing and external links now allowed for U.S. users (Epic injunction) – compliance deadline Jan 28, 2026
+
+</div>
+
+*(No other critical Google/Apple deadlines this week.)*
+
+---
+
+## Android (PRIMARY)
+
+### Android Security Bulletin – December 2025 (Patch 2025-12-05)
+<div style="background: #FEF2F2; border-left: 3px solid #DC2626; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+
+<span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">CRITICAL</span> **Released: December 4, 2025**
+
+Monthly patch fixes a critical Framework flaw (remote denial-of-service) and dozens of high-severity vulnerabilities across System, Kernel, and vendor components. Google notes two of the patched bugs are under **limited targeted exploitation**, underscoring the need for immediate updates.
+
+**Why Critical:**
+- **Active exploits:** Vulnerabilities (CVE-2025-48633, CVE-2025-48572) are known to be exploited in the wild, potentially enabling privilege escalation or device instability
+- **Banking risk:** Unpatched devices could be susceptible to remote app crashes or compromise, affecting transaction and OTP flows
+- **Fragmentation:** Users on older Android versions might not receive timely OEM patches, increasing fraud risk
+
+**Impact Surfaces:** Login sessions (potential DoS mid-transaction), WebView content rendering (malicious web content could crash app), biometric authenticator stability
+
+**Actions:**
+- Update all test devices to December 2025 SPL (security patch level) and require customers to update
+- Re-run critical user flows (login, OTP, payments) on patched vs. unpatched devices to observe any difference or crashes
+- Monitor crash logs and security alerts on devices pre-2025-12-05 patch for signs of the exploited CVEs
+- If any in-house device management: enforce minimum patch level checks during app startup to warn users on older patches
+
+**Test Matrix:**
+- OS: Android 10, 12, 14, 15 (to cover devices that may or may not get patches)
+- Patch Levels: 2025-11-05 vs 2025-12-05 on identical devices
+- WebView: Test with WebView 143 (latest)
+- Flows: Login, Balance check, Funds transfer (ensure no unexpected crashes)
+- Locales: vi-VN primary (verify error messaging)
+</div>
+
+### Google Play External Links & Alt-Billing (U.S.)
+<div style="background: #FAFAFA; border-left: 3px solid #EA580C; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+
+<span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">HIGH</span> **Updated: December 9, 2025** · Compliance Deadline: **January 28, 2026**
+
+Google Play is implementing U.S.-only policy changes per a court injunction. Apps may now link to external app downloads and offer payment methods besides Google Play Billing for U.S. users. Google launched an External Content Links program and expanded Alternative Billing programs for U.S. developers.
+
+**Why it matters:**
+- **Payment flexibility:** Banks or fintech apps distributing in the U.S. can now direct users to web sign-up or external payment systems without fear of Play Store removal
+- **Compliance overhead:** To use these freedoms, apps must follow new program requirements (disclosure dialogs, user protections). Non-compliance by Jan 28 will force removal of such links
+- **Competitive dynamics:** Rival apps might offer fee-saving payment methods in the U.S., impacting user expectations
+
+**Impact Surfaces:** In-app upgrade flows, subscription purchase screens, any "Add money" or "Premium account" feature for U.S. region users
+
+**Actions:**
+- Evaluate if our app would benefit from external link or alternative billing in the U.S. (most banking apps have no IAPs, so likely not applicable)
+- If applicable, enroll in Google's external links or alt billing program ASAP and implement required user prompts
+- Update App Store listing and in-app wording for U.S. region to clarify any external purchase flows
+- Ensure compliance by Jan 28, 2026 if participating
+
+**Test Matrix:**
+- Device/Region: U.S. Play Store account vs non-U.S. (feature flag differences)
+- Flows: (If using alt billing) attempt a purchase in-app – verify proper warning dialog and smooth handoff
+- Compliance: Check that the latest app bundle targets the correct Play policy version
+</div>
+
+### Android Vitals "Excessive Wake Locks" Enforcement
+<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+
+<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Enforcement Begins: March 1, 2026**
+
+Google is raising the bar on battery performance. A new core vitals metric tracks apps holding partial wake locks >2 hours in 24h. Starting March 1, 2026, any app exceeding the bad threshold (5% of user sessions) will face Play Store penalties: reduced visibility and a warning label about battery drain.
+
+**Why Critical:**
+- **Background services:** Banking apps often run background jobs. If misconfigured to keep the CPU awake, the app could exceed the threshold, leading to public "battery hog" warnings
+- **Store discoverability:** Being demoted in Play discovery means fewer organic installs
+- **User trust:** A battery warning on our app's listing could undermine user confidence
+
+**Impact Surfaces:** Long-running background processes (balance refresh, biometric listeners, location-based offers), third-party SDKs with misuse of WakeLock
+
+**Actions:**
+- Audit the app for any explicit WakeLock usage or implicit wake locks. Ensure they release properly
+- Use Play Console Android Vitals to check current Excessive Wake Locks metrics
+- Optimize or remove long wake locks. Use JobScheduler with flexible execution windows instead of indefinite wake locks
+- Prepare communication in case a battery warning appears
+
+**Test Matrix:**
+- Devices: One low-end device and one high-end
+- OS: Android 13, 14, 15
+- Scenarios: Simulate edge cases (e.g., user leaves app in background during OTP flow)
+- Monitoring: Use Android Studio Profiler or `adb shell dumpsys batterystats` to capture wake lock usage
+</div>
+
+---
+
+## iOS
+
+### iOS/iPadOS 26.2 Security Update
+<div style="background: #FEF2F2; border-left: 3px solid #DC2626; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+
+<span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">CRITICAL</span> **Released: December 12, 2025**
+
+Apple released iOS 26.2 and iPadOS 26.2, addressing over 20 security vulnerabilities, including **two WebKit bugs actively exploited in targeted attacks**. The exploited flaws allow malicious web content to execute arbitrary code or cause memory corruption. Other fixes cover App Store payment token exposure, image processing memory corruption, and a Hidden Photos album bypass.
+
+**Why Critical:**
+- **Zero-day exploits:** At least two WebKit vulnerabilities were used in sophisticated attacks. A compromised WebView inside our app (e.g., during OAuth or 3DS) could be an entry point if the device isn't updated
+- **App security & privacy:** One patched bug allowed viewing Hidden album photos without auth – signals potential privacy weaknesses that could indirectly expose sensitive images used in KYC or mobile check deposit flows
+- **Platform stability:** iOS 26.2 is now the latest stable; Apple typically requires apps to be built with the latest SDK by next year
+
+**Impact Surfaces:** In-app web content (WKWebView) such as 3D Secure or OAuth login flows. Face ID/Touch ID and Keychain appear unaffected.
+
+**Actions:**
+- Upgrade test devices to iOS 26.2 (and iPadOS 26.2). Verify our app functions normally, especially web-based flows
+- Re-run biometric login, OTP flows, and secure document upload on 26.2
+- For users on older iOS (like 18.7.3), consider an in-app message encouraging updating
+- Ensure the app is built with at least Xcode corresponding to iOS 26 SDK
+
+**Test Matrix:**
+- Devices: iPhone 15 (iOS 26.2), iPhone 12 (iOS 18.7.3 legacy), iPad mini 7 (iPadOS 26.2)
+- Focus Tests: WKWebView flows (3DS), login with Face ID/Touch ID, share sheet
+- Network: Use a proxy to observe if any new ATS or certificate pinning behaviors
+</div>
+
+*(No App Store policy updates relevant to banking this week, aside from the App Store Connect holiday freeze Dec 23-27 – plan releases accordingly.)*
+
+---
+
+## Cross-Platform / Browser
+
+### Chrome 143 Stable (WebView) Update
+<div style="background: #FAFAFA; border-left: 3px solid #EA580C; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+
+<span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">HIGH</span> **Released: December 2, 2025** (Chrome 143.0.7499.40)
+
+Google promoted Chrome 143 to stable on all platforms, which includes 13 security fixes. Among the patched issues is a high-severity V8 JavaScript engine type confusion (CVE-2025-13630) that could potentially lead to arbitrary code execution. No known active exploits yet, but a prior emergency patch fixed a zero-day, indicating attackers are targeting Chromium components.
+
+**Why it matters:**
+- **Embedded WebView:** Our Android app relies on Android System WebView. Chrome 143's fixes apply to WebView 143, significantly reducing risk of malware-injected web content exploiting the WebView
+- **3DS/OAuth flows:** High-severity browser exploits could be triggered during redirections – patching ensures a rogue ACS or login page cannot compromise the app sandbox
+- **New features:** Chrome 143 doesn't introduce breaking web platform changes for OAuth/3DS (e.g., Read Aloud API, minor CSS enhancements mostly benign)
+
+**Impact Surfaces:** In-app web content (SameSite cookies, CSP). OAuth login persistence should behave unchanged.
+
+**Actions:**
+- Ensure WebView 143 is installed on test devices and run full 3DS challenge flows and OAuth login flows
+- Pay attention to any console logs or deprecation warnings in WebView during testing
+- Force-update WebView/Chrome on QA devices and encourage end-users to keep Chrome up to date
+- If anomalies appear, gather console logs and compare with Chrome 142 behavior
+
+**Test Matrix:**
+- Android Devices: Pixel 7 (Android 14) with WebView 143, Samsung S22 (Android 13) with WebView 143, one device with WebView 142 for comparison
+- Flows: Login via Google SSO, Payment with 3D Secure challenge, Open bank T&C PDF in WebView
+- Web Content: Test deep links and App Links to ensure Chrome's update didn't affect intents
+</div>
+
+### WebKitGTK/WPE Security Advisory – WSA-2025-0009
+<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+
+<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Published: December 4, 2025** (WebKitGTK 2.50.3)
+
+The WebKitGTK and WPE WebKit engines received an advisory addressing multiple vulnerabilities. Notably, one flaw could allow a malicious website to exfiltrate sensitive system information, and several others could lead to unexpected process crashes.
+
+**Why it matters:**
+- **Cross-platform users:** Some customers might access our web internet banking or 3DS flows on Linux desktop browsers that use WebKitGTK
+- **Consistency:** Tracking WebKit advisories ensures our web-based components maintain secure parity with mobile
+- **No immediate mobile impact:** iOS uses Apple's WebKit (patched separately) and Android uses Chromium WebView
+
+**Impact Surfaces:** 3DS web pages or OAuth on Linux devices. Internal admin tools using WebKitGTK browser.
+
+**Actions:**
+- If any team maintains web banking features, ensure WebKitGTK >= 2.50.3 is used on any Linux kiosks
+- Update any Linux-based automated scanners or headless browsers
+- Keep an eye on similar issues in Apple's WebKit
+
+**Test Matrix:** Use a Linux VM with WebKitGTK 2.50.3 and run our bank's public website, login page, and a sample 3DS flow
+</div>
+
+---
+
+## Security & Tamper Detection (DEFENSIVE)
+
+### Magisk v30.6 Stable (Rust Rewrite)
+<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+
+<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Released: December 2, 2025**
+
+The popular Android rooting tool Magisk has reached version 30.6, marking a major update with a significant portion of its codebase **rewritten in Rust**. This update aims for better stability and security for the root tool itself, but still provides robust hiding features (Magisk Hide) that allow rooted devices to evade detection.
+
+**Why it matters (Attacker POV):**
+- **Improved stealth:** A more stable Magisk means attackers have an easier time maintaining root without detection. The Rust rewrite eliminates many memory bugs
+- **MagiskHide revival:** Forks and modules reintroduce hide functionality. Magisk v30.6 integrates hiding mechanisms effectively
+- **Attestation bypass:** Combined with modules, Magisk v30 can help a device pass Play Integrity's STRONG verdict even while rooted
+
+**Why it matters (Defender POV):**
+- **RASP & integrity:** Our app's root detection must be updated to account for Magisk 30's changes
+- **Debugging challenges:** The new Rust-based Magisk might alter how root hiding interacts with debuggers
+- **KernelSU synergy:** Users are increasingly using KernelSU alongside Magisk, leaving system partition untouched
+
+**Attacker/User Capabilities Observed:**
+- Rooted users running Magisk 30.6 (or KernelSU) have reported success running many banking apps by hiding root
+- Community has created Magisk modules to patch specific bank apps' detection (e.g., "patch prctl")
+- With Magisk's stability improvements, more average users might attempt rooting
+
+**Defensive Actions:**
+- Update root detection: Look for signs of both Magisk and KernelSU (check `/dev/kernelsu` device)
+- Play Integrity API: Place greater reliance on Google's Play Integrity evaluationType
+- Dynamic analysis: Install Magisk 30.6 on test devices and verify if our app detects it
+- Continuous monitoring: Monitor forums (XDA, Telegram, VOZ) for Magisk modules targeting our app
+
+**Test Matrix:**
+- Devices: Pixel 6 (rooted with Magisk 30.6), Xiaomi device (rooted with KernelSU + Magisk), non-rooted control
+- OS: Android 13 and 14 for Magisk, Android 15 for KernelSU
+- Flows: Full login -> balance -> transfer on rooted device with root hidden
+- Telemetry: Enable verbose logging in test build to capture root check triggers
+</div>
+
+### Frida 17.5.x Updates (Instrumentation)
+<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+
+<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Released: November 4-5, 2025** (Frida 17.5.0 & 17.5.1)
+
+The Frida dynamic instrumentation toolkit saw a "feature-packed" 17.5.0 release. Major highlights include a smarter Frida compiler, more robust iOS (Darwin) injection internals, and a complete overhaul of the Swift bindings to use modern concurrency.
+
+**Why it matters:**
+- **Resilience against detection:** As Frida becomes more stable, our anti-instrumentation measures might fail. Frida 17.5's improved Darwin injection might avoid telltale patterns we previously checked
+- **Swift bindings:** Frida's new Swift API is more "Swift-native," making hooks more seamless and harder to spot. Attackers can now write Frida scripts in Swift
+- **Cross-platform ease:** Frida's enhancements are "platform-agnostic" and "delegate-free", implying fewer complications for attackers
+
+**Attacker Capabilities:**
+- A Frida user can inject scripts more efficiently (less crash-prone) on iOS 17+/18
+- The "smarter compiler" optimizes payloads, meaning a smaller footprint in memory. This could evade simplistic "scan memory for known Frida strings" defenses
+
+**Defensive Actions:**
+- Update Frida detection rules: Test against Frida 17.5 – signatures might have changed
+- Runtime obfuscation: Continue efforts to obfuscate critical code (OTP generation, PIN validation)
+- Monitor for Frida presence: Use multiple signals (listening port AND default named unix socket `/tmp/frida-*`)
+- Penetration testing: Engage internal red team or external pentest to use Frida 17.5 against our app
+- Server-side checks: Re-emphasize server-side anomaly detection for suspicious app behavior
+
+**Test Matrix:**
+- Android: Pixel 5 (Android 12) with Frida 17.5.1 server running; attempt to hook critical methods
+- iOS: Jailbroken iPhone 13 (iOS 18.0) with Frida 17.5.0 gadgets injected
+- Observation: Track performance impact – defensive checks shouldn't degrade app performance
+</div>
+
+---
+
+## Defensive Test Playbook
+
+To proactively validate our app's defenses, we will conduct structured tests in both normal and high-risk environments:
+
+### Scenario 1: Rooted Device Login (Bypass Attempt)
+
+**Preconditions:** Android test device rooted using KernelSU + Magisk 30.6, app freshly installed, added to Magisk's hide/deny list, device passes basic integrity.
+
+**Steps:**
+1. Launch the app and attempt user login with valid credentials
+2. Observe whether the app displays any root/jailbreak warning or blocks access
+3. If login proceeds, navigate through sensitive actions (view balance, attempt transfer)
+
+**Expected:** The app should detect the rooted environment and prevent login, showing a clear warning. Under no circumstance should high-value actions complete on a rooted device that's successfully hiding root.
+
+**Severity:** If app allowed full login without detection → **High Severity**. Immediately notify mobile development and security teams.
+
+### Scenario 2: Biometric Authentication under Instrumentation
+
+**Preconditions:** Android device with root access and Frida 17.5 running, or iPhone with jailbreak and Frida gadget. Biometrics enrolled.
+
+**Steps:**
+1. Launch the app on the instrumented device with Frida hooking a non-critical function
+2. Proceed to log in and trigger biometric authentication
+3. Observe app behavior during biometric prompt
+
+**Expected:** The app should not crash or hang during biometric auth. It may detect instrumentation and gracefully terminate the session with an error. No sensitive data should be exposed.
+
+**Severity:** If app crashes → **High Severity**. If app fails biometric gracefully → **Medium**. If app succeeds despite instrumentation → depends on security requirements.
+
+### Scenario 3: Network Interference with Root Check (Bypass Attempt)
+
+**Preconditions:** Android device is rooted but not hiding. Block app's network calls to root-check endpoint via hosts file or local VPN firewall.
+
+**Steps:**
+1. Configure device to block access to suspected root-check domain
+2. Launch the banking app and attempt normal login flow
+3. Proceed as far as possible through login/OTP
+
+**Expected:** The app should not allow login on a rooted device even if its security check is blocked. Network failure of a security check should default to deny access (fail safe).
+
+**Severity:** If login succeeds despite root with security call blocked → **Critical Severity**. Immediately escalate to engineering; may require a hotfix.
+
+---
+
+## Community Watchlist (UNVERIFIED) — VOZ Pulse
+
+<div style="background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+
+**Thread:** "Thao luan ve root bang Magisk, module, giai phap an root (24+)" – VOZ Forums
+**Crawl Date:** Dec 13, 2025 – capturing 10 most recent posts (#6461–#6470)
+
+### Pulse Summary (Vietnam Developer Community)
+
+- **VPBank app** – Mixed results under root: One user reports bypass success (passes Strong Integrity, app working), but another still gets rooted device warning at login. (Root environment: KernelSU Next + Magisk hide)
+- **MoMo e-wallet** – Crash at biometric stage: After hiding root and clearing data, MoMo consistently crashes during face verification (eKYC selfie step) on rooted devices
+- **MB Bank** – New update heightened detection: Latest MB Bank app version detects root where previous version did not. Community suggests using newest KernelSU or applying "patch prctl" tweak (unverified)
+- **Techcombank app** – No current bypass: App fails to fully log in on rooted devices. Blocking the root-check domain removed the in-app warning page, but login still doesn't complete (stuck at OTP)
+- **General** – Legacy root-hiding methods (e.g., BShield module) are reported ineffective on modern banking apps
+
+### Recent Reports Table
+
+| App | Current Status | Symptoms / Stage | Environment | Confidence |
+|-----|---------------|------------------|-------------|------------|
+| VPBank | Bypass works for some; still detects for others | Warning prompt at login (for some users) | KernelSU Next + hide | Low |
+| MoMo | Detected → crash | App crashes at FaceID verification step | Magisk with hide | Low |
+| MB Bank | Detecting root | App shows root warning on launch/login | Magisk/KernelSU | Low |
+| Techcombank | No login on rooted devices | OTP stage failure | Rooted + network filtering | Medium |
+
+*(Above posts are user-generated content from a developer forum, unverified by official sources. Interpret with caution – trust level low.)*
+
+**Source:** [VOZ Root Discussion Thread](https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/)
+
+</div>
+
+---
+
+## Week-over-Week Changes
+
+### New This Week
+- Android December 2025 patch with critical Framework fix and two 0-days (must update test devices)
+- iOS 26.2 release addressing WebKit exploits (all iOS devices should be updated)
+- U.S. Play Store policy changes enabling alt billing and external links (planning needed by Jan 28)
+- Chrome/WebView 143 stable with multiple security fixes (update WebView in testing matrix)
+- Frida & Magisk tooling updates (Magisk 30.6 stable, Frida 17.5) potentially impacting root/hook detection
+
+### Continuing
+- **16KB memory page size enforcement:** Now in effect since Nov 1 – continue verifying native libraries compatibility
+- **Play Billing v7+ requirement:** Deadline (Nov 1) passed; all releases use Billing Library 7 or 8
+- **WebView compatibility:** Ongoing watch on WebView 14X versions for OAuth/3DS flows
+- **Tamper detection improvements:** Arms race with new Magisk/Frida versions continues
+
+### Resolved Since Last Issue
+- ~~Target API Level 35 extension~~ – All apps now target SDK 35 per policy
+- ~~Play Billing Library 7+ adoption~~ – Completed by Nov 1 deadline. PBL v8.1.0 in use
+- ~~16KB native library compliance~~ – App rebuilt with 16KB page support before cut-off
+- ~~iOS 18.6.2 zero-day~~ – Resolved by Apple's iOS 26.0.1 and later
+- ~~React Native 0.81 migration~~ – Completed in late October; stable in production
+
+---
+
+## Next Week Preview
+
+- **Android 16 Preview & Target API 36 Planning:** Anticipate details on Android 16 – start evaluating expected API changes
+- **iOS 26.3 Beta Watch:** Apple may begin seeding iOS 26.3 or iOS 27.0 beta in January
+- **Magisk/Root Detection Deep-Dive:** Schedule internal workshop to brainstorm advanced root detection
+- **User Advisory & Education:** Prepare customer-facing advisory about device security
+- **Chrome 144 Beta Testing:** Begin testing app with Chrome/WebView 144 beta
+- **Backend Monitoring Enhancements:** Roll out enhanced server-side anomaly detection rules
+
+---
+
+<div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #E5E7EB;">
+  <p style="color: #6B7280; font-size: 0.875rem;">
+    Mobile Banking Security Weekly #4 · December 13, 2025<br/>
+    Critical security patches require immediate action · Plan your January compliance<br/>
+    Questions? Contact <a href="mailto:phamdinhkhoivan@gmail.com" style="color: #059669;">phamdinhkhoivan@gmail.com</a>
+  </p>
+</div>
