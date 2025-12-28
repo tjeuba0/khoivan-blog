@@ -1,0 +1,63 @@
+---
+title: "Our Custom Git Flow: A Tale of Two Syncs"
+description: "Diving deep into the custom Git Flow we use for our banking apps, and why standard Git Flow wasn't enough. A story of hotfixes, integration, and keeping master clean."
+pubDate: 2025-12-28
+category: "engineering"
+tags: ["git", "workflow", "devops", "best-practice", "vietinbank"]
+mood: "technical"
+language: "en"
+draft: false
+featured: true
+heroImage: "./images/git-flow-diagram.webp"
+heroImageAlt: "The complete custom Git Flow diagram for our eFast banking application."
+---
+
+If you've been in the software game for a while, you've probably used Git Flow. It's the classic, the standard, the one we all learned. But what happens when the standard model starts to show cracks under the pressure of a high-stakes production environment? 
+
+For our team building banking applications, "good enough" isn't an option. We need a workflow that's not just robust, but bulletproof. After a few too many late-night debugging sessions fueled by instant noodles and the fear of breaking production, we decided to evolve. We created our own custom Git Flow, battle-tested and refined. 
+
+This is the story of that workflow.
+
+### The Diagram That Explains It All
+
+Before we dive in, here's the map of our world. This diagram is our source of truth, the result of countless whiteboard sessions and a few hard-learned lessons.
+
+![The complete custom Git Flow diagram for our eFast banking application.](./images/git-flow-diagram.webp)
+
+Looks complex? It is. But every line and every box has a purpose, designed to prevent a specific kind of disaster.
+
+### The Core Problem: Drifting Apart
+
+The biggest issue with standard Git Flow in a fast-moving team is branch drift. `master` (our Production) and `developing` (our Mainline) can quickly fall out of sync. A hotfix applied to a `release` branch might never make it back to `developing`, leading to developers building new features on an outdated codebase. The next release cycle, that same bug mysteriously reappears. Sound familiar?
+
+Our entire model is built to solve this problem with two critical, mandatory sync steps.
+
+### Our Secret Sauce: The Two Syncs and a Safe Zone
+
+Three custom protocols make our workflow tick. They are the heart of our process.
+
+#### 1. Sync Fixes (Hotfix): The Pre-emptive Strike
+
+This is our first line of defense. When a bug is found during release testing, we fix it on the `release` branch. Standard stuff. But here's our rule: **before that release can go live, the fix *must* be merged back into `developing`**. 
+
+This `release -> developing` sync is non-negotiable. It ensures that the `developing` branch always contains every single fix that is about to go into production. No more resurrected bugs. No more "but we fixed that last month!" moments.
+
+#### 2. Post Go-live Sync: The Final Handshake
+
+After a successful deployment, the `release` branch is merged into `master`. The job is done, right? Not for us. The very next step is a `master -> developing` sync. This is our final handshake, a guarantee that the `developing` branch is a perfect mirror of what's now in production. It aligns the entire codebase, ensuring the next cycle of development starts from the true, final source of truth.
+
+#### 3. Integration Conflict Protocol: The Safe Zone
+
+We've all been there: "integration hell." Multiple feature branches, all trying to merge into `developing` at once, resulting in a tangled mess of conflicts. Our solution is the `tmp-int` branch.
+
+When a `feature` branch is ready for testing but has conflicts with the `integration` branch, we don't resolve it directly. Instead, we create a temporary `tmp-int` branch from the `feature` branch. We then merge `integration` into `tmp-int` and resolve all conflicts there. This keeps the original `feature` branch clean and isolated. The merge request is then made from the clean, conflict-free `tmp-int` branch. It's a safe, isolated sandbox for resolving conflicts without polluting the main development lines.
+
+### The Golden Rule
+
+All of this is governed by one simple, unbreakable rule: **Never commit directly to `master` or `developing`.** Every change, no matter how small, must go through a Merge Request. This enforces code review, runs automated checks, and ensures our carefully crafted workflow is always followed.
+
+### Was It Worth It?
+
+Absolutely. This custom flow has dramatically reduced our production bugs, eliminated entire classes of merge conflicts, and made our release process smoother and more predictable. It adds a few extra steps, but the peace of mind and stability it provides are priceless.
+
+So, if you're feeling the pain of standard Git Flow, maybe it's time to evolve. Create your own rules, solve your own specific problems, and build a workflow that lets you sleep soundly at night. Even if you still keep the instant noodles handy. Just in case. 🍜
