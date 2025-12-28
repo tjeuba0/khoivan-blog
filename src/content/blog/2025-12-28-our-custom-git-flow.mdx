@@ -1,9 +1,9 @@
 ---
-title: "Our Custom Git Flow: A Tale of Two Syncs"
-description: "Diving deep into the custom Git Flow we use for our banking apps, and why standard Git Flow wasn't enough. A story of hotfixes, integration, and keeping master clean."
+title: "The Git Flow That Lets You Un-Merge: A Banking App Story"
+description: "Standard Git Flow breaks when you need to remove a single feature from a release. Here’s the custom workflow we built to solve the real-world problem of surgical rollbacks."
 pubDate: 2025-12-28
 category: "engineering"
-tags: ["git", "workflow", "devops", "best-practice", "vietinbank"]
+tags: ["git", "workflow", "devops", "rollback", "banking", "vietinbank"]
 mood: "technical"
 language: "en"
 draft: false
@@ -12,52 +12,56 @@ heroImage: "./images/git-flow-diagram.webp"
 heroImageAlt: "The complete custom Git Flow diagram for our eFast banking application."
 ---
 
-If you've been in the software game for a while, you've probably used Git Flow. It's the classic, the standard, the one we all learned. But what happens when the standard model starts to show cracks under the pressure of a high-stakes production environment? 
+We’ve all been there. It’s the day before a major release. Ten new features have been tested, merged, and are sitting in a `release` branch, ready for deployment. Then the call comes in: "Feature X has a critical bug. We can’t release it."
 
-For our team building banking applications, "good enough" isn't an option. We need a workflow that's not just robust, but bulletproof. After a few too many late-night debugging sessions fueled by instant noodles and the fear of breaking production, we decided to evolve. We created our own custom Git Flow, battle-tested and refined. 
+With standard Git Flow, you’re now in a world of pain. Do you try a `git revert`, risking a tangled mess of conflicts? Do you delay the entire release for one bad feature? This exact scenario is why we abandoned the standard model and built our own custom Git Flow.
 
-This is the story of that workflow.
+This isn’t just another article about branching strategies. This is a story about how we solved the single most stressful problem in release management: **how to surgically remove one feature from a release without breaking the other nine.**
 
-### The Diagram That Explains It All
+### The Diagram That Makes It Possible
 
-Before we dive in, here's the map of our world. This diagram is our source of truth, the result of countless whiteboard sessions and a few hard-learned lessons.
+First, here’s the map of our world. It looks complex, but its entire structure is designed to solve that one core problem.
 
 ![The complete custom Git Flow diagram for our eFast banking application.](./images/git-flow-diagram.webp)
 
-Looks complex? It is. But every line and every box has a purpose, designed to prevent a specific kind of disaster.
+### The Core Problem: The Tangled Release Branch
 
-### The Core Problem: Drifting Apart
+In a typical Git Flow, multiple `feature` branches are merged directly into `developing`. When it’s time to release, you create a `release` branch from `developing`. At this point, all those features are bundled together. They are a single, tangled unit. Trying to remove one is like trying to un-bake a cake.
 
-The biggest issue with standard Git Flow in a fast-moving team is branch drift. `master` (our Production) and `developing` (our Mainline) can quickly fall out of sync. A hotfix applied to a `release` branch might never make it back to `developing`, leading to developers building new features on an outdated codebase. The next release cycle, that same bug mysteriously reappears. Sound familiar?
+A `git revert` on the merge commit for the bad feature often leads to a cascade of new conflicts, especially if other features touched the same files. It’s risky, error-prone, and not something you want to be doing at 2 AM with a banking app that serves millions.
 
-Our entire model is built to solve this problem with two critical, mandatory sync steps.
+### Our Solution: Isolation and Intentional Merging
 
-### Our Secret Sauce: The Two Syncs and a Safe Zone
+Our workflow’s power comes from one fundamental principle: **the `developing` branch is kept pristine.** Features are *never* merged directly into it before they are fully approved for release. Instead, they are merged into an `integration` branch for testing.
 
-Three custom protocols make our workflow tick. They are the heart of our process.
+This isolation is the key. Here’s how it allows for surgical rollbacks:
 
-#### 1. Sync Fixes (Hotfix): The Pre-emptive Strike
+**Scenario:** Ten features are on the `integration` branch. UAT (User Acceptance Testing) begins. Nine features pass, but Feature #7 fails catastrophically.
 
-This is our first line of defense. When a bug is found during release testing, we fix it on the `release` branch. Standard stuff. But here's our rule: **before that release can go live, the fix *must* be merged back into `developing`**. 
+**The Rollback Process (The Easy Way):**
 
-This `release -> developing` sync is non-negotiable. It ensures that the `developing` branch always contains every single fix that is about to go into production. No more resurrected bugs. No more "but we fixed that last month!" moments.
+1.  **Do Nothing:** We don’t revert. We don’t try to untangle anything. We simply abandon the current `release` candidate that was built from `integration`.
 
-#### 2. Post Go-live Sync: The Final Handshake
+2.  **Create a New Release:** We create a brand new, clean `release` branch directly from `developing` (which, remember, doesn’t have any of these ten features yet).
 
-After a successful deployment, the `release` branch is merged into `master`. The job is done, right? Not for us. The very next step is a `master -> developing` sync. This is our final handshake, a guarantee that the `developing` branch is a perfect mirror of what's now in production. It aligns the entire codebase, ensuring the next cycle of development starts from the true, final source of truth.
+3.  **Merge the Winners:** We then merge the **nine approved feature branches** one by one into this new `release` branch.
 
-#### 3. Integration Conflict Protocol: The Safe Zone
+4.  **Leave the Loser Behind:** The problematic Feature #7 is simply not included. It stays in its own branch, waiting to be fixed, without ever touching the new release.
 
-We've all been there: "integration hell." Multiple feature branches, all trying to merge into `developing` at once, resulting in a tangled mess of conflicts. Our solution is the `tmp-int` branch.
+That’s it. No reverts. No conflict hell. The release goes out on time with the nine good features. The problematic feature is sent back to the drawing board. This process is clean, safe, and repeatable.
 
-When a `feature` branch is ready for testing but has conflicts with the `integration` branch, we don't resolve it directly. Instead, we create a temporary `tmp-int` branch from the `feature` branch. We then merge `integration` into `tmp-int` and resolve all conflicts there. This keeps the original `feature` branch clean and isolated. The merge request is then made from the clean, conflict-free `tmp-int` branch. It's a safe, isolated sandbox for resolving conflicts without polluting the main development lines.
+### The Supporting Cast: Syncs and Safe Zones
 
-### The Golden Rule
+While the rollback capability is the star of the show, a few other rules make it all possible:
 
-All of this is governed by one simple, unbreakable rule: **Never commit directly to `master` or `developing`.** Every change, no matter how small, must go through a Merge Request. This enforces code review, runs automated checks, and ensures our carefully crafted workflow is always followed.
+*   **Sync Fixes (Hotfix):** If a bug is found in the *new* `release` branch (with the nine good features), we fix it there and immediately merge that fix back to `developing`. This prevents branch drift and ensures the fix is in the baseline for the next cycle.
 
-### Was It Worth It?
+*   **Post Go-live Sync:** After the release goes to `master`, we sync `master` back to `developing`. This ensures our mainline is a perfect mirror of production, ready for the next round of development.
 
-Absolutely. This custom flow has dramatically reduced our production bugs, eliminated entire classes of merge conflicts, and made our release process smoother and more predictable. It adds a few extra steps, but the peace of mind and stability it provides are priceless.
+*   **Integration Conflict Protocol:** Our `tmp-int` process provides a safe sandbox to handle merge conflicts between features *before* they even hit the `integration` branch, keeping our testing environment stable.
 
-So, if you're feeling the pain of standard Git Flow, maybe it's time to evolve. Create your own rules, solve your own specific problems, and build a workflow that lets you sleep soundly at night. Even if you still keep the instant noodles handy. Just in case. 🍜
+### The Real-World Payoff
+
+This workflow isn’t just theoretical. It has saved our releases on multiple occasions. By reframing the problem from "How do we revert a bad feature?" to "How do we build a release with only the good features?", we’ve made our deployment process dramatically safer and less stressful.
+
+If your team has ever been held hostage by a single problematic feature in a release, I highly recommend rethinking your flow. Isolate your features, merge with intention, and give yourself the power to un-merge. You might even get a full night’s sleep before a release. 🌙
