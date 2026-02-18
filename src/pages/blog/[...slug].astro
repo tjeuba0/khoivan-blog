@@ -17,6 +17,11 @@ export async function getStaticPaths() {
 const { post } = Astro.props
 const { Content } = await render(post)
 
+// Calculate reading time
+const body = post.body || ''
+const wordCount = body.split(/\s+/).filter(Boolean).length
+const readingTime = Math.max(1, Math.ceil(wordCount / 200))
+
 // Format date
 const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
   year: 'numeric',
@@ -70,6 +75,8 @@ const relatedPosts = allPosts
         </time>
         <span>·</span>
         <span>{post.data.author}</span>
+        <span>·</span>
+        <span>{readingTime} min read</span>
       </div>
 
       <!-- Tags -->

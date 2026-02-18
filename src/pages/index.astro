@@ -9,6 +9,7 @@ const allPosts = await getCollection('blog')
 const posts = allPosts
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 6)
 ---
 
 <BaseLayout title="Khoi Van" description="Personal blog about Android development, software engineering, and life in Saigon">
@@ -22,6 +23,13 @@ const posts = allPosts
       {posts.map((post) => (
         <BlogCard post={post} />
       ))}
+    </div>
+
+    <!-- View All Posts -->
+    <div class="mt-10 text-center">
+      <a href="/blog" class="inline-block px-6 py-2 rounded-lg border-2 border-current opacity-70 hover:opacity-100 transition-opacity no-underline text-sm font-semibold">
+        View all posts →
+      </a>
     </div>
   </div>
 </BaseLayout>

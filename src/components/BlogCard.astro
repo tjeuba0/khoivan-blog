@@ -1,7 +1,10 @@
 ---
+import { render } from 'astro:content'
+
 export interface Props {
   post: {
     id: string
+    body?: string
     data: {
       title: string
       description: string
@@ -14,6 +17,11 @@ export interface Props {
 
 const { post } = Astro.props
 const url = `/blog/${post.id}`
+
+// Calculate reading time (~200 words per minute)
+const body = post.body || ''
+const wordCount = body.split(/\s+/).filter(Boolean).length
+const readingTime = Math.max(1, Math.ceil(wordCount / 200))
 
 // Format date for display
 const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
@@ -41,6 +49,12 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
       <time datetime={post.data.pubDate.toISOString()}>
         {formattedDate}
       </time>
+    </div>
+    <div class="flex items-center gap-1.5">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-70" viewBox="0 0 24 24" fill="currentColor">
+        <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clip-rule="evenodd"/>
+      </svg>
+      <span>{readingTime} min read</span>
     </div>
     {post.data.tags && post.data.tags.length > 0 && (
       <div class="flex gap-2">
