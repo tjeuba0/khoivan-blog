@@ -1,49 +1,36 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 
+// Timeline: HDBank → VietinBank eFAST → Agribank Plus → VietinBank eFAST One (current)
 const projects = [
   {
-    title: 'VietinBank eFAST',
+    title: 'VietinBank eFAST One',
     role: 'Senior Android Developer (Team Lead)',
     company: 'VietinBank',
     period: '2024 - Present',
+    current: true,
     description:
-      'Corporate banking application for VietinBank — one of Vietnam\'s "Big 4" state-owned banks. Leading the Android team responsible for architecture, code quality, and feature delivery for enterprise customers.',
+      'Next-generation corporate mobile banking for VietinBank. Leading the Android team — responsible for architecture decisions, code quality, feature delivery, and mentoring team members.',
     tech: [
       'Kotlin',
       'Jetpack Compose',
       'Clean Architecture',
       'Multi-Module',
-      'Biometric Auth',
-      'End-to-end Encryption',
-    ],
-    playStore: 'https://play.google.com/store/apps/details?id=com.vnpay.vietinbank.efast',
-    featured: true,
-  },
-  {
-    title: 'VietinBank eFAST One',
-    role: 'Senior Android Developer',
-    company: 'VietinBank',
-    period: '2024 - Present',
-    description:
-      'Next-generation mobile banking experience for VietinBank corporate customers. Streamlined UI/UX with modern architecture and enhanced security features.',
-    tech: [
-      'Kotlin',
-      'Jetpack Compose',
       'Hilt',
-      'Coroutines & Flow',
       'Material Design 3',
     ],
-    playStore: 'https://play.google.com/store/apps/details?id=com.vnpay.vietinbank.efast.one',
-    featured: true,
+    screenshot: '/portfolio/vietinbank-efast-one.webp',
+    icon: '/portfolio/vietinbank-efast-one-icon.webp',
+    playStore: 'https://play.google.com/store/apps/details?id=com.vietinbank.dbs.efast',
   },
   {
     title: 'Agribank Plus',
     role: 'Key Android Developer',
-    company: 'VNPAY',
+    company: 'VNPAY (for Agribank)',
     period: '2020 - 2024',
+    current: false,
     description:
-      'The upgraded E-Mobile Banking app for Agribank — Vietnam\'s largest bank by branch network. Served millions of users nationwide with money transfer, bill payment, QR payment, and investment services.',
+      'The upgraded E-Mobile Banking app for Agribank — Vietnam\'s largest bank by branch network. Core developer for money transfer, bill payment, QR payment, and investment features serving millions of users nationwide.',
     tech: [
       'Kotlin',
       'MVVM',
@@ -52,28 +39,51 @@ const projects = [
       'QR Payment',
       'Push Notifications',
     ],
-    stats: '10M+ downloads · 3.5★ · 145K reviews',
+    stats: '10M+ downloads · 145K reviews',
+    screenshot: '/portfolio/agribank-plus.webp',
+    icon: '/portfolio/agribank-plus-icon.webp',
     playStore: 'https://play.google.com/store/apps/details?id=com.vnpay.Agribank3g',
-    featured: true,
   },
   {
-    title: 'HDBank Mobile Banking',
+    title: 'VietinBank eFAST',
     role: 'Android Developer',
-    company: 'VNPAY',
+    company: 'VNPAY (for VietinBank)',
     period: '2019 - 2024',
+    current: false,
     description:
-      'Full-featured mobile banking app for HDBank. Implemented core banking features including fund transfers, savings, loan management, and card services.',
+      'Corporate banking application for VietinBank — one of Vietnam\'s "Big 4" state-owned banks. Developed core banking features including fund transfers, payroll management, and enterprise payment solutions.',
     tech: [
       'Kotlin',
       'Java',
       'MVVM',
       'Retrofit',
+      'Biometric Auth',
+      'End-to-end Encryption',
+    ],
+    screenshot: '/portfolio/vietinbank-efast.webp',
+    icon: '/portfolio/vietinbank-efast-icon.webp',
+    playStore: 'https://play.google.com/store/apps/details?id=com.vietinbank.efast',
+  },
+  {
+    title: 'HDBank Mobile Banking',
+    role: 'Android Developer',
+    company: 'VNPAY (for HDBank)',
+    period: '2018 - 2020',
+    current: false,
+    description:
+      'Full-featured mobile banking app for HDBank. Implemented core features including fund transfers, savings, loan management, card services, and bill payments.',
+    tech: [
+      'Java',
+      'Kotlin',
+      'MVP',
+      'Retrofit',
       'Room',
       'Encryption',
     ],
     stats: '1M+ downloads · 13.2K reviews',
+    screenshot: '/portfolio/hdbank.webp',
+    icon: '/portfolio/hdbank-icon.webp',
     playStore: 'https://play.google.com/store/apps/details?id=com.vnpay.hdbank',
-    featured: false,
   },
 ]
 ---
@@ -84,67 +94,99 @@ const projects = [
     <div class="mb-12">
       <h1 class="text-3xl font-bold tracking-tight">Portfolio</h1>
       <p class="mt-3 opacity-75">
-        Các dự án mobile banking tiêu biểu tôi đã tham gia phát triển
+        Mobile banking projects I've built throughout my career
       </p>
     </div>
 
-    <!-- Projects -->
-    <div class="space-y-8">
-      {
-        projects.map((project) => (
-          <div 
-            class="rounded-lg p-6 border"
-            style={`border-color: rgba(var(--color-border), 0.2); background-color: rgb(var(--color-card));`}
-          >
-            <div class="flex items-start justify-between flex-wrap gap-2">
-              <div>
-                <h2 class="text-xl font-bold">{project.title}</h2>
-                <p class="text-sm mt-1" style="color: rgb(var(--color-accent));">
-                  {project.role} · {project.company}
-                </p>
-                <p class="text-xs opacity-60 mt-0.5">{project.period}</p>
+    <!-- Timeline -->
+    <div class="relative">
+      <!-- Vertical line -->
+      <div class="absolute left-6 top-0 bottom-0 w-0.5 hidden md:block" style="background-color: rgba(var(--color-border), 0.3);"></div>
+
+      <div class="space-y-12">
+        {
+          projects.map((project, index) => (
+            <div class="relative md:pl-16">
+              <!-- Timeline dot -->
+              <div class={`absolute left-4 top-6 h-5 w-5 rounded-full border-4 hidden md:block ${project.current ? 'animate-pulse' : ''}`}
+                style={`border-color: rgb(var(--color-accent)); background-color: ${project.current ? 'rgb(var(--color-accent))' : 'rgb(var(--color-bg))'};`}>
               </div>
-              {project.featured && (
-                <span class="rounded-full px-3 py-1 text-xs font-medium"
-                  style="background-color: rgba(var(--color-accent), 0.15); color: rgb(var(--color-accent));">
-                  Featured
-                </span>
-              )}
-            </div>
 
-            <p class="mt-4 opacity-90 leading-relaxed">{project.description}</p>
+              <div class="rounded-lg overflow-hidden border"
+                style="border-color: rgba(var(--color-border), 0.2); background-color: rgb(var(--color-card));">
+                
+                <!-- Screenshot -->
+                <div class="relative">
+                  <img 
+                    src={project.screenshot} 
+                    alt={`${project.title} screenshot`}
+                    class="w-full h-48 md:h-56 object-cover object-top"
+                    style="border-radius: 0; border: none; margin: 0;"
+                  />
+                  {project.current && (
+                    <span class="absolute top-3 right-3 rounded-full px-3 py-1 text-xs font-bold text-white bg-green-600">
+                      Current
+                    </span>
+                  )}
+                </div>
 
-            <div class="mt-4 flex flex-wrap gap-2">
-              {project.tech.map((tech) => (
-                <span class="rounded-full px-3 py-1 text-xs"
-                  style="background-color: rgb(var(--color-card-muted)); color: rgb(var(--color-text));">
-                  {tech}
-                </span>
-              ))}
-            </div>
+                <!-- Content -->
+                <div class="p-6">
+                  <div class="flex items-center gap-3">
+                    <img 
+                      src={project.icon} 
+                      alt={`${project.title} icon`}
+                      class="w-12 h-12 rounded-xl shadow-sm"
+                      style="border: none; margin: 0;"
+                    />
+                    <div>
+                      <h2 class="text-xl font-bold">{project.title}</h2>
+                      <p class="text-sm" style="color: rgb(var(--color-accent));">
+                        {project.role}
+                      </p>
+                    </div>
+                  </div>
 
-            <div class="mt-4 flex items-center gap-4 text-sm">
-              {project.stats && (
-                <span class="opacity-70">{project.stats}</span>
-              )}
-              {project.playStore && (
-                <a 
-                  href={project.playStore}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="inline-flex items-center gap-1 font-medium no-underline hover:opacity-80"
-                  style="color: rgb(var(--color-accent));"
-                >
-                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.302 2.302-2.302 2.302-2.659-2.302 2.659-2.302zM5.864 2.658L16.8 8.99l-2.302 2.302-8.635-8.635z"/>
-                  </svg>
-                  Google Play
-                </a>
-              )}
+                  <div class="mt-1 flex items-center gap-2 text-xs opacity-60">
+                    <span>{project.company}</span>
+                    <span>·</span>
+                    <span>{project.period}</span>
+                  </div>
+
+                  <p class="mt-4 opacity-90 leading-relaxed text-sm">{project.description}</p>
+
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    {project.tech.map((tech) => (
+                      <span class="rounded-full px-2.5 py-0.5 text-xs"
+                        style="background-color: rgb(var(--color-card-muted)); color: rgb(var(--color-text));">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div class="mt-4 flex items-center gap-4 text-sm">
+                    {project.stats && (
+                      <span class="opacity-60 text-xs">{project.stats}</span>
+                    )}
+                    <a 
+                      href={project.playStore}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center gap-1.5 text-xs font-medium no-underline hover:opacity-80"
+                      style="color: rgb(var(--color-accent));"
+                    >
+                      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.302 2.302-2.302 2.302-2.659-2.302 2.659-2.302zM5.864 2.658L16.8 8.99l-2.302 2.302-8.635-8.635z"/>
+                      </svg>
+                      Google Play
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        ))
-      }
+          ))
+        }
+      </div>
     </div>
 
     <!-- CTA -->
