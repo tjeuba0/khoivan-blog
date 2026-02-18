@@ -311,23 +311,43 @@
     border-color: rgba(var(--color-border), 0.2);
   }
 
-  /* Override inline HTML alert/callout boxes in dark mode */
+  /* Override ALL inline HTML alert/callout boxes in dark mode */
+  /* Critical alerts - red tint */
   .dark .prose-content div[style*="background: #FEF2F2"],
   .dark .prose-content div[style*="background:#FEF2F2"] {
     background-color: rgba(220, 38, 38, 0.15) !important;
     border-color: rgba(220, 38, 38, 0.4) !important;
-    color: rgb(var(--color-text)) !important;
   }
 
+  /* Warning alerts - yellow tint */
+  .dark .prose-content div[style*="background: #FEF3C7"],
+  .dark .prose-content div[style*="background:#FEF3C7"] {
+    background-color: rgba(202, 138, 4, 0.15) !important;
+    border-color: rgba(202, 138, 4, 0.4) !important;
+  }
+
+  /* Info/High alerts - neutral tint */
   .dark .prose-content div[style*="background: #FAFAFA"],
   .dark .prose-content div[style*="background:#FAFAFA"] {
     background-color: rgba(234, 88, 12, 0.15) !important;
     border-color: rgba(234, 88, 12, 0.4) !important;
+  }
+
+  /* Force all inline text colors to theme color in dark mode */
+  .dark .prose-content div[style*="color: #1F2937"],
+  .dark .prose-content div[style*="color:#1F2937"],
+  .dark .prose-content div[style*="color: #6B7280"],
+  .dark .prose-content div[style*="color:#6B7280"] {
     color: rgb(var(--color-text)) !important;
   }
 
-  /* Catch-all: any inline-styled div in prose with light backgrounds */
-  .dark .prose-content div[style*="color: #1F2937"] {
-    color: rgb(var(--color-text)) !important;
+  /* Also fix nested elements inside those divs */
+  .dark .prose-content div[style] p,
+  .dark .prose-content div[style] li,
+  .dark .prose-content div[style] span:not([style*="background"]),
+  .dark .prose-content div[style] strong,
+  .dark .prose-content div[style] em,
+  .dark .prose-content div[style] a {
+    color: inherit !important;
   }
 }
