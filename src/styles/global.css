@@ -310,4 +310,24 @@
     background-color: rgb(41, 48, 66) !important;
     border-color: rgba(var(--color-border), 0.2);
   }
+
+  /* Override inline HTML alert/callout boxes in dark mode */
+  .dark .prose-content div[style*="background: #FEF2F2"],
+  .dark .prose-content div[style*="background:#FEF2F2"] {
+    background-color: rgba(220, 38, 38, 0.15) !important;
+    border-color: rgba(220, 38, 38, 0.4) !important;
+    color: rgb(var(--color-text)) !important;
+  }
+
+  .dark .prose-content div[style*="background: #FAFAFA"],
+  .dark .prose-content div[style*="background:#FAFAFA"] {
+    background-color: rgba(234, 88, 12, 0.15) !important;
+    border-color: rgba(234, 88, 12, 0.4) !important;
+    color: rgb(var(--color-text)) !important;
+  }
+
+  /* Catch-all: any inline-styled div in prose with light backgrounds */
+  .dark .prose-content div[style*="color: #1F2937"] {
+    color: rgb(var(--color-text)) !important;
+  }
 }
