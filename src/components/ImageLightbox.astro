@@ -1,0 +1,55 @@
+---
+// ImageLightbox.astro
+// Auto-wraps all images in blog posts with GLightbox
+// No props needed - works via client-side JS on all article images
+---
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
+
+<script>
+  import GLightbox from 'glightbox';
+
+  function initLightbox() {
+    // Find all images inside article content
+    const article = document.querySelector('article');
+    if (!article) return;
+
+    const images = article.querySelectorAll('img');
+
+    images.forEach((img) => {
+      // Skip if already wrapped in a link
+      if (img.parentElement?.tagName === 'A') return;
+      // Skip tiny icons/avatars (< 100px)
+      if (img.naturalWidth > 0 && img.naturalWidth < 100) return;
+
+      // Wrap image in a glightbox link
+      const link = document.createElement('a');
+      link.href = img.src;
+      link.classList.add('glightbox');
+      link.setAttribute('data-gallery', 'post-images');
+      link.setAttribute('data-description', img.alt || '');
+
+      // Style: show pointer cursor
+      img.style.cursor = 'zoom-in';
+
+      // Replace img with link > img
+      img.parentNode?.insertBefore(link, img);
+      link.appendChild(img);
+    });
+
+    // Initialize GLightbox
+    GLightbox({
+      selector: '.glightbox',
+      touchNavigation: true,
+      loop: true,
+      closeOnOutsideClick: true,
+      openEffect: 'zoom',
+      closeEffect: 'fade',
+      cssEf498: 'fade',
+    });
+  }
+
+  // Run on page load and on Astro page transitions
+  document.addEventListener('DOMContentLoaded', initLightbox);
+  document.addEventListener('astro:page-load', initLightbox);
+</script>
