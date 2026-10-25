@@ -1,4 +1,6 @@
 ---
+import { person, website } from '../lib/schema'
+
 export interface Props {
   title: string
   description: string
@@ -11,6 +13,7 @@ export interface Props {
   noindex?: boolean
   lang?: 'vi' | 'en'
   tags?: string[]
+  schema?: Record<string, unknown>[]
 }
 
 const {
@@ -25,11 +28,17 @@ const {
   noindex = false,
   lang = 'vi',
   tags = [],
+  schema = [],
 } = Astro.props
 
 const siteTitle = 'Khoi Van - Android Developer'
 const fullTitle = title === siteTitle ? title : `${title} | ${siteTitle}`
 const imageURL = new URL(image, Astro.url)
+
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [website, person, ...schema],
+}).replace(/</g, '\\u003c')
 ---
 
 <!-- Primary Meta Tags -->
@@ -80,3 +89,5 @@ const imageURL = new URL(image, Astro.url)
 <meta name="theme-color" content="#1c2131" media="(prefers-color-scheme: dark)" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link rel="alternate" type="application/rss+xml" title={siteTitle} href="/rss.xml" />
+
+<script type="application/ld+json" set:html={jsonLd} />

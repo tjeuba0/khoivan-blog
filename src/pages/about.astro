@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro'
 import ContactCta from '../components/ContactCta.astro'
 import { experienceYears } from '../lib/site'
+import { profilePage, SITE_URL } from '../lib/schema'
 
 const skills = {
   'Core Expertise': [
@@ -72,6 +73,7 @@ const experience = [
 
 <BaseLayout
   title="About - Phạm Đình Khôi Văn"
+  schema={[profilePage(`${SITE_URL}/about/`)]}
   description={`Senior Android Developer với ${experienceYears}+ năm kinh nghiệm chuyên sâu trong phát triển ứng dụng mobile banking, lead các dự án fintech quy mô lớn tại Việt Nam`}
 >
   <div class="container-narrow pt-10 pb-8 md:pt-14">
