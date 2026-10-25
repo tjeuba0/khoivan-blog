@@ -1,46 +1,93 @@
 @import 'tailwindcss';
 
-/* Minimalist color system with CSS variables */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme static {
+  --color-paper: #fbfdfb;
+  --color-surface: #f1f4f2;
+  --color-surface-2: #e8ecea;
+  --color-line: #e1e5e3;
+  --color-ink: #1c2029;
+  --color-ink-2: #596070;
+  --color-signal: #b84800;
+
+  --color-crit: #b4302a;
+  --color-crit-bg: #fcefee;
+  --color-warn: #8a5a00;
+  --color-warn-bg: #fbf3e2;
+  --color-info: #22608f;
+  --color-info-bg: #eaf2f8;
+  --color-ok: #2f6b3f;
+  --color-ok-bg: #eaf4ec;
+
+  --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --radius-1: 4px;
+  --radius-2: 8px;
+
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --dur-1: 120ms;
+  --dur-2: 220ms;
+}
+
 @layer base {
+  .dark {
+    --color-paper: #1c2131;
+    --color-surface: #252b3d;
+    --color-surface-2: #2d3449;
+    --color-line: #343b51;
+    --color-ink: #eceef3;
+    --color-ink-2: #a3aabb;
+    --color-signal: #ff7a1a;
+
+    --color-crit: #ff8a80;
+    --color-crit-bg: rgb(220 60 50 / 0.14);
+    --color-warn: #f2c063;
+    --color-warn-bg: rgb(210 150 20 / 0.14);
+    --color-info: #8cc4f0;
+    --color-info-bg: rgb(60 140 210 / 0.14);
+    --color-ok: #8fd3a0;
+    --color-ok-bg: rgb(60 160 90 / 0.14);
+  }
+
+  /* Legacy comma-separated RGB of the tokens above, read as rgba(var(--color-x), a) by components not yet migrated */
   :root {
-    /* Light theme colors */
-    --color-bg: 251 254 251;           /* Very light background */
-    --color-text: 40 39 40;             /* Dark gray text */
-    --color-text-light: 102 102 102;   /* Secondary text */
-    --color-border: 229 231 235;       /* Light gray border */
-    --color-accent: 0 108 172;         /* Blue accent */
-    --color-card: 246 248 250;         /* Card background */
-    --color-card-muted: 239 241 243;   /* Muted card background */
+    --color-bg: 251, 253, 251;
+    --color-text: 28, 32, 41;
+    --color-text-light: 89, 96, 112;
+    --color-border: 225, 229, 227;
+    --color-accent: 184, 72, 0;
+    --color-card: 241, 244, 242;
+    --color-card-muted: 232, 236, 234;
   }
 
   .dark {
-    /* Dark theme with navy background and orange accent */
-    --color-bg: 33 39 55;              /* Navy background */
-    --color-text: 255 255 255;         /* Pure white text */
-    --color-text-light: 229 231 235;   /* Light gray for secondary text */
-    --color-border: 255 107 1;         /* Orange border */
-    --color-accent: 255 107 1;         /* Orange accent */
-    --color-card: 41 48 66;            /* Card background */
-    --color-card-muted: 49 57 77;      /* Muted card background */
+    --color-bg: 28, 33, 49;
+    --color-text: 236, 238, 243;
+    --color-text-light: 163, 170, 187;
+    --color-border: 52, 59, 81;
+    --color-accent: 255, 122, 26;
+    --color-card: 37, 43, 61;
+    --color-card-muted: 45, 52, 73;
   }
 
   html {
     @apply scroll-smooth antialiased;
   }
 
-  /* Apply monospace font to entire body */
   body {
-    @apply font-mono transition-colors duration-200;
-    background-color: rgb(var(--color-bg));
-    color: rgb(var(--color-text));
-    font-family: 'IBM Plex Mono', monospace;
-    line-height: 1.75;
+    @apply font-sans transition-colors duration-200;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    line-height: 1.7;
   }
 
   /* Typography hierarchy */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-mono font-semibold tracking-tight;
-    color: rgb(var(--color-text));
+    @apply font-semibold tracking-tight;
+    color: var(--color-ink);
+    text-wrap: balance;
   }
 
   h1 { @apply text-2xl md:text-3xl mb-6 mt-0; }
@@ -75,8 +122,8 @@
   }
 
   /* Code blocks */
-  code {
-    font-family: 'IBM Plex Mono', monospace;
+  code, kbd, samp, pre {
+    font-family: var(--font-mono);
   }
 
   /* Inline code */
@@ -132,7 +179,7 @@
 
   /* Prose content styling */
   .prose-content {
-    @apply mx-auto max-w-3xl px-4 font-mono;
+    @apply mx-auto max-w-3xl px-4;
   }
 
   .prose-content h1,
@@ -265,10 +312,6 @@
     fill: currentColor;
   }
 
-  svg:hover {
-    color: rgb(var(--color-accent));
-  }
-
   /* Tabler icons use stroke */
   .icon-tabler {
     fill: none;
@@ -277,38 +320,33 @@
     stroke-linecap: round;
     stroke-linejoin: round;
   }
-
-  .icon-tabler:hover {
-    @apply scale-110;
-    stroke: rgb(var(--color-accent));
-  }
 }
 
 /* Dark mode specific overrides */
 @layer utilities {
   /* Header in dark mode */
   .dark header {
-    background-color: rgba(33, 39, 55, 0.95);
+    background-color: rgba(var(--color-bg), 0.95);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(var(--color-border), 0.2);
+    border-bottom: 1px solid var(--color-line);
   }
 
   /* Footer in dark mode */
   .dark footer {
-    background-color: rgb(41, 48, 66);
-    border-top: 1px solid rgba(var(--color-border), 0.2);
+    background-color: var(--color-surface);
+    border-top: 1px solid var(--color-line);
   }
 
   /* Dividers in dark mode */
   .dark hr {
-    border-color: rgba(var(--color-border), 0.3);
+    border-color: var(--color-line);
   }
 
   /* Code blocks maintain contrast in dark mode */
   .dark .astro-code,
   .dark pre {
-    background-color: rgb(41, 48, 66) !important;
-    border-color: rgba(var(--color-border), 0.2);
+    background-color: var(--color-surface) !important;
+    border-color: var(--color-line);
   }
 
   /* Override ALL inline HTML alert/callout boxes in dark mode */
