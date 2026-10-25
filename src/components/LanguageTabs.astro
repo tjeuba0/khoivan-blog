@@ -1,0 +1,106 @@
+---
+export interface Props {
+  id: string
+  labels: { en: string; vi: string }
+}
+
+const { id, labels } = Astro.props
+const langs = [
+  { code: 'en', short: 'EN', name: 'English' },
+  { code: 'vi', short: 'VI', name: 'Tiếng Việt' },
+] as const
+---
+
+<section class="mt-10" data-language-tabs={id}>
+  <div class="mb-4 flex items-center justify-between gap-4">
+    <h2 class="m-0 font-mono text-xs font-semibold tracking-wider text-ink-2 uppercase">
+      {langs.map(({ code }) => <span data-lang-label={code} lang={code}>{labels[code]}</span>)}
+    </h2>
+
+    <div
+      role="tablist"
+      aria-label="Language"
+      class="inline-flex shrink-0 rounded-full border border-line bg-surface p-0.5 font-mono text-xs"
+    >
+      {
+        langs.map(({ code, short, name }, i) => (
+          <button
+            type="button"
+            role="tab"
+            id={`${id}-tab-${code}`}
+            aria-controls={`${id}-panel-${code}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+            lang={code}
+            aria-label={name}
+            title={name}
+            data-lang={code}
+            class="inline-flex min-h-10 min-w-11 cursor-pointer items-center justify-center rounded-full px-3 font-medium text-ink-2 transition-colors duration-(--dur-1) hover:text-ink aria-selected:bg-paper aria-selected:font-semibold aria-selected:text-ink aria-selected:shadow-[0_0_0_1px_var(--color-line)]"
+          >
+            {short}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <div role="tabpanel" id={`${id}-panel-en`} aria-labelledby={`${id}-tab-en`} lang="en" data-lang-panel="en">
+    <slot name="en" />
+  </div>
+  <div role="tabpanel" id={`${id}-panel-vi`} aria-labelledby={`${id}-tab-vi`} lang="vi" data-lang-panel="vi">
+    <slot name="vi" />
+  </div>
+
+  <!-- Runs inline right after the panels so the stored choice applies before first paint -->
+  <script is:inline define:vars={{ id }}>
+    const root = document.querySelector(`[data-language-tabs="${id}"]`)
+    const tabs = [...root.querySelectorAll('[role="tab"]')]
+    const storageKey = `lang:${id}`
+
+    const select = (code, { focus = false, persist = false } = {}) => {
+      for (const tab of tabs) {
+        const active = tab.dataset.lang === code
+        tab.setAttribute('aria-selected', String(active))
+        tab.tabIndex = active ? 0 : -1
+        if (active && focus) tab.focus()
+      }
+      root.querySelectorAll('[data-lang-panel]').forEach((el) => (el.hidden = el.dataset.langPanel !== code))
+      root.querySelectorAll('[data-lang-label]').forEach((el) => (el.hidden = el.dataset.langLabel !== code))
+      if (persist) {
+        try {
+          localStorage.setItem(storageKey, code)
+        } catch {}
+      }
+    }
+
+    let initial = 'en'
+    try {
+      initial = localStorage.getItem(storageKey) || initial
+    } catch {}
+    const fromHash = () => (location.hash === '#vi' || location.hash === '#en' ? location.hash.slice(1) : null)
+    select(fromHash() ?? initial)
+    window.addEventListener('hashchange', () => {
+      const code = fromHash()
+      if (code) select(code)
+    })
+
+    root.addEventListener('click', (e) => {
+      const tab = e.target.closest('[role="tab"]')
+      if (tab) select(tab.dataset.lang, { persist: true })
+    })
+
+    root.querySelector('[role="tablist"]').addEventListener('keydown', (e) => {
+      const keys = { ArrowLeft: -1, ArrowRight: 1, Home: -Infinity, End: Infinity }
+      if (!(e.key in keys)) return
+      e.preventDefault()
+      const current = tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true')
+      const step = keys[e.key]
+      const next = Number.isFinite(step)
+        ? (current + step + tabs.length) % tabs.length
+        : step < 0
+          ? 0
+          : tabs.length - 1
+      select(tabs[next].dataset.lang, { focus: true, persist: true })
+    })
+  </script>
+</section>

@@ -24,6 +24,7 @@ export interface Props {
   noindex?: boolean
   tags?: string[]
   schema?: Record<string, unknown>[]
+  lang?: 'vi' | 'en'
 }
 
 const {
@@ -37,11 +38,12 @@ const {
   noindex = false,
   tags = [],
   schema,
+  lang = 'en',
 } = Astro.props
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang={lang} class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -59,6 +61,7 @@ const {
       noindex={noindex}
       tags={tags}
       schema={schema}
+      lang={lang}
     />
 
     <!-- Dark mode script - must run before page renders to prevent flash -->
