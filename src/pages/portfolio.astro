@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 import ContactCta from '../components/ContactCta.astro'
+import { experienceYears } from '../lib/site'
 
 // Timeline: HDBank → VietinBank eFAST → Agribank Plus → VietinBank eFAST One (current)
 const projects = [
@@ -89,7 +90,7 @@ const projects = [
 ]
 ---
 
-<BaseLayout title="Portfolio - Khoi Van" description="Các dự án mobile banking tôi đã phát triển trong 8+ năm sự nghiệp">
+<BaseLayout title="Portfolio - Khoi Van" description={`Các dự án mobile banking tôi đã phát triển trong ${experienceYears}+ năm sự nghiệp`}>
   <div class="container-narrow pt-10 pb-8 md:pt-14">
     <h1 class="m-0 text-3xl leading-tight font-bold tracking-[-0.02em] md:text-4xl">Work</h1>
     <p class="mt-2 mb-0 text-ink-2">Mobile banking apps I've built and shipped since 2018.</p>
