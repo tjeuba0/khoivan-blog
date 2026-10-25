@@ -15,26 +15,26 @@ draft: false
 
 ## 🔴 Critical Updates
 
-<div style="background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+<Callout type="critical">
 
-**API 35 + PBL v7 ENFORCEMENT** · <span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;">CRITICAL</span>
+**API 35 + PBL v7 ENFORCEMENT** · <Badge level="critical" />
 Google Play mandatory update with extended deadline
 Original: August 31, 2025 → **Extended to November 1, 2025**
 
-**16KB PAGE SIZE COMPLIANCE** · <span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;">CRITICAL</span>
+**16KB PAGE SIZE COMPLIANCE** · <Badge level="critical" />
 NDK rebuild required for Android 16 compatibility
 Action required before device rollout
 
-</div>
+</Callout>
 
 ---
 
 ## 🤖 Android
 
 ### Target API 35 Enforcement · EXTENDED DEADLINE
-<div style="background: #FEF2F2; border-left: 3px solid #DC2626; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="critical">
 
-<span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">CRITICAL</span> **Extended Deadline: November 1, 2025**
+**Extended Deadline: November 1, 2025**
 
 **Original deadline: August 31, 2025 → Extended to November 1, 2025**
 
@@ -54,12 +54,12 @@ All new app updates must target SDK 35 (except Wear/TV). Non-compliance will res
 - Submit extension form if unable to meet November 1 deadline
 
 **Test Matrix:** Android API 35 / WebView 141 with login, OTP, 3DS, Thai locale insets
-</div>
+</Callout>
 
 ### 16KB Page Size Requirement · UPDATED GUIDANCE
-<div style="background: #FEF2F2; border-left: 3px solid #DC2626; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="critical">
 
-<span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">CRITICAL</span> **Documentation Updated: September 10, 2025**
+**Documentation Updated: September 10, 2025**
 
 NDK libraries built with 4KB page sizes will fail on 16KB devices in new Android versions.
 
@@ -76,12 +76,12 @@ NDK libraries built with 4KB page sizes will fail on 16KB devices in new Android
 - Test with 16KB emulator or Pixel 8/9 with 16KB mode enabled
 
 **Test Matrix:** Android API 35 + 16KB emulator/Pixel (16KB) running login, OTP, 3DS, camera OCR
-</div>
+</Callout>
 
 ### Android Security Bulletin October 2025
-<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="warning" label="Medium">
 
-<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Security Patch Level: 2025-10-05**
+**Security Patch Level: 2025-10-05**
 
 Framework/Media/SoC vulnerabilities patched. Unpatched devices at risk of exploit chains.
 
@@ -93,12 +93,12 @@ Framework/Media/SoC vulnerabilities patched. Unpatched devices at risk of exploi
 - Monitor crash logs on unpatched OS versions
 
 **Test Matrix:** Android API 33-35 / WebView 141 on patched vs unpatched devices
-</div>
+</Callout>
 
 ### Play Integrity API Updates
-<div style="background: #FAFAFA; border-left: 3px solid #EA580C; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="high">
 
-<span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">HIGH</span> **New Features: StandardIntegrityVerdictOptOut + app_access_risk**
+**New Features: StandardIntegrityVerdictOptOut + app_access_risk**
 
 Backend updates required to handle new verdict fields and opt-out capabilities.
 
@@ -112,12 +112,12 @@ Backend updates required to handle new verdict fields and opt-out capabilities.
 - Configure opt-out testing for sensitive flows
 
 **Test Matrix:** Android API 33-35 / WebView 141 with standard Integrity tokens and opt-out scenarios
-</div>
+</Callout>
 
 ### Play Billing Library v7+ Requirement · EXTENDED
-<div style="background: #FAFAFA; border-left: 3px solid #EA580C; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="high">
 
-<span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">HIGH</span> **Extended to November 1, 2025**
+**Extended to November 1, 2025**
 
 PBL v7+ mandatory for all apps. PBL 8.0.0 now available with one-time product options.
 
@@ -131,16 +131,16 @@ PBL v7+ mandatory for all apps. PBL 8.0.0 now available with one-time product op
 - Update backend for one-time product lifecycle
 
 **Test Matrix:** Android API 33-35 / WebView 141 with one-time payments + subscription proration
-</div>
+</Callout>
 
 ---
 
 ## 🍎 iOS
 
 ### iOS/iPadOS 26.0.1 Security Update
-<div style="background: #FEF2F2; border-left: 3px solid #DC2626; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="critical">
 
-<span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">CRITICAL</span> **Released: September 29, 2025**
+**Released: September 29, 2025**
 
 Apple confirms 26.0.1 as latest stable version. CI/CD and QA synchronization required.
 
@@ -152,16 +152,16 @@ Apple confirms 26.0.1 as latest stable version. CI/CD and QA synchronization req
 - Review ATS/cert pinning post-update
 
 **Test Matrix:** iOS 18.x/26.0.1 / WKWebView Safari 26 with login, OTP, 3DS
-</div>
+</Callout>
 
 ---
 
 ## 🌐 Cross-Platform / Browser
 
 ### Chrome 141 Stable Update
-<div style="background: #FAFAFA; border-left: 3px solid #EA580C; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="high">
 
-<span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">HIGH</span> **Multiple Patches: October 7-14, 2025**
+**Multiple Patches: October 7-14, 2025**
 
 Android System WebView follows Chromium 141 branch. Web CVEs risk 3DS/OAuth in-app flows.
 
@@ -175,12 +175,12 @@ Android System WebView follows Chromium 141 branch. Web CVEs risk 3DS/OAuth in-a
 **Test Matrix:**
 - Android API 33-35 / WebView 141
 - iOS 26.0.1 / WKWebView Safari 26
-</div>
+</Callout>
 
 ### WebKitGTK/WPE Security Advisory
-<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="warning" label="Medium">
 
-<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **WSA-2025-0007: September 24, 2025**
+**WSA-2025-0007: September 24, 2025**
 
 Multiple WebKit CVEs patched. Indirect impact on 3DS pages for WebKitGTK browser users.
 
@@ -192,16 +192,16 @@ Multiple WebKit CVEs patched. Indirect impact on 3DS pages for WebKitGTK browser
 - Test 3DS ACS access
 
 **Test Matrix:** Android WebView 141 / iOS WKWebView 26 accessing test 3DS ACS
-</div>
+</Callout>
 
 ---
 
 ## 🛡️ Security & Tamper Detection
 
 ### Frida 17.3.2 Update
-<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="warning" label="Medium">
 
-<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Released: August 13, 2025**
+**Released: August 13, 2025**
 
 Bug fixes and behavior changes. Update detection signatures to avoid RASP false negatives.
 
@@ -213,12 +213,12 @@ Bug fixes and behavior changes. Update detection signatures to avoid RASP false 
 - Test SSL_write/crypto hook scenarios
 
 **Test Matrix:** Android API 33-35 / iOS 26.0.1 with Frida attachment scenarios
-</div>
+</Callout>
 
 ### Magisk v30.2 Pre-release
-<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="warning" label="Medium">
 
-<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Pre-release: December 28, 2024**
+**Pre-release: December 28, 2024**
 
 Combined with LSPosed/Shamiko creates RASP/attestation bypass risks if poorly configured.
 
@@ -232,13 +232,13 @@ Combined with LSPosed/Shamiko creates RASP/attestation bypass risks if poorly co
 - Test Strong Integrity enforcement scenarios
 
 **Test Matrix:** Android API 33-35 / WebView 141 with rooted devices + Play Integrity MEETS_STRONG_INTEGRITY=false
-</div>
+</Callout>
 
 ---
 
 ## 👁️ Community Watchlist
 
-<div style="background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+<Callout type="warning">
 
 ⚠️ **Unverified community reports** - awaiting official confirmation
 
@@ -250,7 +250,7 @@ No notable root detection or bypass discussions reported in the community forums
 
 **Source:** [VOZ Root Discussion Thread](https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/)
 
-</div>
+</Callout>
 
 ---
 
@@ -287,10 +287,8 @@ No notable root detection or bypass discussions reported in the community forums
 
 ---
 
-<div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #E5E7EB;">
-  <p style=" font-size: 0.875rem;">
-    Mobile Banking Security Weekly #3 · October 19, 2025<br/>
-    Extended deadlines provide compliance flexibility · 16KB compliance remains critical<br/>
-    Questions? Contact <a href="mailto:phamdinhkhoivan@gmail.com" style="color: #059669;">phamdinhkhoivan@gmail.com</a>
-  </p>
-</div>
+<p className="text-center font-mono text-xs text-ink-2">
+  Mobile Banking Security Weekly #3 · October 19, 2025<br/>
+  Extended deadlines provide compliance flexibility · 16KB compliance remains critical<br/>
+  Questions? Contact <a href="mailto:phamdinhkhoivan@gmail.com">phamdinhkhoivan@gmail.com</a>
+</p>

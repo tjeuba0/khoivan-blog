@@ -1,0 +1,34 @@
+---
+export interface Props {
+  href?: string
+  pressed?: boolean
+  current?: boolean
+  count?: number
+  class?: string
+}
+
+const { href, pressed, current, count, class: className } = Astro.props
+const active = pressed || current
+
+const classes = [
+  'inline-flex min-h-9 items-center gap-1 rounded-full border px-3 font-mono text-[13px] leading-none no-underline transition-colors',
+  active
+    ? 'border-ink bg-ink text-paper'
+    : 'border-line text-ink-2 hover:border-signal hover:text-ink',
+  className,
+]
+---
+
+{
+  href ? (
+    <a href={href} aria-current={current ? 'page' : undefined} class:list={classes}>
+      <slot />
+      {count !== undefined && <sup class="text-[10px] opacity-80">{count}</sup>}
+    </a>
+  ) : (
+    <button type="button" aria-pressed={pressed ? 'true' : 'false'} class:list={classes}>
+      <slot />
+      {count !== undefined && <sup class="text-[10px] opacity-80">{count}</sup>}
+    </button>
+  )
+}

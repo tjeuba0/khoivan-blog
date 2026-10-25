@@ -1,10 +1,9 @@
 ---
 import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
-import BlogCard from '../components/BlogCard.astro'
+import PostRow from '../components/PostRow.astro'
 import HeroSection from '../components/HeroSection.astro'
 
-// Get all posts
 const allPosts = await getCollection('blog')
 const posts = allPosts
   .filter((post) => !post.data.draft)
@@ -12,24 +11,22 @@ const posts = allPosts
   .slice(0, 6)
 ---
 
-<BaseLayout title="Khoi Van" description="Personal blog about Android development, software engineering, and life in Saigon">
-  <!-- Hero Section with Bio -->
+<BaseLayout title="Khoi Van" description="Personal blog about Android development, software engineering, and life in Hanoi">
   <HeroSection />
-  
-  <!-- Blog Posts -->
-  <div class="container-narrow pb-16">
-    <h2 class="text-xl font-semibold mb-6 mt-2">Recent Posts</h2>
-    <div class="space-y-6">
-      {posts.map((post) => (
-        <BlogCard post={post} />
-      ))}
+
+  <section class="container-narrow pb-8">
+    <h2 class="mt-0 mb-6 font-mono text-xs font-semibold tracking-wider text-ink-2 uppercase">
+      Recent posts
+    </h2>
+    <div>
+      {posts.map((post) => <PostRow post={post} headingLevel="h3" />)}
     </div>
 
-    <!-- View All Posts -->
-    <div class="mt-10 text-center">
-      <a href="/blog" class="inline-block px-6 py-2 rounded-lg border-2 border-current opacity-70 hover:opacity-100 transition-opacity no-underline text-sm font-semibold">
-        View all posts →
-      </a>
-    </div>
-  </div>
+    <a
+      href="/blog/"
+      class="mt-8 inline-flex min-h-11 items-center font-mono text-sm text-signal no-underline hover:underline"
+    >
+      All posts →
+    </a>
+  </section>
 </BaseLayout>

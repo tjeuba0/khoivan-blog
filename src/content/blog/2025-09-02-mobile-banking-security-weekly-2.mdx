@@ -15,26 +15,26 @@ draft: false
 
 ## 🔴 Critical Updates
 
-<div style="background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+<Callout type="critical">
 
-**16KB PAGE SIZE MANDATE** · <span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;">CRITICAL</span>  
+**16KB PAGE SIZE MANDATE** · <Badge level="critical" />  
 Google Play requirement for all apps with native code  
 Deadline: November 1, 2025
 
-**iOS 18.6.2 ZERO-DAY** · <span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;">CRITICAL</span>  
+**iOS 18.6.2 ZERO-DAY** · <Badge level="critical" />  
 CVE-2025-43300 actively exploited  
 Update immediately
 
-</div>
+</Callout>
 
 ---
 
 ## 🤖 Android
 
 ### 16KB Page Size Requirement · NEW
-<div style="background: #FEF2F2; border-left: 3px solid #DC2626; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="critical">
 
-<span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">CRITICAL</span> **Deadline: November 1, 2025**
+**Deadline: November 1, 2025**
 
 All apps targeting Android 15+ with native code must support 16KB page sizes. Apps failing this requirement will be blocked from Google Play submission.
 
@@ -52,12 +52,12 @@ All apps targeting Android 15+ with native code must support 16KB page sizes. Ap
 - Run APK Analyzer in Android Studio 2025.1.2
 
 **Test Matrix:** Android 15+ with 16KB page configuration
-</div>
+</Callout>
 
 ### Play Billing Library v7 Requirement
-<div style="background: #FAFAFA; border-left: 3px solid #EA580C; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="high">
 
-<span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">HIGH</span> **Deadline: November 1, 2025**
+**Deadline: November 1, 2025**
 
 Play Billing Library v5/v6 deprecated. Upgrade to v7.x required for all payment flows.
 
@@ -69,12 +69,12 @@ Play Billing Library v5/v6 deprecated. Upgrade to v7.x required for all payment 
 - Verify subscription upgrade/downgrade scenarios
 
 **Test Matrix:** Android API 29-36 with PBL v7
-</div>
+</Callout>
 
 ### Chrome/WebView 140 Early Stable
-<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="warning" label="Medium">
 
-<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Rolling out: August 27, 2025**
+**Rolling out: August 27, 2025**
 
 Chrome 140 introduces Local Network Access permission requirements affecting OAuth/SSO flows.
 
@@ -92,16 +92,16 @@ Chrome 140 introduces Local Network Access permission requirements affecting OAu
 - Monitor crash reports after auto-update
 
 **Test Matrix:** Android API 29-36 / WebView 140.x
-</div>
+</Callout>
 
 ---
 
 ## 🍎 iOS
 
 ### iOS 18.6.2 Zero-Day Patch
-<div style="background: #FEF2F2; border-left: 3px solid #DC2626; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="critical">
 
-<span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">CRITICAL</span> **CVE-2025-43300 (CVSS 8.8)**
+**CVE-2025-43300 (CVSS 8.8)**
 
 ImageIO out-of-bounds write vulnerability actively exploited in targeted attacks. Processing malicious images can lead to memory corruption and RCE.
 
@@ -116,12 +116,12 @@ ImageIO out-of-bounds write vulnerability actively exploited in targeted attacks
 - Monitor ImageIO crash signatures
 
 **Test Matrix:** iOS 18.6.2 / WKWebView 18.6.x
-</div>
+</Callout>
 
 ### macOS Sequoia 15.6.1 · Related Update
-<div style="background: #FAFAFA; border-left: 3px solid #EA580C; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="high">
 
-<span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">HIGH</span> **Same CVE-2025-43300**
+**Same CVE-2025-43300**
 
 Desktop apps and internal tools also affected. Update development machines.
 
@@ -130,16 +130,16 @@ Desktop apps and internal tools also affected. Update development machines.
 - Rebuild iOS simulators after update
 - Test Catalyst apps if applicable
 
-</div>
+</Callout>
 
 ---
 
 ## 🌐 Cross-Platform
 
 ### React Native 0.81
-<div style="background: #FAFAFA; border-left: 3px solid #059669; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="note" label="Low">
 
-<span style="background: #059669; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">LOW</span> **Released: August 12, 2025**
+**Released: August 12, 2025**
 
 Major update with Android 16 support and edge-to-edge requirements.
 
@@ -159,16 +159,16 @@ Major update with Android 16 support and edge-to-edge requirements.
 - Update to Hermes or add JSC package
 
 **Test Matrix:** Android API 29-36 / iOS 17-18
-</div>
+</Callout>
 
 ---
 
 ## 🛡️ Security & Tamper Detection
 
 ### Frida 17.2.17 Update
-<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="warning" label="Medium">
 
-<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Released: August 20, 2025**
+**Released: August 20, 2025**
 
 New Interceptor behavior on iOS. Update detection patterns.
 
@@ -181,12 +181,12 @@ New Interceptor behavior on iOS. Update detection patterns.
 - Review symbol/port detection logic
 
 **Test Matrix:** Android 13-16 / iOS 17-18
-</div>
+</Callout>
 
 ### Magisk v30.2 Pre-release
-<div style="background: #FAFAFA; border-left: 3px solid #059669; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="note" label="Low">
 
-<span style="background: #059669; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">LOW</span> **Pre-release: August 2025**
+**Pre-release: August 2025**
 
 Zygisk/denylist improvements. Monitor for banking app detection changes.
 
@@ -197,13 +197,13 @@ Zygisk/denylist improvements. Monitor for banking app detection changes.
 - Monitor root detection bypass reports
 
 **Test Matrix:** Android 13-16 with various root configurations
-</div>
+</Callout>
 
 ---
 
 ## 👁️ Community Watchlist
 
-<div style="background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+<Callout type="warning">
 
 ⚠️ **Unverified community reports** - awaiting official confirmation
 
@@ -223,7 +223,7 @@ Zygisk/denylist improvements. Monitor for banking app detection changes.
 - Source: Multiple reports · low-trust
 - [VOZ Thread Page 313](https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-313)
 
-</div>
+</Callout>
 
 ---
 
@@ -252,10 +252,8 @@ Zygisk/denylist improvements. Monitor for banking app detection changes.
 
 ---
 
-<div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #E5E7EB;">
-  <p style=" font-size: 0.875rem;">
-    Mobile Banking Security Weekly #2 · September 2, 2025<br/>
-    Critical updates require immediate action · Plan your November 1 compliance<br/>
-    Questions? Contact <a href="mailto:phamdinhkhoivan@gmail.com" style="color: #059669;">phamdinhkhoivan@gmail.com</a>
-  </p>
-</div>
+<p className="text-center font-mono text-xs text-ink-2">
+  Mobile Banking Security Weekly #2 · September 2, 2025<br/>
+  Critical updates require immediate action · Plan your November 1 compliance<br/>
+  Questions? Contact <a href="mailto:phamdinhkhoivan@gmail.com">phamdinhkhoivan@gmail.com</a>
+</p>

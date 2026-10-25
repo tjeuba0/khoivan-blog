@@ -15,26 +15,26 @@ draft: false
 
 ## 🔴 Critical Updates
 
-<div style="background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+<Callout type="critical">
 
-**ANDROID SECURITY BULLETIN** · <span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;">CRITICAL</span>  
+**ANDROID SECURITY BULLETIN** · <Badge level="critical" />  
 System RCE vulnerability · SPL 2025-08-05  
 Update test devices immediately
 
-**GOOGLE PLAY API 35** · <span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;">HIGH</span>  
+**GOOGLE PLAY API 35** · <Badge level="high" />  
 Required by August 31, 2025  
 Extension available until November 1
 
-</div>
+</Callout>
 
 ---
 
 ## 🤖 Android
 
 ### Security Bulletin · August 2025
-<div style="background: #FAFAFA; border-left: 3px solid #DC2626; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="critical">
 
-<span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">CRITICAL</span> **SPL 2025-08-01/05**
+**SPL 2025-08-01/05**
 
 System RCE vulnerability and framework EoP. Pixel devices patched at 2025-08-05 level.
 
@@ -46,12 +46,12 @@ System RCE vulnerability and framework EoP. Pixel devices patched at 2025-08-05 
 - Monitor crash rates for 48h post-update
 
 **Test Matrix:** Android API 29-35 / WebView 139.x
-</div>
+</Callout>
 
 ### Pixel Update Bulletin · August 2025
-<div style="background: #FAFAFA; border-left: 3px solid #EA580C; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="high">
 
-<span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">HIGH</span> **SPL 2025-08-05**
+**SPL 2025-08-05**
 
 Additional patches for Pixel devices including modem fixes.
 
@@ -63,12 +63,12 @@ Additional patches for Pixel devices including modem fixes.
 - Monitor incident reports
 
 **Test Matrix:** Android API 29-35 / WebView 139.x
-</div>
+</Callout>
 
 ### Google Play API 35 Requirement
-<div style="background: #FAFAFA; border-left: 3px solid #EA580C; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="high">
 
-<span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">HIGH</span> **Deadline: August 31, 2025**
+**Deadline: August 31, 2025**
 
 Apps failing requirement will be blocked from submission/updates. Extension available until November 1.
 
@@ -82,12 +82,12 @@ Apps failing requirement will be blocked from submission/updates. Extension avai
   - Behavior changes
 
 **Test Matrix:** Android 15 (API 35)
-</div>
+</Callout>
 
 ### Android Studio Narwhal 2025.1.2
-<div style="background: #FAFAFA; border-left: 3px solid #059669; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="note" label="Low">
 
-<span style="background: #059669; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">LOW</span> **Stable Release**
+**Stable Release**
 
 New stable version for Android teams.
 
@@ -97,16 +97,16 @@ New stable version for Android teams.
 - Review new AGP/lint warnings
 
 **Test Matrix:** AGP/Gradle on CI
-</div>
+</Callout>
 
 ---
 
 ## 🍎 iOS
 
 ### iOS/iPadOS 18.6.1 Security Update
-<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="warning" label="Medium">
 
-<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Released: August 14, 2025**
+**Released: August 14, 2025**
 
 Latest security patch for iOS 18. CVEs not disclosed at release.
 
@@ -118,16 +118,16 @@ Latest security patch for iOS 18. CVEs not disclosed at release.
 - Test WKWebView checkout performance
 
 **Test Matrix:** iOS 18.6.1 / WKWebView 18.6.x
-</div>
+</Callout>
 
 ---
 
 ## 🌐 Cross-Platform
 
 ### Flutter 3.35 Stable
-<div style="background: #FAFAFA; border-left: 3px solid #059669; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="note" label="Low">
 
-<span style="background: #059669; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">LOW</span> **Released: August 13, 2025**
+**Released: August 13, 2025**
 
 New stable version. Consider upgrading cross-platform apps.
 
@@ -137,12 +137,12 @@ New stable version. Consider upgrading cross-platform apps.
 - Measure bundle size after upgrade
 
 **Test Matrix:** Flutter 3.35 / Dart
-</div>
+</Callout>
 
 ### React Native 0.79.x
-<div style="background: #FAFAFA; border-left: 3px solid #059669; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="note" label="Low">
 
-<span style="background: #059669; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">LOW</span> **Branch 0.79**
+**Branch 0.79**
 
 Bugfixes for 0.79 branch.
 
@@ -152,16 +152,16 @@ Bugfixes for 0.79 branch.
 - Check AGP/Xcode compatibility
 
 **Test Matrix:** RN 0.79.x / Hermes
-</div>
+</Callout>
 
 ---
 
 ## 🛡️ Security & Tamper Detection
 
 ### Frida 17.2.16
-<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="warning" label="Medium">
 
-<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Released: August 12, 2025**
+**Released: August 12, 2025**
 
 Hook tool update. Adjust detection/hardening if RASP has version-specific rules.
 
@@ -173,13 +173,13 @@ Hook tool update. Adjust detection/hardening if RASP has version-specific rules.
 - Test anti-hook at login/KYC screens
 
 **Test Matrix:** Android 14-15 / iOS 17-18
-</div>
+</Callout>
 
 ---
 
 ## 👁️ Community Watchlist
 
-<div style="background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+<Callout type="warning">
 
 ⚠️ **Unverified community reports** - awaiting official confirmation
 
@@ -209,7 +209,7 @@ Hook tool update. Adjust detection/hardening if RASP has version-specific rules.
 - Updating Zygisk + LSPosed reportedly helps restore functionality
 - Source: 1 author, 1 post · low-trust
 - [https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308](https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/page-308)
-</div>
+</Callout>
 
 ---
 
@@ -221,9 +221,7 @@ Hook tool update. Adjust detection/hardening if RASP has version-specific rules.
 
 ---
 
-<div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #E5E7EB;">
-  <p style=" font-size: 0.875rem;">
-    Mobile Banking Security Weekly #1 · August 17, 2025<br/>
-    Questions? Contact <a href="mailto:phamdinhkhoivan@gmail.com" style="color: #059669;">phamdinhkhoivan@gmail.com</a>
-  </p>
-</div>
+<p className="text-center font-mono text-xs text-ink-2">
+  Mobile Banking Security Weekly #1 · August 17, 2025<br/>
+  Questions? Contact <a href="mailto:phamdinhkhoivan@gmail.com">phamdinhkhoivan@gmail.com</a>
+</p>

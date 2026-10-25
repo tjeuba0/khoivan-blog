@@ -1,0 +1,25 @@
+---
+export type Severity = 'critical' | 'high' | 'medium' | 'low'
+
+export interface Props {
+  level: Severity
+}
+
+const { level } = Astro.props
+
+const styles: Record<Severity, string> = {
+  critical: 'bg-crit',
+  high: 'bg-high',
+  medium: 'bg-warn',
+  low: 'bg-ok',
+}
+---
+
+<span
+  class:list={[
+    'inline-block rounded-1 px-1.5 py-0.5 align-[0.1em] font-mono text-[11px] leading-none font-semibold tracking-wider text-paper uppercase',
+    styles[level],
+  ]}
+>
+  {level}
+</span>

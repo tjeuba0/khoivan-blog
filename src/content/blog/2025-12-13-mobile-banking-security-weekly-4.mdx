@@ -15,20 +15,20 @@ draft: false
 
 ## Critical Updates
 
-<div style="background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+<Callout type="critical">
 
-**Android December 2025 Security Bulletin** · <span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;">CRITICAL</span>
+**Android December 2025 Security Bulletin** · <Badge level="critical" />
 Actively exploited vulnerabilities patched (critical remote DoS in Framework) – update devices to 2025-12-05 or later
 *Released: Dec 4, 2025*
 
-**iOS 26.2 Security Update** · <span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;">CRITICAL</span>
+**iOS 26.2 Security Update** · <Badge level="critical" />
 Apple patches 20+ vulnerabilities (2 WebKit zero-days under active exploit) – update iPhones/iPads
 *Released: Dec 12, 2025*
 
-**Google Play US Policy Changes** · <span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.875rem;">HIGH</span>
+**Google Play US Policy Changes** · <Badge level="high" />
 Alternative billing and external links now allowed for U.S. users (Epic injunction) – compliance deadline Jan 28, 2026
 
-</div>
+</Callout>
 
 *(No other critical Google/Apple deadlines this week.)*
 
@@ -37,9 +37,9 @@ Alternative billing and external links now allowed for U.S. users (Epic injuncti
 ## Android (PRIMARY)
 
 ### Android Security Bulletin – December 2025 (Patch 2025-12-05)
-<div style="background: #FEF2F2; border-left: 3px solid #DC2626; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="critical">
 
-<span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">CRITICAL</span> **Released: December 4, 2025**
+**Released: December 4, 2025**
 
 Monthly patch fixes a critical Framework flaw (remote denial-of-service) and dozens of high-severity vulnerabilities across System, Kernel, and vendor components. Google notes two of the patched bugs are under **limited targeted exploitation**, underscoring the need for immediate updates.
 
@@ -62,12 +62,12 @@ Monthly patch fixes a critical Framework flaw (remote denial-of-service) and doz
 - WebView: Test with WebView 143 (latest)
 - Flows: Login, Balance check, Funds transfer (ensure no unexpected crashes)
 - Locales: vi-VN primary (verify error messaging)
-</div>
+</Callout>
 
 ### Google Play External Links & Alt-Billing (U.S.)
-<div style="background: #FAFAFA; border-left: 3px solid #EA580C; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="high">
 
-<span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">HIGH</span> **Updated: December 9, 2025** · Compliance Deadline: **January 28, 2026**
+**Updated: December 9, 2025** · Compliance Deadline: **January 28, 2026**
 
 Google Play is implementing U.S.-only policy changes per a court injunction. Apps may now link to external app downloads and offer payment methods besides Google Play Billing for U.S. users. Google launched an External Content Links program and expanded Alternative Billing programs for U.S. developers.
 
@@ -88,12 +88,12 @@ Google Play is implementing U.S.-only policy changes per a court injunction. App
 - Device/Region: U.S. Play Store account vs non-U.S. (feature flag differences)
 - Flows: (If using alt billing) attempt a purchase in-app – verify proper warning dialog and smooth handoff
 - Compliance: Check that the latest app bundle targets the correct Play policy version
-</div>
+</Callout>
 
 ### Android Vitals "Excessive Wake Locks" Enforcement
-<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="warning" label="Medium">
 
-<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Enforcement Begins: March 1, 2026**
+**Enforcement Begins: March 1, 2026**
 
 Google is raising the bar on battery performance. A new core vitals metric tracks apps holding partial wake locks >2 hours in 24h. Starting March 1, 2026, any app exceeding the bad threshold (5% of user sessions) will face Play Store penalties: reduced visibility and a warning label about battery drain.
 
@@ -115,16 +115,16 @@ Google is raising the bar on battery performance. A new core vitals metric track
 - OS: Android 13, 14, 15
 - Scenarios: Simulate edge cases (e.g., user leaves app in background during OTP flow)
 - Monitoring: Use Android Studio Profiler or `adb shell dumpsys batterystats` to capture wake lock usage
-</div>
+</Callout>
 
 ---
 
 ## iOS
 
 ### iOS/iPadOS 26.2 Security Update
-<div style="background: #FEF2F2; border-left: 3px solid #DC2626; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="critical">
 
-<span style="background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">CRITICAL</span> **Released: December 12, 2025**
+**Released: December 12, 2025**
 
 Apple released iOS 26.2 and iPadOS 26.2, addressing over 20 security vulnerabilities, including **two WebKit bugs actively exploited in targeted attacks**. The exploited flaws allow malicious web content to execute arbitrary code or cause memory corruption. Other fixes cover App Store payment token exposure, image processing memory corruption, and a Hidden Photos album bypass.
 
@@ -145,7 +145,7 @@ Apple released iOS 26.2 and iPadOS 26.2, addressing over 20 security vulnerabili
 - Devices: iPhone 15 (iOS 26.2), iPhone 12 (iOS 18.7.3 legacy), iPad mini 7 (iPadOS 26.2)
 - Focus Tests: WKWebView flows (3DS), login with Face ID/Touch ID, share sheet
 - Network: Use a proxy to observe if any new ATS or certificate pinning behaviors
-</div>
+</Callout>
 
 *(No App Store policy updates relevant to banking this week, aside from the App Store Connect holiday freeze Dec 23-27 – plan releases accordingly.)*
 
@@ -154,9 +154,9 @@ Apple released iOS 26.2 and iPadOS 26.2, addressing over 20 security vulnerabili
 ## Cross-Platform / Browser
 
 ### Chrome 143 Stable (WebView) Update
-<div style="background: #FAFAFA; border-left: 3px solid #EA580C; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="high">
 
-<span style="background: #EA580C; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">HIGH</span> **Released: December 2, 2025** (Chrome 143.0.7499.40)
+**Released: December 2, 2025** (Chrome 143.0.7499.40)
 
 Google promoted Chrome 143 to stable on all platforms, which includes 13 security fixes. Among the patched issues is a high-severity V8 JavaScript engine type confusion (CVE-2025-13630) that could potentially lead to arbitrary code execution. No known active exploits yet, but a prior emergency patch fixed a zero-day, indicating attackers are targeting Chromium components.
 
@@ -177,12 +177,12 @@ Google promoted Chrome 143 to stable on all platforms, which includes 13 securit
 - Android Devices: Pixel 7 (Android 14) with WebView 143, Samsung S22 (Android 13) with WebView 143, one device with WebView 142 for comparison
 - Flows: Login via Google SSO, Payment with 3D Secure challenge, Open bank T&C PDF in WebView
 - Web Content: Test deep links and App Links to ensure Chrome's update didn't affect intents
-</div>
+</Callout>
 
 ### WebKitGTK/WPE Security Advisory – WSA-2025-0009
-<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="warning" label="Medium">
 
-<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Published: December 4, 2025** (WebKitGTK 2.50.3)
+**Published: December 4, 2025** (WebKitGTK 2.50.3)
 
 The WebKitGTK and WPE WebKit engines received an advisory addressing multiple vulnerabilities. Notably, one flaw could allow a malicious website to exfiltrate sensitive system information, and several others could lead to unexpected process crashes.
 
@@ -199,16 +199,16 @@ The WebKitGTK and WPE WebKit engines received an advisory addressing multiple vu
 - Keep an eye on similar issues in Apple's WebKit
 
 **Test Matrix:** Use a Linux VM with WebKitGTK 2.50.3 and run our bank's public website, login page, and a sample 3DS flow
-</div>
+</Callout>
 
 ---
 
 ## Security & Tamper Detection (DEFENSIVE)
 
 ### Magisk v30.6 Stable (Rust Rewrite)
-<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="warning" label="Medium">
 
-<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Released: December 2, 2025**
+**Released: December 2, 2025**
 
 The popular Android rooting tool Magisk has reached version 30.6, marking a major update with a significant portion of its codebase **rewritten in Rust**. This update aims for better stability and security for the root tool itself, but still provides robust hiding features (Magisk Hide) that allow rooted devices to evade detection.
 
@@ -238,12 +238,12 @@ The popular Android rooting tool Magisk has reached version 30.6, marking a majo
 - OS: Android 13 and 14 for Magisk, Android 15 for KernelSU
 - Flows: Full login -> balance -> transfer on rooted device with root hidden
 - Telemetry: Enable verbose logging in test build to capture root check triggers
-</div>
+</Callout>
 
 ### Frida 17.5.x Updates (Instrumentation)
-<div style="background: #FAFAFA; border-left: 3px solid #CA8A04; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+<Callout type="warning" label="Medium">
 
-<span style="background: #CA8A04; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">MEDIUM</span> **Released: November 4-5, 2025** (Frida 17.5.0 & 17.5.1)
+**Released: November 4-5, 2025** (Frida 17.5.0 & 17.5.1)
 
 The Frida dynamic instrumentation toolkit saw a "feature-packed" 17.5.0 release. Major highlights include a smarter Frida compiler, more robust iOS (Darwin) injection internals, and a complete overhaul of the Swift bindings to use modern concurrency.
 
@@ -267,7 +267,7 @@ The Frida dynamic instrumentation toolkit saw a "feature-packed" 17.5.0 release.
 - Android: Pixel 5 (Android 12) with Frida 17.5.1 server running; attempt to hook critical methods
 - iOS: Jailbroken iPhone 13 (iOS 18.0) with Frida 17.5.0 gadgets injected
 - Observation: Track performance impact – defensive checks shouldn't degrade app performance
-</div>
+</Callout>
 
 ---
 
@@ -318,7 +318,7 @@ To proactively validate our app's defenses, we will conduct structured tests in 
 
 ## Community Watchlist (UNVERIFIED) — VOZ Pulse
 
-<div style="background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+<Callout type="warning">
 
 **Thread:** "Thao luan ve root bang Magisk, module, giai phap an root (24+)" – VOZ Forums
 **Crawl Date:** Dec 13, 2025 – capturing 10 most recent posts (#6461–#6470)
@@ -344,7 +344,7 @@ To proactively validate our app's defenses, we will conduct structured tests in 
 
 **Source:** [VOZ Root Discussion Thread](https://voz.vn/t/thao-luan-ve-root-bang-magisk-module-giai-phap-an-root-cho-phien-ban-moi-24.497191/)
 
-</div>
+</Callout>
 
 ---
 
@@ -383,10 +383,8 @@ To proactively validate our app's defenses, we will conduct structured tests in 
 
 ---
 
-<div style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #E5E7EB;">
-  <p style=" font-size: 0.875rem;">
-    Mobile Banking Security Weekly #4 · December 13, 2025<br/>
-    Critical security patches require immediate action · Plan your January compliance<br/>
-    Questions? Contact <a href="mailto:phamdinhkhoivan@gmail.com" style="color: #059669;">phamdinhkhoivan@gmail.com</a>
-  </p>
-</div>
+<p className="text-center font-mono text-xs text-ink-2">
+  Mobile Banking Security Weekly #4 · December 13, 2025<br/>
+  Critical security patches require immediate action · Plan your January compliance<br/>
+  Questions? Contact <a href="mailto:phamdinhkhoivan@gmail.com">phamdinhkhoivan@gmail.com</a>
+</p>

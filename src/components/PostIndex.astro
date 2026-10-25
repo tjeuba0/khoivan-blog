@@ -1,0 +1,71 @@
+---
+import { getCollection } from 'astro:content'
+import Chip from './Chip.astro'
+import PostRow from './PostRow.astro'
+import { categoryUrl, type Post } from '../lib/post'
+
+export interface Props {
+  posts: Post[]
+  title: string
+  intro?: string
+  currentCategory?: string
+}
+
+const { posts, title, intro, currentCategory } = Astro.props
+
+const published = (await getCollection('blog')).filter((p) => !p.data.draft)
+const categoryCounts = new Map<string, number>()
+for (const p of published) {
+  categoryCounts.set(p.data.category, (categoryCounts.get(p.data.category) ?? 0) + 1)
+}
+const categories = [...categoryCounts.entries()].sort((a, b) => b[1] - a[1])
+
+const sorted = [...posts].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+const byYear = new Map<number, Post[]>()
+for (const post of sorted) {
+  const year = post.data.pubDate.getFullYear()
+  byYear.set(year, [...(byYear.get(year) ?? []), post])
+}
+---
+
+<div class="container-narrow pt-10 pb-8 md:pt-14">
+  <h1 class="m-0 text-3xl leading-tight font-bold tracking-[-0.02em] md:text-4xl">{title}</h1>
+  {intro && <p class="mt-2 mb-0 text-ink-2">{intro}</p>}
+
+  <nav class="mt-6 flex flex-wrap gap-2" aria-label="Categories">
+    <Chip href="/blog/" current={!currentCategory} count={published.length}>all</Chip>
+    {
+      categories.map(([category, count]) => (
+        <Chip href={categoryUrl(category)} current={currentCategory === category} count={count}>
+          {category}
+        </Chip>
+      ))
+    }
+  </nav>
+
+  {
+    sorted.length === 0 ? (
+      <p class="mt-10 text-ink-2">No posts here yet.</p>
+    ) : (
+      [...byYear.entries()].map(([year, items]) => (
+        <section class="mt-10">
+          <h2 class="mt-0 mb-4 border-b border-line pb-2 font-mono text-xs font-semibold tracking-wider text-ink-2">
+            {year}
+          </h2>
+          <div>
+            {items.map((post) => (
+              <PostRow post={post} headingLevel="h3" />
+            ))}
+          </div>
+        </section>
+      ))
+    )
+  }
+
+  <a
+    href="/blog/tags/"
+    class="mt-10 inline-flex min-h-11 items-center font-mono text-sm text-signal no-underline hover:underline"
+  >
+    Browse all tags →
+  </a>
+</div>

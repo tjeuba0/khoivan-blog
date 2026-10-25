@@ -1,0 +1,107 @@
+---
+import type { MarkdownHeading } from 'astro'
+
+export interface Props {
+  headings: MarkdownHeading[]
+  minItems?: number
+}
+
+const { headings, minItems = 3 } = Astro.props
+const items = headings.filter((h) => h.depth === 2 || h.depth === 3)
+const sections = items.filter((h) => h.depth === 2)
+const inlineItems = sections.length >= minItems ? sections : items
+---
+
+{
+  items.length >= minItems && (
+    <>
+      <details data-pagefind-ignore="all" class="toc-inline mb-8 rounded-2 border border-line xl:hidden">
+        <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between px-4 font-mono text-xs font-semibold tracking-wider text-ink uppercase [&::-webkit-details-marker]:hidden">
+          Contents
+          <span class="text-ink-2">{inlineItems.length}</span>
+        </summary>
+        <ol class="m-0 list-none space-y-1 px-4 pb-3 text-sm">
+          {inlineItems.map((h) => (
+            <li class:list={[inlineItems !== sections && h.depth === 3 && 'pl-4']}>
+              <a href={`#${h.slug}`} class="block py-1 text-ink-2 no-underline hover:text-ink">
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </details>
+
+      <nav
+        data-pagefind-ignore="all"
+        class="toc-rail absolute top-0 left-full ml-10 hidden h-full w-48 xl:block"
+        aria-label="Contents"
+      >
+        <div class="sticky top-8 border-l border-line pl-4 text-[13px] leading-snug">
+          <p class="mb-3 font-mono text-[11px] font-semibold tracking-wider text-ink uppercase">
+            In this post
+          </p>
+          <ol class="m-0 list-none space-y-2 p-0">
+            {items.map((h) => (
+              <li class:list={[h.depth === 3 && 'pl-3']}>
+                <a
+                  href={`#${h.slug}`}
+                  data-toc-link={h.slug}
+                  class="block text-ink-2 no-underline hover:text-ink aria-[current=true]:font-semibold aria-[current=true]:text-signal"
+                >
+                  {h.text}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </nav>
+    </>
+  )
+}
+
+<script>
+  const links = new Map<string, HTMLElement>()
+  document.querySelectorAll<HTMLElement>('[data-toc-link]').forEach((a) => {
+    links.set(a.dataset.tocLink!, a)
+  })
+
+  if (links.size > 0) {
+    const targets = [...links.keys()]
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null)
+
+    let currentId = ''
+    const setCurrent = (id: string) => {
+      if (id === currentId) return
+      links.get(currentId)?.removeAttribute('aria-current')
+      links.get(id)?.setAttribute('aria-current', 'true')
+      currentId = id
+    }
+
+    // The current section is the last heading that has scrolled past the top third of the viewport
+    const update = () => {
+      const line = window.innerHeight / 3
+      let id = targets[0]?.id ?? ''
+      for (const el of targets) {
+        if (el.getBoundingClientRect().top <= line) id = el.id
+        else break
+      }
+      setCurrent(id)
+    }
+
+    let ticking = false
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (ticking) return
+        ticking = true
+        requestAnimationFrame(() => {
+          update()
+          ticking = false
+        })
+      },
+      { passive: true }
+    )
+    update()
+  }
+</script>

@@ -1,0 +1,8 @@
+/blog/2 /blog/ 301
+/blog/2/ /blog/ 301
+/blog/3 /blog/ 301
+/blog/3/ /blog/ 301
+/blog/category/:category/:page /blog/category/:category/ 301
+/blog/category/:category/:page/ /blog/category/:category/ 301
+/blog/tag/:tag/:page /blog/tag/:tag/ 301
+/blog/tag/:tag/:page/ /blog/tag/:tag/ 301
