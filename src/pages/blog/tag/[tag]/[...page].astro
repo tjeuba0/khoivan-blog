@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content'
 import BaseLayout from '../../../../layouts/BaseLayout.astro'
-import BlogCard from '../../../../components/BlogCard.astro'
+import PostRow from '../../../../components/PostRow.astro'
 import Pagination from '../../../../components/Pagination.astro'
 
 export async function getStaticPaths({ paginate }) {
@@ -55,9 +55,9 @@ const pageTitle = page.currentPage === 1 ? `Tag: ${tag}` : `Tag: ${tag} - Trang 
     {
       page.data.length > 0 ? (
         <>
-          <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div>
             {page.data.map((post) => (
-              <BlogCard post={post} />
+              <PostRow post={post} />
             ))}
           </div>
 

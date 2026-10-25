@@ -1,0 +1,35 @@
+---
+import { categoryUrl, isoDate, postUrl, readingMinutes, type Post } from '../lib/post'
+
+export interface Props {
+  post: Post
+  headingLevel?: 'h2' | 'h3'
+}
+
+const { post, headingLevel: Heading = 'h2' } = Astro.props
+const { title, description, pubDate, category, tags } = post.data
+const minutes = readingMinutes(post.body)
+---
+
+<article
+  class="grid grid-cols-1 gap-x-6 gap-y-1 border-t border-line py-5 first:border-t-0 first:pt-0 sm:grid-cols-[6rem_minmax(0,1fr)]"
+>
+  <div class="flex items-baseline gap-3 font-mono text-xs sm:flex-col sm:gap-1 sm:pt-1 sm:text-[13px]">
+    <time datetime={pubDate.toISOString()} class="text-ink-2 tabular-nums">
+      {isoDate(pubDate)}
+    </time>
+    <a href={categoryUrl(category)} class="text-signal no-underline hover:underline">
+      {category}/
+    </a>
+  </div>
+
+  <div class="min-w-0">
+    <Heading class="m-0 text-lg leading-snug font-semibold">
+      <a href={postUrl(post)} class="text-ink no-underline hover:text-signal">{title}</a>
+    </Heading>
+    <p class="mt-1 mb-0 text-[15px] leading-relaxed text-ink-2">{description}</p>
+    <p class="mt-2 mb-0 font-mono text-xs text-ink-2">
+      {minutes} min{tags.slice(0, 3).map((tag) => ` · ${tag}`)}
+    </p>
+  </div>
+</article>

@@ -324,19 +324,6 @@
 
 /* Dark mode specific overrides */
 @layer utilities {
-  /* Header in dark mode */
-  .dark header {
-    background-color: rgba(var(--color-bg), 0.95);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--color-line);
-  }
-
-  /* Footer in dark mode */
-  .dark footer {
-    background-color: var(--color-surface);
-    border-top: 1px solid var(--color-line);
-  }
-
   /* Dividers in dark mode */
   .dark hr {
     border-color: var(--color-line);

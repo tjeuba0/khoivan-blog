@@ -1,0 +1,45 @@
+---
+export interface Props {
+  target?: string
+}
+
+const { target = 'article' } = Astro.props
+---
+
+<div
+  class="pointer-events-none fixed inset-x-0 top-0 z-50 h-[3px]"
+  role="progressbar"
+  aria-label="Reading progress"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  aria-valuenow="0"
+  data-reading-progress={target}
+>
+  <div class="h-full origin-left scale-x-0 bg-signal" data-reading-progress-bar></div>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-reading-progress]')
+  const bar = root?.querySelector<HTMLElement>('[data-reading-progress-bar]')
+  const article = root ? document.querySelector<HTMLElement>(root.dataset.readingProgress!) : null
+
+  if (root && bar && article) {
+    let ticking = false
+    const update = () => {
+      const rect = article.getBoundingClientRect()
+      const total = rect.height - window.innerHeight
+      const ratio = total <= 0 ? 1 : Math.min(1, Math.max(0, -rect.top / total))
+      bar.style.transform = `scaleX(${ratio})`
+      root.setAttribute('aria-valuenow', String(Math.round(ratio * 100)))
+      ticking = false
+    }
+    const schedule = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(update)
+    }
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    update()
+  }
+</script>

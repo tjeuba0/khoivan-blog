@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
-import BlogCard from '../components/BlogCard.astro'
+import PostRow from '../components/PostRow.astro'
 import HeroSection from '../components/HeroSection.astro'
 
 // Get all posts
@@ -19,9 +19,9 @@ const posts = allPosts
   <!-- Blog Posts -->
   <div class="container-narrow pb-16">
     <h2 class="text-xl font-semibold mb-6 mt-2">Recent Posts</h2>
-    <div class="space-y-6">
+    <div>
       {posts.map((post) => (
-        <BlogCard post={post} />
+        <PostRow post={post} />
       ))}
     </div>
 
