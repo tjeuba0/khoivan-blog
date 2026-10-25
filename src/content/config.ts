@@ -48,7 +48,7 @@ const blog = defineCollection({
         featured: z.boolean().default(false),
 
         // Technical metadata
-        language: z.enum(['vi', 'en']).default('vi'),
+        language: z.enum(['vi', 'en']).default('en'),
         readingTime: z.string().optional(), // Will be auto-calculated
 
         // SEO overrides

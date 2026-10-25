@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 import ContactCta from '../components/ContactCta.astro'
+import LanguageTabs from '../components/LanguageTabs.astro'
 import { experienceYears } from '../lib/site'
 import { profilePage, SITE_URL } from '../lib/schema'
 
@@ -111,9 +112,8 @@ const experience = [
       </div>
     </header>
 
-    <section class="mt-10">
-      <h2 class="mt-0 mb-4 font-mono text-xs font-semibold tracking-wider text-ink-2 uppercase">About me</h2>
-      <div class="prose-content">
+    <LanguageTabs id="bio" labels={{ en: 'About me', vi: 'Giới thiệu' }}>
+      <div slot="en" class="prose-content">
         <p>
           Hi! I'm Pham Dinh Khoi Van, a Senior Android Developer with over {experienceYears} years of experience 
           specializing in mobile banking applications. Currently, I'm working at VietinBank, one of 
@@ -137,9 +137,33 @@ const experience = [
           especially trail running. This blog is where I share technical insights, lessons learned, 
           and stories from my journey as an Android Developer in Vietnam's dynamic fintech landscape.
         </p>
-      
       </div>
-    </section>
+      <div slot="vi" class="prose-content">
+        <p>
+          Xin chào! Tôi là Phạm Đình Khôi Văn, Senior Android Developer với hơn {experienceYears} năm
+          kinh nghiệm, chuyên về ứng dụng mobile banking. Hiện tôi làm việc tại VietinBank, một trong
+          những ngân hàng lớn nhất Việt Nam, và dẫn dắt đội Android phát triển giải pháp ngân hàng cho
+          khách hàng doanh nghiệp.
+        </p>
+        <p>
+          Trong sự nghiệp, tôi đã tham gia phát triển giải pháp mobile banking cho hầu hết các ngân hàng
+          lớn tại Việt Nam như VPBank, HDBank, Agribank, CPBank, SGBank và ABBank. Là thành viên chủ chốt
+          của dự án Agribank OMNI, tôi góp phần đưa vào vận hành một trong những dự án chuyển đổi số ngân
+          hàng lớn nhất Việt Nam, phục vụ hàng triệu khách hàng trên cả nước.
+        </p>
+        <p>
+          Ở vai trò Senior Developer, tôi không chỉ tập trung viết code sạch, dễ bảo trì mà còn hướng dẫn
+          các bạn junior, review kiến trúc và đưa ra những quyết định kỹ thuật quan trọng. Niềm đam mê
+          với Android internals, từ custom ROM đến tối ưu ở tầng hệ thống, giúp tôi thiết kế những giải
+          pháp hiệu năng cao và bảo mật, đáp ứng yêu cầu khắt khe của ứng dụng ngân hàng.
+        </p>
+        <p>
+          Ngoài công việc, tôi thích thử thách bản thân với thể thao: bóng đá, chạy bộ và đặc biệt là
+          chạy trail. Blog này là nơi tôi chia sẻ kiến thức kỹ thuật, những bài học rút ra và các câu
+          chuyện trên hành trình làm Android Developer giữa thị trường fintech sôi động của Việt Nam.
+        </p>
+      </div>
+    </LanguageTabs>
 
     <section class="mt-12">
       <h2 class="mt-0 mb-6 font-mono text-xs font-semibold tracking-wider text-ink-2 uppercase">Experience</h2>

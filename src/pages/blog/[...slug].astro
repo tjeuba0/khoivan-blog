@@ -47,6 +47,7 @@ const shareLinks = [
   publishedDate={post.data.pubDate}
   tags={post.data.tags}
   schema={[blogPosting(post)]}
+  lang={post.data.language}
 >
   {readingTime > 6 && <ReadingProgress target="#post-body" />}
 
