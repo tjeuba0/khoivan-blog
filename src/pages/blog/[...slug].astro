@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 import Comments from '../../components/CommentsUtterances.astro'
 import ImageLightbox from '../../components/ImageLightbox.astro'
 import Callout from '../../components/Callout.astro'
+import Badge from '../../components/Badge.astro'
 import Chip from '../../components/Chip.astro'
 import Toc from '../../components/Toc.astro'
 import ReadingProgress from '../../components/ReadingProgress.astro'
@@ -83,7 +84,7 @@ const shareLinks = [
     <div id="post-body" class="relative">
       <Toc headings={headings} />
       <div class="prose-content">
-        <Content components={{ Callout }} />
+        <Content components={{ Callout, Badge }} />
       </div>
     </div>
 

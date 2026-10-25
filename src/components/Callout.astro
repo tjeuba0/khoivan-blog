@@ -1,6 +1,6 @@
 ---
 export interface Props {
-  type?: 'critical' | 'warning' | 'info' | 'note'
+  type?: 'critical' | 'high' | 'warning' | 'info' | 'note'
   title?: string
   label?: string
 }
@@ -9,6 +9,7 @@ const { type = 'info', title, label } = Astro.props
 
 const variants = {
   critical: { box: 'bg-crit-bg', tag: 'text-crit', label: 'Critical' },
+  high: { box: 'bg-high-bg', tag: 'text-high', label: 'High' },
   warning: { box: 'bg-warn-bg', tag: 'text-warn', label: 'Warning' },
   info: { box: 'bg-info-bg', tag: 'text-info', label: 'Info' },
   note: { box: 'bg-ok-bg', tag: 'text-ok', label: 'Note' },

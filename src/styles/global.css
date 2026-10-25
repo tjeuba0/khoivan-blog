@@ -13,6 +13,8 @@
 
   --color-crit: #b4302a;
   --color-crit-bg: #fcefee;
+  --color-high: #b93d0b;
+  --color-high-bg: #fcefe7;
   --color-warn: #8a5a00;
   --color-warn-bg: #fbf3e2;
   --color-info: #22608f;
@@ -43,6 +45,8 @@
 
     --color-crit: #ff8a80;
     --color-crit-bg: rgb(220 60 50 / 0.14);
+    --color-high: #ffa06b;
+    --color-high-bg: rgb(234 88 12 / 0.15);
     --color-warn: #f2c063;
     --color-warn-bg: rgb(210 150 20 / 0.14);
     --color-info: #8cc4f0;
@@ -270,45 +274,5 @@
   .dark pre {
     background-color: var(--color-surface) !important;
     border-color: var(--color-line);
-  }
-
-  /* Override ALL inline HTML alert/callout boxes in dark mode */
-  /* Critical alerts - red tint */
-  .dark .prose-content div[style*="background: #FEF2F2"],
-  .dark .prose-content div[style*="background:#FEF2F2"] {
-    background-color: rgba(220, 38, 38, 0.15) !important;
-    border-color: rgba(220, 38, 38, 0.4) !important;
-  }
-
-  /* Warning alerts - yellow tint */
-  .dark .prose-content div[style*="background: #FEF3C7"],
-  .dark .prose-content div[style*="background:#FEF3C7"] {
-    background-color: rgba(202, 138, 4, 0.15) !important;
-    border-color: rgba(202, 138, 4, 0.4) !important;
-  }
-
-  /* Info/High alerts - neutral tint */
-  .dark .prose-content div[style*="background: #FAFAFA"],
-  .dark .prose-content div[style*="background:#FAFAFA"] {
-    background-color: rgba(234, 88, 12, 0.15) !important;
-    border-color: rgba(234, 88, 12, 0.4) !important;
-  }
-
-  /* Force all inline text colors to theme color in dark mode */
-  .dark .prose-content div[style*="color: #1F2937"],
-  .dark .prose-content div[style*="color:#1F2937"],
-  .dark .prose-content div[style*="color: #6B7280"],
-  .dark .prose-content div[style*="color:#6B7280"] {
-    color: var(--color-ink) !important;
-  }
-
-  /* Also fix nested elements inside those divs */
-  .dark .prose-content div[style] p,
-  .dark .prose-content div[style] li,
-  .dark .prose-content div[style] span:not([style*="background"]),
-  .dark .prose-content div[style] strong,
-  .dark .prose-content div[style] em,
-  .dark .prose-content div[style] a {
-    color: inherit !important;
   }
 }
