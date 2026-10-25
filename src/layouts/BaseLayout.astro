@@ -23,6 +23,7 @@ export interface Props {
   type?: 'website' | 'article'
   noindex?: boolean
   tags?: string[]
+  schema?: Record<string, unknown>[]
 }
 
 const {
@@ -35,6 +36,7 @@ const {
   type = 'website',
   noindex = false,
   tags = [],
+  schema,
 } = Astro.props
 ---
 
@@ -56,6 +58,7 @@ const {
       type={type}
       noindex={noindex}
       tags={tags}
+      schema={schema}
     />
 
     <!-- Dark mode script - must run before page renders to prevent flash -->

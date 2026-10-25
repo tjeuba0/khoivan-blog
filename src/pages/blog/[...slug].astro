@@ -9,6 +9,7 @@ import Chip from '../../components/Chip.astro'
 import Toc from '../../components/Toc.astro'
 import ReadingProgress from '../../components/ReadingProgress.astro'
 import { categoryUrl, isoDate, postUrl, readingMinutes, tagUrl } from '../../lib/post'
+import { blogPosting } from '../../lib/schema'
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog')
@@ -45,6 +46,7 @@ const shareLinks = [
   author={post.data.author}
   publishedDate={post.data.pubDate}
   tags={post.data.tags}
+  schema={[blogPosting(post)]}
 >
   {readingTime > 6 && <ReadingProgress target="#post-body" />}
 
