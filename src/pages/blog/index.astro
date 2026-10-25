@@ -1,0 +1,14 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import PostIndex from '../../components/PostIndex.astro'
+
+const posts = (await getCollection('blog')).filter((post) => !post.data.draft)
+---
+
+<BaseLayout
+  title="Blog - Android Development & Tech Articles"
+  description="Chia sẻ kiến thức về Android, Clean Architecture, Jetpack Compose, và các công nghệ mobile hiện đại."
+>
+  <PostIndex posts={posts} title="Posts" />
+</BaseLayout>

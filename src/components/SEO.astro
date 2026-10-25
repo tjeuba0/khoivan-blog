@@ -76,6 +76,7 @@ const imageURL = new URL(image, Astro.url)
 
 <!-- Additional Meta Tags -->
 <meta name="keywords" content={tags.join(', ')} />
-<meta name="theme-color" content="#4F39FA" />
+<meta name="theme-color" content="#fbfdfb" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#1c2131" media="(prefers-color-scheme: dark)" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link rel="alternate" type="application/rss+xml" title={siteTitle} href="/rss.xml" />
