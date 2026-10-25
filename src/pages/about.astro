@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 import ContactCta from '../components/ContactCta.astro'
+import { experienceYears } from '../lib/site'
 
 const skills = {
   'Core Expertise': [
@@ -71,7 +72,7 @@ const experience = [
 
 <BaseLayout
   title="About - Phạm Đình Khôi Văn"
-  description="Senior Android Developer với 8+ năm kinh nghiệm chuyên sâu trong phát triển ứng dụng mobile banking, lead các dự án fintech quy mô lớn tại Việt Nam"
+  description={`Senior Android Developer với ${experienceYears}+ năm kinh nghiệm chuyên sâu trong phát triển ứng dụng mobile banking, lead các dự án fintech quy mô lớn tại Việt Nam`}
 >
   <div class="container-narrow pt-10 pb-8 md:pt-14">
     <header class="flex items-center gap-5">
@@ -112,7 +113,7 @@ const experience = [
       <h2 class="mt-0 mb-4 font-mono text-xs font-semibold tracking-wider text-ink-2 uppercase">About me</h2>
       <div class="prose-content">
         <p>
-          Hi! I'm Pham Dinh Khoi Van, a Senior Android Developer with over 8 years of experience 
+          Hi! I'm Pham Dinh Khoi Van, a Senior Android Developer with over {experienceYears} years of experience 
           specializing in mobile banking applications. Currently, I'm working at VietinBank, one of 
           Vietnam's largest banks, where I lead the Android team for corporate banking solutions.
         </p>
