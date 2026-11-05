@@ -25,6 +25,7 @@ export interface Props {
   tags?: string[]
   schema?: Record<string, unknown>[]
   lang?: 'vi' | 'en'
+  fullTitle?: boolean
 }
 
 const {
@@ -39,6 +40,7 @@ const {
   tags = [],
   schema,
   lang = 'en',
+  fullTitle = false,
 } = Astro.props
 ---
 
@@ -62,6 +64,7 @@ const {
       tags={tags}
       schema={schema}
       lang={lang}
+      fullTitle={fullTitle}
     />
 
     <!-- Dark mode script - must run before page renders to prevent flash -->
