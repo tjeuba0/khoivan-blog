@@ -26,7 +26,7 @@ export default defineConfig({
         }],
       ],
     }),
-    sitemap(), 
+    sitemap({ filter: (page) => !page.endsWith("/search/") }),
     pagefind(),
   ],
 
