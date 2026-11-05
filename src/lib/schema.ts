@@ -9,7 +9,14 @@ export const person = {
   '@type': 'Person',
   '@id': PERSON_ID,
   name: 'Phạm Đình Khôi Văn',
-  alternateName: ['Pham Dinh Khoi Van', 'Khôi Văn', 'Khoi Van', 'Van Pham Dinh Khoi'],
+  alternateName: [
+    'Pham Dinh Khoi Van',
+    'Đình Khôi Văn Phạm',
+    'Dinh Khoi Van Pham',
+    'Khôi Văn',
+    'Khoi Van',
+    'Van Pham Dinh Khoi',
+  ],
   url: `${SITE_URL}/about/`,
   image: `${SITE_URL}/avatar.jpg`,
   jobTitle: 'Senior Android Developer',
@@ -23,7 +30,12 @@ export const person = {
     'Mobile banking',
     'Mobile application security',
   ],
-  sameAs: ['https://github.com/tjeuba0', 'https://www.linkedin.com/in/vanmarch27/'],
+  sameAs: [
+    'https://github.com/tjeuba0',
+    'https://www.linkedin.com/in/vanmarch27/',
+    'https://utmb.world/runner/8860199.dinhkhoivan.pham',
+    'https://itra.run/RunnerSpace/phamdinhkhoi.van.7923622',
+  ],
 }
 
 export const website = {
